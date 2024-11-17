@@ -1,0 +1,179 @@
+/* Hide scrollbar for Chrome, Safari and Opera */
+html::-webkit-scrollbar {
+	display: none;
+}
+  
+  /* Hide scrollbar for IE, Edge and Firefox */
+html {
+	-ms-overflow-style: none;  /* IE and Edge */
+	scrollbar-width: none;  /* Firefox */
+}
+  
+ 
+.App {
+	text-align: center;
+}
+
+.App-logo {
+	animation: App-logo-spin infinite 20s linear;
+	height: 80px;
+}
+
+.App-header {
+	height: auto;
+	padding: 20px;
+	color: white;
+}
+
+.App-title {
+	font-size: 1.5em;
+}
+
+.App-intro {
+	font-size: large;
+}
+
+
+.centered {
+	margin: auto;
+}
+
+.right {
+	direction: rtl;
+}
+
+.no-margin {
+	margin: 0;
+}
+
+.nav-link {
+	color: white;
+	font-weight: bold;
+}
+
+.nav-link:hover {
+	color: rgb(128, 128, 128);
+}
+
+.bg-white {
+	background-color: rgb(255, 255, 255);
+}
+
+.bg-lightblue {
+	background-color: rgb(183, 224, 243);
+}
+
+.bg-lightcoral {
+	background-color: rgb(240,128,128);
+}
+
+.outline {
+	border: 2px solid rgb(167, 167, 167);
+}
+
+
+
+
+
+.fixed-image {
+	max-width: 100%;
+	display: block;
+	justify-content: center;
+	margin: auto;
+	border-radius: 10px;
+	height: 200px;
+	object-fit: cover;
+}
+.fixed-image-big {
+	width: 205px;
+	height: 175px;
+	object-fit: contain;
+	padding-right: 1rem;
+}
+
+
+.Post_feed {
+	display: flex;
+	align-items: center;
+}
+
+.post-card{
+	justify-content: center;
+	border: none;
+	cursor: pointer;
+	box-shadow: -2px 6px 17px -5px rgba(0,0,0,0.5);
+	transition: 0.3s ease-out;
+	min-height: 380px;
+}
+.post-card:hover{
+	box-shadow: -2px 6px 17px 0px rgba(0,0,0,0.5);
+	transform: scale(1.03);
+}
+.post-card-complete {
+	box-shadow: -2px 6px 17px -5px rgba(0,0,0,0.5);
+	border: none;
+}
+.post-complete {
+	padding-top: 2rem;
+	padding-bottom: 2rem;
+	padding-left: 2rem;
+	padding-right: 1rem;
+	overflow: hidden;
+}
+
+.post-text {
+	color: rgba(0,0,0,0.5);
+}
+
+.descripcion {
+	margin: 30px 0;
+	padding: 10px 0;
+	border-top: 1px solid rgba(0,0,0,0.3);
+	border-bottom: 1px solid rgba(0,0,0,0.3);
+}
+
+.post-text h2 {
+	font-weight: bold;
+	color: rgba(0,0,0,0.5);
+	margin-top: 10px;
+	border-bottom: 2px rgba(0,0,0,0.1) solid;
+}
+
+.post-text-info{
+	display: flex;
+	justify-content: space-between;
+	padding: 0 30px;
+}
+
+.box{
+	display: block;
+}
+
+.post-content{
+	padding: 15px 30px;
+	text-align: center;
+}
+
+.header-box{
+	padding: 1em 2em 0 2em;
+	width: 100%;
+	display: block;
+	justify-content: space-between;
+}
+.post-header .post-text h2 {
+	border-bottom: none;
+}
+.post-header .post-text h4 {
+	color: rgba(0,0,0,0.3);
+}
+
+
+
+.visible {
+	display: flex;
+}
+
+.hidden {
+	display: none;
+}
+

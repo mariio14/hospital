@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@react-pdf/renderer": "^3.4.0",
+    "@stomp/stompjs": "^7.0.0",
+    "downloadjs": "^1.4.7",
+    "stompjs": "^2.3.3"
+  }
+}

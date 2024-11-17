@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: myTfg-ingress
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /mytfg
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /mytfg
+            pathType: Prefix
+            backend:
+              service:
+                name: mytfg
+                port:
+                  number: 8080

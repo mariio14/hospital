@@ -1,0 +1,15 @@
+.navbar-collapse {
+    text-align: center;
+}
+
+.form-group > label > span {
+    font-weight: bold;
+}
+
+.session-link {
+    margin-right: 10px;
+}
+
+body {
+    background-color: #F7F3E9; /* Cambia esto por el color que desees */
+}

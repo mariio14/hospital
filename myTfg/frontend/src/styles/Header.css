@@ -1,0 +1,77 @@
+.navbar {
+    background-color: #000;
+    border-bottom: 2px solid #ff6f61;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    color: #ff6f61 !important;
+}
+
+.nav-link {
+    color: #343a40 !important;
+}
+
+.nav-link:hover {
+    color: #ff6f61 !important;
+}
+
+.avatar {
+    cursor: pointer;
+    margin-left: 1rem;
+}
+
+.navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%2855, 255, 255, 0.5%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+
+
+
+.menu-button {
+    background: none;
+    border: none;
+    color: #343a40;
+    font-size: 1.5rem;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.menu-button:focus {
+    outline: none;
+}
+
+
+.nav-link2 {
+    text-decoration: none;
+    color: #343a40; /* Color del texto en el menú */
+    display: block;
+    padding: 10px 0;
+}
+
+.nav-link:hover2 {
+    background-color: #f8f9fa; /* Color de fondo al pasar el mouse */
+    color: #343a40; /* Color del texto al pasar el mouse */
+}
+
+.drawer-content {
+    width: 250px;
+    padding: 20px;
+}
+
+
+.bg-white2 {
+    background-color: rgb(255, 255, 255);
+}
+
+.bg-lightblue2 {
+    background-color: rgb(183, 224, 243);
+}
+
+.bg-lightcoral2 {
+    background-color: rgb(240,128,128);
+}

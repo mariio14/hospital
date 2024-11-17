@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    jkube.io/scm-url: https://github.com/mariio14/myTfg
+    jkube.io/scm-tag: head
+  labels:
+    app: mytfg
+    provider: jkube
+    version: 0.1-SNAPSHOT
+    group: es.udc.fi.tfg
+  name: tfg
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: mytfg
+      provider: jkube
+      group: es.udc.fi.tfg
+  template:
+    metadata:
+      annotations:
+        jkube.io/scm-url: https://github.com/mariio14/myTfg
+        jkube.io/scm-tag: head
+      labels:
+        app: mytfg
+        provider: jkube
+        version: 0.1-SNAPSHOT
+        group: es.udc.fi.tfg
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        image: gitlab.fic.udc.es:5050/ferramentas.2023/dalmatas:latest
+        imagePullPolicy: Always
+        name: deploy-tfg
+        securityContext:
+          privileged: false
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+        - name: fd-reg-cred
