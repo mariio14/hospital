@@ -1,11 +1,11 @@
 import clingo
 import sys
+import json
+from collections import OrderedDict
 
 if len(sys.argv) < 2:
     print("Uso: python decode.py file1 [file2 ... ]")
     sys.exit()
-
-output_file = "solution.txt"
 
 ctl = clingo.Control()
 for arg in sys.argv[1:]:
@@ -13,8 +13,7 @@ for arg in sys.argv[1:]:
 ctl.ground([("base", [])])
 
 with ctl.solve(yield_=True) as handle:
-    assignments = {} 
-    months = set()
+    assignments = {}
 
     for model in handle:
         for atom in model.symbols(atoms=True):
@@ -26,21 +25,13 @@ with ctl.solve(yield_=True) as handle:
                 if person not in assignments:
                     assignments[person] = {}
                 assignments[person][month] = turn
-                months.add(month)
 
-months = sorted(months)
+# Ordenar personas y meses
+ordered_assignments = OrderedDict(
+    sorted(
+        {person: OrderedDict(sorted(months.items())) for person, months in assignments.items()}.items()
+    )
+)
 
-with open(output_file, "w") as f:
-    f.write("Persona\\Mes ")
-    for month in months:
-        f.write(f"Mes {month:2} ")
-    f.write("\n")
-
-    for person in sorted(assignments.keys()):
-        f.write(f"Persona {person:2} ")
-        for month in months:
-            turn = assignments[person].get(month, "-")
-            f.write(f" {turn:5} ")
-        f.write("\n")
-
-print(f"Resultados guardados en {output_file}")
+# Exportamos los resultados directamente a la salida estándar como JSON
+print(json.dumps(ordered_assignments, indent=4))

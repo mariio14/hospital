@@ -18,7 +18,7 @@ public class PlanningServiceImpl implements PlanningService {
 
     @Override
     public Map<Integer, Map<Integer, String>> getPlanning(PlanningType planningType) {
-        String command = "python3 decode2.py " + resolveInputFile(planningType);
+        String command = "python3 decode.py " + resolveInputFile(planningType);
 
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
