@@ -23,11 +23,10 @@ public class PlanningServiceImpl implements PlanningService {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
             processBuilder.directory(new File(pathname));
-            processBuilder.redirectErrorStream(true); // Redirigir errores a la salida estándar
+            processBuilder.redirectErrorStream(true);
 
             Process process = processBuilder.start();
 
-            // Capturar la salida estándar del proceso
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             StringBuilder output = new StringBuilder();
             String line;
@@ -35,7 +34,6 @@ public class PlanningServiceImpl implements PlanningService {
                 output.append(line);
             }
 
-            // Esperar a que el proceso termine
             int exitCode = process.waitFor();
             if (exitCode == 0) {
                 System.out.println("Script ejecutado correctamente.");
@@ -59,8 +57,8 @@ public class PlanningServiceImpl implements PlanningService {
 
     private String resolveInputFile(PlanningType planningType) {
         return switch (planningType) {
-            case WEEKLY -> "weekly_schedule.lp";
-            case MONTHLY -> "monthly_schedule.lp";
+            case WEEKLY -> "weekly.lp";
+            case MONTHLY -> "monthly.lp";
             case ANNUAL -> "yearly.lp";
         };
     }
