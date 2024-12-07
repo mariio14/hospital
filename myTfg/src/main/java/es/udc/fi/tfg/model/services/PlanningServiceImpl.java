@@ -14,7 +14,7 @@ import es.udc.fi.tfg.model.util.PlanningType;
 @Transactional
 public class PlanningServiceImpl implements PlanningService {
 
-    private String pathname = "/home/mario/AAAAAAAAAAAAAAAAAAAAA/hospital/myTfg/src/main/java/es/udc/fi/tfg/model/services/clingo";
+    private final String pathname = "/home/mario/AAAAAAAAAAAAAAAAAAAAA/hospital/myTfg/src/main/java/es/udc/fi/tfg/model/services/clingo";
 
     @Override
     public Map<Integer, Map<Integer, String>> getPlanning(PlanningType planningType) {
@@ -40,9 +40,8 @@ public class PlanningServiceImpl implements PlanningService {
             if (exitCode == 0) {
                 System.out.println("Script ejecutado correctamente.");
                 System.out.println("Salida del script (JSON): " + output);
-                
-                Map<Integer, Map<Integer, String>> planningResult = parseJson(output.toString());
-                return planningResult;
+
+                return parseJson(output.toString());
             }  else {
                 System.err.println("Error en la ejecución del script. Código de salida: " + exitCode);
                 throw new RuntimeException("El script Python falló con código de salida: " + exitCode);
@@ -50,23 +49,19 @@ public class PlanningServiceImpl implements PlanningService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     private Map<Integer, Map<Integer, String>> parseJson(String jsonString) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(jsonString, new TypeReference<Map<Integer, Map<Integer, String>>>() {});
+        return mapper.readValue(jsonString, new TypeReference<>() {});
     }
 
     private String resolveInputFile(PlanningType planningType) {
-        switch (planningType) {
-            case WEEKLY:
-                return "weekly_schedule.lp";
-            case MONTHLY:
-                return "monthly_schedule.lp";
-            case ANNUAL:
-                return "yearly.lp";
-            default:
-                throw new IllegalArgumentException("Tipo de planificación no soportado: " + planningType);
-        }
+        return switch (planningType) {
+            case WEEKLY -> "weekly_schedule.lp";
+            case MONTHLY -> "monthly_schedule.lp";
+            case ANNUAL -> "yearly.lp";
+        };
     }
 }
