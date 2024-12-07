@@ -6,8 +6,6 @@ import es.udc.fi.tfg.model.entities.Users;
 import es.udc.fi.tfg.model.services.exceptions.IncorrectLoginException;
 import es.udc.fi.tfg.model.services.exceptions.IncorrectPasswordException;
 
-import java.util.List;
-
 /**
  * The Interface UserService.
  */

@@ -1,6 +1,5 @@
 package es.udc.fi.tfg.model.services;
 
-import es.udc.fi.tfg.model.services.exceptions.IncorrectLoginException;
 import es.udc.fi.tfg.model.util.PlanningType;
 
 public interface PlanningService {
