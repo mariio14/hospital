@@ -17,7 +17,7 @@ public class PlanningServiceImpl implements PlanningService{
 
     @Override
     public void getPlanning(PlanningType planningType) {
-        String command = "python3 decode.py yearly.lp";
+        String command = "python3 decode2.py yearly.lp";
 
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
@@ -59,7 +59,6 @@ public class PlanningServiceImpl implements PlanningService{
 
     
     private String resolveInputFile(PlanningType planningType) {
-        // Mapea el tipo de planificación a un archivo ASP específico
         switch (planningType) {
             case WEEKLY:
                 return "weekly_schedule.lp";
