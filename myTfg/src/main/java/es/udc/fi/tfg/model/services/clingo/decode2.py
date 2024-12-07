@@ -7,8 +7,6 @@ if len(sys.argv) < 2:
     print("Uso: python decode.py file1 [file2 ... ]")
     sys.exit()
 
-output_file = "solution.json"
-
 ctl = clingo.Control()
 for arg in sys.argv[1:]:
     ctl.load(arg)
@@ -35,8 +33,5 @@ ordered_assignments = OrderedDict(
     )
 )
 
-# Exportamos los resultados como JSON
-with open(output_file, "w") as f:
-    json.dump(ordered_assignments, f, indent=4)
-
-print(f"Resultados guardados en {output_file}")
+# Exportamos los resultados directamente a la salida estándar como JSON
+print(json.dumps(ordered_assignments, indent=4))

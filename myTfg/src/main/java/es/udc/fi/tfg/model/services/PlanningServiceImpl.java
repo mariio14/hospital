@@ -3,21 +3,22 @@ package es.udc.fi.tfg.model.services;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
-import java.io.IOException;
-import java.lang.InterruptedException;
+import java.util.Map;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import es.udc.fi.tfg.model.util.PlanningType;
 
 @Service
 @Transactional
-public class PlanningServiceImpl implements PlanningService{
+public class PlanningServiceImpl implements PlanningService {
 
     private String pathname = "/home/mario/AAAAAAAAAAAAAAAAAAAAA/hospital/myTfg/src/main/java/es/udc/fi/tfg/model/services/clingo";
 
     @Override
-    public void getPlanning(PlanningType planningType) {
-        String command = "python3 decode2.py yearly.lp";
+    public Map<Integer, Map<Integer, String>> getPlanning(PlanningType planningType) {
+        String command = "python3 decode2.py " + resolveInputFile(planningType);
 
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
@@ -26,38 +27,36 @@ public class PlanningServiceImpl implements PlanningService{
 
             Process process = processBuilder.start();
 
-            // Leer salida estándar
+            // Capturar la salida estándar del proceso
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             StringBuilder output = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
-                output.append(line).append(System.lineSeparator());
-            }
-
-            // Leer salida de error
-            BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            StringBuilder errorOutput = new StringBuilder();
-            while ((line = errorReader.readLine()) != null) {
-                errorOutput.append(line).append(System.lineSeparator());
+                output.append(line);
             }
 
             // Esperar a que el proceso termine
             int exitCode = process.waitFor();
             if (exitCode == 0) {
                 System.out.println("Script ejecutado correctamente.");
-                System.out.println("Salida del script: ");
-                System.out.println(output.toString());
-            } else {
+                System.out.println("Salida del script (JSON): " + output);
+                
+                Map<Integer, Map<Integer, String>> planningResult = parseJson(output.toString());
+                return planningResult;
+            }  else {
                 System.err.println("Error en la ejecución del script. Código de salida: " + exitCode);
-                System.err.println("Errores del script: ");
-                System.err.println(errorOutput.toString());
+                throw new RuntimeException("El script Python falló con código de salida: " + exitCode);
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    
+    private Map<Integer, Map<Integer, String>> parseJson(String jsonString) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(jsonString, new TypeReference<Map<Integer, Map<Integer, String>>>() {});
+    }
+
     private String resolveInputFile(PlanningType planningType) {
         switch (planningType) {
             case WEEKLY:

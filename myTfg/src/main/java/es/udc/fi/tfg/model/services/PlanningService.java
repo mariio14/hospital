@@ -1,8 +1,10 @@
 package es.udc.fi.tfg.model.services;
 
+import java.util.Map;
+
 import es.udc.fi.tfg.model.util.PlanningType;
 
 public interface PlanningService {
 
-    void getPlanning(PlanningType planningType);
+    Map<Integer, Map<Integer, String>> getPlanning(PlanningType planningType);
 }
