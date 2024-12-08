@@ -40,7 +40,7 @@ const Header = () => {
                     <FontAwesomeIcon icon={faBars} />
                 </button>
                 <Link className="navbar-brand text-light font-weight-bold" to="/">
-                    <i className="fas fa-home"></i> UDConnect
+                    <i className="fas fa-home"></i> MedShift
                 </Link>
             </div>
             <button
