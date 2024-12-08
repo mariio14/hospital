@@ -1,0 +1,1 @@
+export const ANNUAL_PLANNING_COMPLETED = "project/plannings/annualPlanningCompleted";

@@ -1,8 +1,9 @@
 import React from "react";
 import "./App.css";
+import {AnnualPlanning} from "../../plannings";
 
 const Home = () => {
-   // return <FilterAndSearch/>
+   return <AnnualPlanning/>
 };
 
 export default Home;

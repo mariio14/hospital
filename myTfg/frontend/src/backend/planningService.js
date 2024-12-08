@@ -7,5 +7,5 @@ import {
   setReauthenticationCallback,
 } from "./appFetch";
 
-export const annualPlanning = (params, onSuccess, onErrors) =>
-  appFetch(`/plannings/annual`, fetchConfig("GET", params), onSuccess, onErrors);
+export const annualPlanning = (onSuccess, onErrors) =>
+  appFetch(`/plannings/annual`, fetchConfig("POST"), onSuccess, onErrors);

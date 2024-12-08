@@ -26,12 +26,10 @@ with ctl.solve(yield_=True) as handle:
                     assignments[person] = {}
                 assignments[person][month] = turn
 
-# Ordenar personas y meses
 ordered_assignments = OrderedDict(
     sorted(
         {person: OrderedDict(sorted(months.items())) for person, months in assignments.items()}.items()
     )
 )
 
-# Exportamos los resultados directamente a la salida estándar como JSON
 print(json.dumps(ordered_assignments, indent=4))
