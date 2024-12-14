@@ -12,64 +12,65 @@ month(1..12).
 aux(M,T) :- month_assign(4,M,T).
 %show month_assign/3.
 
-% num_min(L,T,N) = persons of level L must have activity T at least N months
-% num_exact(L,T,N) = persons of level L must have activity T exactly N months
-% num_or_num(L,T,N,X) = persons of level L must have activity T N or X months.
-% num_in_a_row(L,T,N) = persons of level L must have activity T exactly N months in a row
-num_exact(1,nutrition,1).
-num_exact(2,rea,1).
-num_exact(2,xray,1).
-num_exact(3,vascular,1).
-num_exact(3,thoracic,1).
-num_exact(4,valencia,1).
+% occup_min(L,T,N) = persons of level L must have activity T at least N months
+% occup_exact(L,T,N) = persons of level L must have activity T exactly N months
+% occup_max(L,T,N) = persons of level L must have activity T at most N months.
+% occup_consecutive(L, S) The occupation of persons of level L in activity T must be consecutive
+occup_exact(1,nutrition,1).
+occup_exact(2,rea,1).
+occup_exact(2,xray,1).
+occup_exact(3,vascular,1).
+occup_exact(3,thoracic,1).
+occup_exact(4,valencia,1).
 
 % otras
-num_or_num(4,other,1,2).
-num_or_num(5,other,1,2).
+occup_min(4,other,1).
+occup_min(5,other,1).
 
-% colon
-num_min(1,blue,2).
-num_min(2,blue,2).
-num_min(3,blue,2).
-num_min(4,blue,3).
-num_min(5,blue,3).
-
-% procto
-num_exact(2,brown,1).
-num_exact(3,brown,1).
-num_exact(4,brown,1).
-num_exact(5,brown,1).
-
-% higado
-num_min(2,red,2).
-num_min(3,red,2).
-num_min(4,red,2).
-num_min(5,red,2).
+occup_max(4,other,2).
+occup_max(5,other,2).
 
 % mama 
-num_in_a_row(2,pink,2).
-num_in_a_row(4,pink,2).
+occup_exact(2,pink,2).
+occup_exact(4,pink,2).
+
+occup_consecutive(2, pink).
+occup_consecutive(4, pink).
 
 % pared
-num_exact(1,green,4).
-num_exact(2,green,1).
-num_exact(3,green,1).
-num_exact(4,green,1).
-num_exact(5,green,1).
+occup_exact(1,green,4).
+occup_exact(2,green,1).
+occup_exact(3,green,1).
+occup_exact(4,green,1).
+occup_exact(5,green,1).
 
 % urgencias
-num_min(1,purple,3).
+occup_min(1,purple,3).
 
 % esofago
-num_exact(2,yellow,2).
-num_exact(3,yellow,2).
-num_exact(4,yellow,2).
-num_min(5,yellow,2).
+occup_exact(2,yellow,2).
+occup_exact(3,yellow,2).
+occup_exact(4,yellow,2).
+occup_min(5,yellow,2).
 
-:- level(P,L), num_exact(L,T,N), #count{X:month_assign(P,X,T)}!=N.   % Actividades a las que se asigna N meses
-:- level(P,L), num_min(L,T,N), #count{X:month_assign(P,X,T)}<N.      % Actividades a las que se asigna al menos N meses
+:- level(P,L), occup_exact(L,T,N), #count{X:month_assign(P,X,T)}!=N.   % Actividades a las que se asigna N meses
+:- level(P,L), occup_min(L,T,N), #count{X:month_assign(P,X,T)}<N.      % Actividades a las que se asigna al menos N meses
+:- level(P,L), occup_max(L,T,N), #count{X:month_assign(P,X,T)}>N.      % Actividades a las que se asigna como mucho N meses
 
-% Meses seguidos
-:- level(P,L), num_in_a_row(L,T,N), #count{X:month_assign(P,X,T)}!=N.  % Exactamente N meses
-:- level(P,L), num_in_a_row(L,T,N), month_assign(P,M,T), not month_assign(P,M-1,T), not month_assign(P,M+N-1,T). % Que sean seguidos
+% :- level(P,L), occup_consecutive(L,T,N), month_assign(P,M,T), not month_assign(P,M-1,T), not month_assign(P,M+N-1,T).
+:- level(P, L), occup_consecutive(S, L),                % Having a Person P, with Level L
+    month_assign(P, M, S), not month_assign(P, M+1, S), % Being M the last month assigned
+    month_assign(P, M', S), M' > M+1.                   % Cannot be that exists M' later than M+1
 
+
+% demmand_min(S, N) The service S demands N people.
+demmand_min(blue, 3).
+demmand_min(pink, 1).
+demmand_min(red, 2).
+demmand_min(yellow, 1).
+demmand_min(purple, 1).
+demmand_min(green, 1).
+demmand_min(brown, 1).
+
+:- month(M), turn(T), demmand_min(T,N), % Para cada mes, para un turno con demanda minima N
+    #count{X:month_assign(X,M,T)}<N.   % Que haya N o mas personas en turno T en el mes M
