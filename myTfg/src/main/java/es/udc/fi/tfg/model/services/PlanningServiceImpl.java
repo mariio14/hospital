@@ -14,11 +14,11 @@ import es.udc.fi.tfg.model.util.PlanningType;
 @Transactional
 public class PlanningServiceImpl implements PlanningService {
 
-    private final String pathname = "/home/mario/AAAAAAAAAAAAAAAAAAAAA/hospital/myTfg/src/main/java/es/udc/fi/tfg/model/services/clingo";
-
+    // private final String pathname = "/home/mario/TFG/hospital/myTfg/src/main/java/es/udc/fi/tfg/model/services/clingo";
+    private final String pathname = "C:/Users/mario/hospital/myTfg/src/main/java/es/udc/fi/tfg/model/services/clingo";
     @Override
     public Map<Integer, Map<Integer, String>> getPlanning(PlanningType planningType) {
-        String command = "python3 decode.py yearly.lp";
+        String command = "python decode.py yearly.lp";
 
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));

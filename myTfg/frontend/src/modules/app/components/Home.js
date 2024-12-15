@@ -1,9 +1,14 @@
 import React from "react";
 import "./App.css";
 import {AnnualPlanning} from "../../plannings";
+import '../../../styles/Home.css';
 
 const Home = () => {
-   return <AnnualPlanning/>
+   return (
+         <div className="container">
+            <AnnualPlanning />
+         </div>
+      );
 };
 
 export default Home;

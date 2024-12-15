@@ -33,6 +33,8 @@ const AnnualPlanning = () => {
         valencia: "#FF5722"
     };
 
+    if(annualPlanning == null)
+        return;
     return (
         <div>
             <h2>Planificación Anual</h2>
