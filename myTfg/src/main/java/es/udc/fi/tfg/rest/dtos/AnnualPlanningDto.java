@@ -9,7 +9,6 @@ public class AnnualPlanningDto {
     private Map<Integer, String> assignations;
     
     public AnnualPlanningDto() {
-
     }
 
     public AnnualPlanningDto(String name, Map<Integer, String> assignations) {

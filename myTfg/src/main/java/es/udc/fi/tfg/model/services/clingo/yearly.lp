@@ -74,3 +74,7 @@ demmand_min(brown, 1).
 
 :- month(M), turn(T), demmand_min(T,N), % Para cada mes, para un turno con demanda minima N
     #count{X:month_assign(X,M,T)}<N.   % Que haya N o mas personas en turno T en el mes M
+
+
+
+#minimize { 1@priority, P, P', M, T : month_assign(P, M, T), month_assign(P', M, T), level(P, 5), level(P', 5), P < P' }.

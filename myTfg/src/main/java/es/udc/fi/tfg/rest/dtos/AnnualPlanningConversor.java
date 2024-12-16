@@ -15,5 +15,4 @@ public class AnnualPlanningConversor {
                 .map(entry -> new AnnualPlanningDto(entry.getKey().toString(), entry.getValue()))
                 .collect(Collectors.toList());
     }
-    
 }
