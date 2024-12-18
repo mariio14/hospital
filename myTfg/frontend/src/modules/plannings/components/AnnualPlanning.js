@@ -21,19 +21,20 @@ const AnnualPlanning = () => {
     ];
 
     const colorMap = {
-        green: "#4CAF50",
-        yellow: "#FFEB3B",
-        blue: "#2196F3",
-        red: "#F44336",
-        purple: "#9C27B0",
-        brown: "#795548",
-        pink: "#E91E63",
-        nutrition: "#FFC107",
-        xray: "#607D8B",
-        rea: "#3F51B5",
-        thoracic: "#8BC34A",
-        vascular: "#00BCD4",
-        valencia: "#FF5722"
+        PARED: "#4CAF50",
+        AMARILLO: "#FFEB3B",
+        COLON: "#2196F3",
+        ROJOS: "#F44336",
+        URGENCIAS: "#9C27B0",
+        PROCTO: "#795548",
+        MAMA: "#F48FB1",
+        NUTRI: "#D3D3D3",
+        RAYOS: "#607D8B",
+        REA: "#3F51B5",
+        TORACICA: "#8BC34A",
+        VASCULAR: "#00BCD4",
+        VALENCIA: "#FFC107",
+        OTRAS: "#F5F5F5"
     };
 
     return (
