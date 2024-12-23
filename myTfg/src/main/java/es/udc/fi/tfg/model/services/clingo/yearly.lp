@@ -76,8 +76,8 @@ demmand_min(brown, 1).
     #count{X:month_assign(X,M,T)}<N.   % Que haya N o mas personas en turno T en el mes M
 
 
-% AS08
-#minimize { 1@1, P, P', M, T : person(P), person(P'),
+% CAS01
+#minimize { 1@1 : person(P), person(P'),
     level(P, 5), level(P', 5),
     turn(T),
     month_assign(P, M, T), month_assign(P', M, T), P < P' }.
