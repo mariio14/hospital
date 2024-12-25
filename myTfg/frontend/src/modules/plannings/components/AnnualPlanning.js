@@ -8,7 +8,13 @@ const AnnualPlanning = () => {
     const dispatch = useDispatch();
     const annualPlanning = useSelector(selectors.getAnnualPlanning);
 
+    const emptyPlanning = Array.from({ length: 15 }, (_, index) => ({
+        name: `Persona ${index + 1}`,
+        assignations: Array(12).fill(null)
+    }));
+
     const [isGenerated, setIsGenerated] = useState(false);
+    const [planningData, setPlanningData] = useState(emptyPlanning);
 
     const handleGeneratePlanning = () => {
         dispatch(actions.getAnnualPlanning());
@@ -37,10 +43,23 @@ const AnnualPlanning = () => {
         OTRAS: "#F5F5F5"
     };
 
-    const emptyPlanning = Array.from({ length: 15 }, (_, index) => ({
-        name: `Persona ${index + 1}`,
-        assignations: Array(12).fill(null)
-    }));
+    const activities = Object.keys(colorMap);
+
+    const handleSelectChange = (personName, month, value) => {
+        const dataToUpdate = planningData && planningData.length > 0 ? planningData : emptyPlanning;
+        const updatedPlanning = dataToUpdate.map((person) => {
+            if (person.name === personName) {
+                return {
+                    ...person,
+                    assignations: person.assignations.map((activity, index) =>
+                        months[index-1] === month ? value : activity
+                    )
+                };
+            }
+            return person;
+        });
+        setPlanningData(updatedPlanning);
+    };
 
     return (
         <div>
@@ -70,19 +89,20 @@ const AnnualPlanning = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {(isGenerated && annualPlanning ? annualPlanning : emptyPlanning).map((person) => (
-                            <tr key={person.name}
+                        {(isGenerated && annualPlanning ? annualPlanning : planningData).map((person) => (
+                            <tr
+                                key={person.name}
                                 style={{
                                     backgroundColor: "#E0E0E0",
                                     color: "#000"
                                 }}
                             >
                                 <td>{person.name}</td>
-                                {months.map((_, index) => {
+                                {months.map((month, index) => {
                                     const activity = person.assignations[index+1];
                                     return (
                                         <td
-                                            key={`${person.name}-${index}`}
+                                            key={`${person.name}-${month}`}
                                             style={{
                                                 backgroundColor: colorMap[activity] || "#E0E0E0",
                                                 color: "#000",
@@ -91,11 +111,39 @@ const AnnualPlanning = () => {
                                                 cursor: activity ? "pointer" : "default"
                                             }}
                                             title={activity || "Sin asignación"}
-                                            onClick={() =>
-                                                activity && alert(`Persona: ${person.name}\nMes: ${months[index]}\nActividad: ${activity}`)
-                                            }
                                         >
-                                            {activity || "-"}
+                                            <select
+                                                value={activity || ""}
+                                                onChange={(e) =>
+                                                    handleSelectChange(person.name, month, e.target.value)
+                                                }
+                                                style={{
+                                                    backgroundColor: "transparent",
+                                                    border: "none",
+                                                    color: "#000",
+                                                    cursor: "pointer",
+                                                    width: "100%",
+                                                    textAlign: "center",
+                                                    fontWeight: "bold",
+                                                    appearance: "none"
+                                                }}
+                                            >
+                                                <option value="" disabled>
+                                                    Seleccionar
+                                                </option>
+                                                {activities.map((act) => (
+                                                    <option
+                                                        key={act}
+                                                        value={act}
+                                                        style={{
+                                                            backgroundColor: colorMap[act],
+                                                            color: "#000"
+                                                        }}
+                                                    >
+                                                        {act}
+                                                    </option>
+                                                ))}
+                                            </select>
                                         </td>
                                     );
                                 })}
