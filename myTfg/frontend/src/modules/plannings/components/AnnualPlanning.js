@@ -15,9 +15,12 @@ const AnnualPlanning = () => {
 
     const [planningData, setPlanningData] = useState(emptyPlanning);
     const [isExpanded, setIsExpanded] = useState(false);
+    const [backendErrors, setBackendErrors] = useState(null);
 
     const handleGeneratePlanning = () => {
-        dispatch(actions.getAnnualPlanning(planningData));
+        dispatch(actions.getAnnualPlanning(
+            planningData,
+            () => setBackendErrors('Sin solucion')));
     };
 
     const toggleSection = () => {
@@ -55,7 +58,7 @@ const AnnualPlanning = () => {
                 return {
                     ...person,
                     assignations: person.assignations.map((activity, index) =>
-                        months[index] === month ? value : activity
+                        months[index] === month ? (value === "-" ? null : value) : activity
                     )
                 };
             }
@@ -95,6 +98,8 @@ const AnnualPlanning = () => {
                     >
                         Generar Planificación
                     </button>
+                    {backendErrors ? <p style={{ color: 'red', textAlign: 'center', marginTop: '30px',
+                        marginBottom: '20px' }}>{backendErrors}</p> : null}
                     <div className="annual-planning-table">
                         <table>
                             <thead>
@@ -145,9 +150,7 @@ const AnnualPlanning = () => {
                                                             appearance: "none"
                                                         }}
                                                     >
-                                                        <option value="" disabled>
-                                                            Seleccionar
-                                                        </option>
+                                                        <option value="-">-</option>
                                                         {activities.map((act) => (
                                                             <option
                                                                 key={act}

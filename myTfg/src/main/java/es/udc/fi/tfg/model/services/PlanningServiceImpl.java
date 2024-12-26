@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.Map;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import es.udc.fi.tfg.model.services.exceptions.IncorrectLoginException;
+import es.udc.fi.tfg.model.services.exceptions.NoSolutionException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +16,7 @@ public class PlanningServiceImpl implements PlanningService {
     // private final String pathname = "/home/mario/TFG/hospital/myTfg/src/main/java/es/udc/fi/tfg/model/services/clingo";
     private final String pathname = "C:/Users/mario/hospital/myTfg/src/main/java/es/udc/fi/tfg/model/services/clingo";
     @Override
-    public Map<String, Map<Integer, String>> getAnnualPlanning(String params) {
+    public Map<String, Map<Integer, String>> getAnnualPlanning(String params) throws NoSolutionException{
         String command = "python decode.py yearly.lp input.lp";
 
         try {
@@ -40,6 +42,10 @@ public class PlanningServiceImpl implements PlanningService {
 
                 Map<String, Map<Integer, String>> planning = parseJson(output.toString());
 
+                if (planning.isEmpty()) {
+                    throw new NoSolutionException("Sin solucion para los parametros proporcionados.");
+                }
+
                 saveToJsonFile(planning);
 
                 return planning;
@@ -47,6 +53,8 @@ public class PlanningServiceImpl implements PlanningService {
                 System.err.println("Error en la ejecución del script. Código de salida: " + exitCode);
                 throw new RuntimeException("El script Python falló con código de salida: " + exitCode);
             }
+        } catch (NoSolutionException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
         }
