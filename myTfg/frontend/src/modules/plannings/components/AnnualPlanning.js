@@ -9,12 +9,12 @@ const AnnualPlanning = () => {
     const annualPlanning = useSelector(selectors.getAnnualPlanning);
 
     const emptyPlanning = Array.from({ length: 15 }, (_, index) => ({
-        name: `Persona ${index + 1}`,
+        name: `Persona ${String(index + 1).padStart(2, '0')}`,
         assignations: Array(12).fill(null)
     }));
 
     const [planningData, setPlanningData] = useState(emptyPlanning);
-    const [isExpanded, setIsExpanded] = useState(false); // Estado para controlar el desplegable
+    const [isExpanded, setIsExpanded] = useState(false);
 
     const handleGeneratePlanning = () => {
         dispatch(actions.getAnnualPlanning(planningData));

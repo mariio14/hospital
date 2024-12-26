@@ -14,7 +14,7 @@ public class PlanningServiceImpl implements PlanningService {
     // private final String pathname = "/home/mario/TFG/hospital/myTfg/src/main/java/es/udc/fi/tfg/model/services/clingo";
     private final String pathname = "C:/Users/mario/hospital/myTfg/src/main/java/es/udc/fi/tfg/model/services/clingo";
     @Override
-    public Map<Integer, Map<Integer, String>> getAnnualPlanning(String params) {
+    public Map<String, Map<Integer, String>> getAnnualPlanning(String params) {
         String command = "python decode.py yearly.lp input.lp";
 
         try {
@@ -38,7 +38,7 @@ public class PlanningServiceImpl implements PlanningService {
                 System.out.println("Script ejecutado correctamente.");
                 System.out.println("Salida del script (JSON): " + output);
 
-                Map<Integer, Map<Integer, String>> planning = parseJson(output.toString());
+                Map<String, Map<Integer, String>> planning = parseJson(output.toString());
 
                 saveToJsonFile(planning);
 
@@ -59,17 +59,16 @@ public class PlanningServiceImpl implements PlanningService {
         return Map.of();
     }
 
-    private Map<Integer, Map<Integer, String>> parseJson(String jsonString) throws Exception {
+    private Map<String, Map<Integer, String>> parseJson(String jsonString) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(jsonString, new TypeReference<>() {});
     }
 
-    private void saveToJsonFile(Map<Integer, Map<Integer, String>> planning) {
+    private void saveToJsonFile(Map<String, Map<Integer, String>> planning) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             File outputFile = new File(pathname + "/solution.json");
             mapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, planning);
-            System.out.println("Resultado guardado en el archivo: " + outputFile.getAbsolutePath());
         } catch (Exception e) {
             System.err.println("Error al guardar el resultado en un archivo JSON.");
             e.printStackTrace();

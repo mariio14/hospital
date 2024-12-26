@@ -3,8 +3,8 @@ service(nutrition;rea;xray;vascular;thoracic;valencia;other).
 turn(T) :- service(T).
 turn(T) :- section(T).
 
-person(1..15).
-level(P,(P-1)/3 + 1) :- person(P).
+% person(1..15).
+% level(P,(P-1)/3 + 1) :- person(P).
 month(1..12).
 
 % month_assign(P,M,S): Person P at month M is assigned S

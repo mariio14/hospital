@@ -26,17 +26,17 @@ public class AnnualPlanningConversor {
             Map.entry("nutrition", "NUTRI")
     );
 
-    public static List<AnnualPlanningDto> toAnnualPlanningDtos(Map<Integer, Map<Integer, String>> planningMap) {
+    public static List<AnnualPlanningDto> toAnnualPlanningDtos(Map<String, Map<Integer, String>> planningMap) {
         return planningMap.entrySet()
                 .stream()
                 .map(entry -> {
                     Map<Integer, String> transformedValues = entry.getValue().entrySet()
                             .stream()
                             .collect(Collectors.toMap(
-                                    Map.Entry::getKey,
+                                    e -> e.getKey() - 1,
                                     e -> CONSTANTS_MAP.getOrDefault(e.getValue(), e.getValue())
                             ));
-                    return new AnnualPlanningDto(entry.getKey().toString(), transformedValues);
+                    return new AnnualPlanningDto(entry.getKey(), transformedValues);
                 })
                 .collect(Collectors.toList());
     }
