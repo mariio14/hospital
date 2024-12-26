@@ -1,8 +1,6 @@
 package es.udc.fi.tfg.model.services;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.Map;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,10 +14,12 @@ public class PlanningServiceImpl implements PlanningService {
     // private final String pathname = "/home/mario/TFG/hospital/myTfg/src/main/java/es/udc/fi/tfg/model/services/clingo";
     private final String pathname = "C:/Users/mario/hospital/myTfg/src/main/java/es/udc/fi/tfg/model/services/clingo";
     @Override
-    public Map<Integer, Map<Integer, String>> getAnnualPlanning() {
-        String command = "python decode.py yearly.lp";
+    public Map<Integer, Map<Integer, String>> getAnnualPlanning(String params) {
+        String command = "python decode.py yearly.lp input.lp";
 
         try {
+            writeInputFile(params, pathname + "/input.lp");
+
             ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
             processBuilder.directory(new File(pathname));
             processBuilder.redirectErrorStream(true);
@@ -73,6 +73,15 @@ public class PlanningServiceImpl implements PlanningService {
         } catch (Exception e) {
             System.err.println("Error al guardar el resultado en un archivo JSON.");
             e.printStackTrace();
+        }
+    }
+
+    private void writeInputFile(String params, String outputFilePath) {
+        try (FileWriter writer = new FileWriter(outputFilePath)) {
+            writer.write(params);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error al escribir el archivo de entrada LP", e);
         }
     }
 }

@@ -6,6 +6,6 @@ const getAnnualPlanningCompleted = annualPlanning => ({
     annualPlanning
 });
 
-export const getAnnualPlanning = (onErrors) => dispatch =>
-    backend.planningService.annualPlanning(
+export const getAnnualPlanning = (planningData, onErrors) => dispatch =>
+    backend.planningService.annualPlanning(planningData,
     annualPlanning => dispatch(getAnnualPlanningCompleted(annualPlanning)), onErrors);

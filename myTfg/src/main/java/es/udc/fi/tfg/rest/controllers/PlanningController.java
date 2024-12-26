@@ -1,15 +1,14 @@
 package es.udc.fi.tfg.rest.controllers;
 
 import es.udc.fi.tfg.model.services.PlanningService;
-import es.udc.fi.tfg.rest.dtos.AnnualPlanningConversor;
-import es.udc.fi.tfg.rest.dtos.AnnualPlanningDto;
+import es.udc.fi.tfg.rest.dtos.*;
 
 import java.util.List;
 
-import es.udc.fi.tfg.rest.dtos.WeeklyPlanningConversor;
-import es.udc.fi.tfg.rest.dtos.WeeklyPlanningDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,13 +20,14 @@ public class PlanningController {
     private PlanningService planningService;
 
     @PostMapping("/annual")
-    public List<AnnualPlanningDto> annualPlanning() {
-        return AnnualPlanningConversor.toAnnualPlanningDtos(planningService.getAnnualPlanning());
+    public List<AnnualPlanningDto> annualPlanning(@Validated @RequestBody List<AnnualPlanningDataDto> params) {
+        return AnnualPlanningConversor.toAnnualPlanningDtos(planningService.getAnnualPlanning(
+                AnnualPlanningDataConversor.toClingoParams(params)));
     }
 
     @PostMapping("/monthly")
     public List<AnnualPlanningDto> monthlyPlanning() {
-        return AnnualPlanningConversor.toAnnualPlanningDtos(planningService.getAnnualPlanning());
+        return AnnualPlanningConversor.toAnnualPlanningDtos(planningService.getAnnualPlanning(""));
     }
 
     @PostMapping("/weekly")

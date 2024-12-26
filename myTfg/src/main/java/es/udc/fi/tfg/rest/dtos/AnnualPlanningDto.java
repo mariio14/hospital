@@ -28,7 +28,7 @@ public class AnnualPlanningDto {
         return this.assignations;
     }
 
-    public void getAssignations(Map<Integer, String> assignations) {
+    public void setAssignations(Map<Integer, String> assignations) {
         this.assignations = assignations;
     }
 }

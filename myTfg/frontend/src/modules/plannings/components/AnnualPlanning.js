@@ -17,7 +17,7 @@ const AnnualPlanning = () => {
     const [isExpanded, setIsExpanded] = useState(false); // Estado para controlar el desplegable
 
     const handleGeneratePlanning = () => {
-        dispatch(actions.getAnnualPlanning());
+        dispatch(actions.getAnnualPlanning(planningData));
     };
 
     const toggleSection = () => {
