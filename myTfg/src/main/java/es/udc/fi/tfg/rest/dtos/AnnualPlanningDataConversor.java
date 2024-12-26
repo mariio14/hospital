@@ -31,7 +31,7 @@ public class AnnualPlanningDataConversor {
             String personName = annualPlanningDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT);
             clingoParams.append(String.format("person(%s). ", personName));
             level ++;
-            clingoParams.append(String.format("level(%s,%d). ", personName, level/3 +1));
+            clingoParams.append(String.format("level(%s,%d). ", personName, (level-1)/3 +1));
             List<String> assignations = annualPlanningDto.getAssignations();
 
             if (assignations != null) {

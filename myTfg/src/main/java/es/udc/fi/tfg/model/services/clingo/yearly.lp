@@ -7,10 +7,13 @@ turn(T) :- section(T).
 % level(P,(P-1)/3 + 1) :- person(P).
 month(1..12).
 
+% Definimos costes para las preferencias
+cost(cas01,100).
+cost(cas02,20).
+cost(cas03,10).
+
 % month_assign(P,M,S): Person P at month M is assigned S
 1 {month_assign(P,M,T) : turn(T)} 1:- person(P), month(M).
-aux(M,T) :- month_assign(4,M,T).
-%show month_assign/3.
 
 % occup_min(L,T,N) = persons of level L must have activity T at least N months
 % occup_exact(L,T,N) = persons of level L must have activity T exactly N months
@@ -77,7 +80,12 @@ demmand_min(brown, 1).
 
 
 % CAS01
-#minimize { 1@1 : person(P), person(P'),
+#minimize { V : person(P), person(P'),
     level(P, 5), level(P', 5),
     turn(T),
-    month_assign(P, M, T), month_assign(P', M, T), P < P' }.
+    month_assign(P, M, T), month_assign(P', M, T), P < P', cost(cas01, V) }.
+
+% CAS03
+#minimize { V : person(P), person(P'),
+    service(T), turn(T),
+    month_assign(P, M, T), month_assign(P', M, T), P < P', cost(cas03, V)}.
