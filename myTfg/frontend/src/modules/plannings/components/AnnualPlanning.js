@@ -18,7 +18,7 @@ const AnnualPlanning = () => {
         assignations: Array(12).fill(null)
     }));
 
-    const [planningData, setPlanningData] = useState(emptyPlanning);
+    const [planningData, setPlanningData] = useState(annualPlanning ? annualPlanning : emptyPlanning);
     const [isExpanded, setIsExpanded] = useState(false);
     const [backendErrors, setBackendErrors] = useState(null);
 
@@ -36,6 +36,10 @@ const AnnualPlanning = () => {
         }, {});
         setLocalValues(updatedLocalValues);
     }, [planningData]);
+    useEffect(() => {
+        // Si annualPlanning cambia, actualizamos planningData con el nuevo valor
+        setPlanningData(annualPlanning ? annualPlanning : emptyPlanning);
+    }, [annualPlanning]);
 
     const handleGeneratePlanning = () => {
         dispatch(actions.getAnnualPlanning(
@@ -72,14 +76,19 @@ const AnnualPlanning = () => {
     const activities = Object.keys(colorMap);
 
     const handleSelectChange = (personName, month, value) => {
-        const dataToUpdate = planningData && planningData.length > 0 ? planningData : emptyPlanning;
-        const updatedPlanning = dataToUpdate.map((person) => {
+        const updatedPlanning = planningData.map((person) => {
             if (person.name === personName) {
                 return {
                     ...person,
-                    assignations: person.assignations.map((activity, index) =>
-                        months[index] === month ? (value === "-" ? null : value) : activity
-                    )
+                    assignations: Object.keys(person.assignations).reduce((acc, key) => {
+                        // Si la clave corresponde al mes, actualizamos el valor
+                        if (months[key] === month) {
+                            acc[key] = value === "-" ? null : value;
+                        } else {
+                            acc[key] = person.assignations[key]; // Mantenemos el valor actual para otras claves
+                        }
+                        return acc;
+                    }, {})
                 };
             }
             return person;
@@ -153,6 +162,7 @@ const AnnualPlanning = () => {
     };
 
     const handleClearPlanning = () => {
+        setPlanningData(emptyPlanning);
         dispatch(actions.clearAnnualPlanning());
     };
 
@@ -286,7 +296,7 @@ const AnnualPlanning = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {(annualPlanning ? annualPlanning : planningData).map((person) => (
+                                        {planningData.map((person) => (
                                             <tr
                                                 key={person.name}
                                                 style={{
