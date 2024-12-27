@@ -42,9 +42,16 @@ const AnnualPlanning = () => {
     }, [annualPlanning]);
 
     const handleGeneratePlanning = () => {
+        setBackendErrors(null);
+        const convertedPlanningData = planningData.map(person => ({
+            ...person,
+            assignations: Object.values(person.assignations)
+        }));
+
         dispatch(actions.getAnnualPlanning(
-            planningData,
-            () => setBackendErrors('Sin solucion')));
+            convertedPlanningData,
+            () => setBackendErrors('Sin solución')
+        ));
     };
 
     const toggleSection = () => {
@@ -162,6 +169,7 @@ const AnnualPlanning = () => {
     };
 
     const handleClearPlanning = () => {
+        setBackendErrors(null);
         setPlanningData(emptyPlanning);
         dispatch(actions.clearAnnualPlanning());
     };
