@@ -113,10 +113,14 @@ const AnnualPlanning = () => {
                     );
                 }
             },
+            headStyles: {
+                halign: 'center',  // Centra el texto del encabezado (meses)
+            },
         });
 
-        doc.save("planificacion_anual_colores.pdf");
+        doc.save("planificacion_anual.pdf");
     };
+
 
     // Función para convertir colores HEX a RGB
     const hexToRgb = (hex) => {
