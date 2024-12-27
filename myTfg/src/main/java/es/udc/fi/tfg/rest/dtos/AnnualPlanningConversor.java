@@ -36,7 +36,7 @@ public class AnnualPlanningConversor {
                                     e -> e.getKey() - 1,
                                     e -> CONSTANTS_MAP.getOrDefault(e.getValue(), e.getValue())
                             ));
-                    return new AnnualPlanningDto(entry.getKey(), transformedValues);
+                    return new AnnualPlanningDto(entry.getKey().toUpperCase(), transformedValues);
                 })
                 .collect(Collectors.toList());
     }

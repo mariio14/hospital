@@ -6,13 +6,16 @@ public class AnnualPlanningDataDto {
 
     private String name;
 
+    private String level;
+
     private List<String> assignations;
 
     public AnnualPlanningDataDto() {
     }
 
-    public AnnualPlanningDataDto(String name, List<String> assignations) {
+    public AnnualPlanningDataDto(String name, String level, List<String> assignations) {
         this.name = name;
+        this.level = level;
         this.assignations = assignations;
     }
 
@@ -22,6 +25,14 @@ public class AnnualPlanningDataDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
     }
 
     public List<String> getAssignations() {

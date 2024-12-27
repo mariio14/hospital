@@ -25,13 +25,14 @@ public class AnnualPlanningDataConversor {
 
     public static String toClingoParams(List<AnnualPlanningDataDto> annualPlanningList) {
         StringBuilder clingoParams = new StringBuilder();
-        int level = 0;
 
         for (AnnualPlanningDataDto annualPlanningDto : annualPlanningList) {
             String personName = annualPlanningDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT);
             clingoParams.append(String.format("person(%s). ", personName));
-            level ++;
-            clingoParams.append(String.format("level(%s,%d). ", personName, (level-1)/3 +1));
+
+            int level = Integer.parseInt(annualPlanningDto.getLevel().replace("R", ""));
+
+            clingoParams.append(String.format("level(%s,%d). ", personName, level));
             List<String> assignations = annualPlanningDto.getAssignations();
 
             if (assignations != null) {
