@@ -7,15 +7,11 @@ const initialState = {
 };
 
 const annualPlanning = (state = initialState.annualPlanning, action) => {
-
     switch (action.type) {
-
         case actionTypes.ANNUAL_PLANNING_COMPLETED:
             return action.annualPlanning;
-
         default:
             return state;
-
     }
 }
 
