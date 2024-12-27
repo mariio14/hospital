@@ -8,9 +8,12 @@ turn(T) :- section(T).
 month(1..12).
 
 % Definimos costes para las preferencias
+cost(car01,20).
+cost(car02,10).
 cost(cas01,100).
-cost(cas02,20).
+cost(cas02,25).
 cost(cas03,10).
+cost(cas04,3).
 
 % month_assign(P,M,S): Person P at month M is assigned S
 1 {month_assign(P,M,T) : turn(T)} 1:- person(P), month(M).
@@ -78,14 +81,61 @@ demmand_min(brown, 1).
 :- month(M), turn(T), demmand_min(T,N), % Para cada mes, para un turno con demanda minima N
     #count{X:month_assign(X,M,T)}<N.   % Que haya N o mas personas en turno T en el mes M
 
+% CAR01
+#minimize { V : person(P), turn(T),
+    month_assign(P, M, T),
+    not month_assign(P, M+1, T),
+    month_assign(P, M', T), M' > M+1,
+    cost(car01, V)
+}.
+
+
+% CAR02
+#minimize { V : person(P), turn(T),
+    level(P, L), L>3,
+    month_assign(P, M, T),
+    not month_assign(P, M+1, T),
+    month_assign(P, M', T), M' > M+1,
+    cost(car02, V)
+}.
+
 
 % CAS01
 #minimize { V : person(P), person(P'),
     level(P, 5), level(P', 5),
     turn(T),
-    month_assign(P, M, T), month_assign(P', M, T), P < P', cost(cas01, V) }.
+    month_assign(P, M, T), month_assign(P', M, T), P < P', cost(cas01, V)
+}.
+
+
+% CAS02
+% Predicados auxiliares para verificar la presencia de niveles específicos.
+has_high_level(M, T) :- month_assign(P, M, T), level(P, 4).
+has_high_level(M, T) :- month_assign(P, M, T), level(P, 5).
+
+has_low_level(M, T) :- month_assign(P, M, T), level(P, 1).
+has_low_level(M, T) :- month_assign(P, M, T), level(P, 2).
+has_low_level(M, T) :- month_assign(P, M, T), level(P, 3).
+
+% Regla auxiliar que identifica turnos con más de una persona.
+multiple_people(M, T) :- month(M), turn(T), #count{P : month_assign(P, M, T)} > 1.
+
+% CAS02
+#minimize { V : turn(T), multiple_people(M, T),
+    not has_low_level(M, T),
+    cost(cas02, V)
+}.
+#minimize { V : turn(T), multiple_people(M, T),
+    not has_high_level(M, T),
+    cost(cas02, V)
+}.
+
 
 % CAS03
 #minimize { V : person(P), person(P'),
     service(T), turn(T),
-    month_assign(P, M, T), month_assign(P', M, T), P < P', cost(cas03, V)}.
+    month_assign(P, M, T), month_assign(P', M, T), P < P', cost(cas03, V)
+}.
+
+
+% CAS04
