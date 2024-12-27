@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -21,6 +21,21 @@ const AnnualPlanning = () => {
     const [planningData, setPlanningData] = useState(emptyPlanning);
     const [isExpanded, setIsExpanded] = useState(false);
     const [backendErrors, setBackendErrors] = useState(null);
+
+    const [localValues, setLocalValues] = useState(
+        planningData.reduce((acc, person) => {
+          acc[person.name] = person.name; // Inicializa los valores locales
+          return acc;
+        }, {})
+    );
+
+    useEffect(() => {
+        const updatedLocalValues = planningData.reduce((acc, person) => {
+          acc[person.name] = person.name;
+          return acc;
+        }, {});
+        setLocalValues(updatedLocalValues);
+    }, [planningData]);
 
     const handleGeneratePlanning = () => {
         dispatch(actions.getAnnualPlanning(
@@ -72,13 +87,10 @@ const AnnualPlanning = () => {
         setPlanningData(updatedPlanning);
     };
 
-    const handleNameChange = (personName, newName) => {
-        const updatedPlanning = planningData.map((person) => {
-            if (person.name === personName) {
-                return { ...person, name: newName };
-            }
-            return person;
-        });
+    const handleNameChange = (name, newName) => {
+        const updatedPlanning = planningData.map(person =>
+          person.name === name ? { ...person, name: newName } : person
+        );
         setPlanningData(updatedPlanning);
     };
 
@@ -140,6 +152,10 @@ const AnnualPlanning = () => {
         return (r * 299 + g * 587 + b * 114) / 1000;
     };
 
+    const handleClearPlanning = () => {
+        dispatch(actions.clearAnnualPlanning());
+    };
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column' }}>
 
@@ -190,29 +206,76 @@ const AnnualPlanning = () => {
                             >
                                 Exportar a PDF
                             </button>
+                            <button
+                                onClick={handleClearPlanning}
+                                style={{
+                                    padding: "5px 15px",
+                                    backgroundColor: "#FF5733",
+                                    color: "#fff",
+                                    border: "none",
+                                    borderRadius: "5px",
+                                    cursor: "pointer",
+                                    marginLeft: "10px",
+                                    alignSelf: "flex-end"
+                                }}
+                            >
+                                Vaciar Planificación
+                            </button>
                         </div>
                         {backendErrors ? <p style={{ color: 'red', textAlign: 'center', marginTop: '30px', marginBottom: '20px' }}>{backendErrors}</p> : null}
 
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
 
                             {/* Lista de Personal y su Nivel */}
-                            <div style={{ width: '15%', paddingRight: '10px', border: '1px solid #ddd', padding: '10px', borderRadius: '5px', backgroundColor: '#f9f9f9', boxShadow: '0px 4px 8px rgba(0,0,0,0.1)' }}>
-                                <h3>Lista de Personal</h3>
-                                {planningData.map((person) => (
-                                    <div key={person.name} style={{ marginBottom: '5px', display: 'flex', alignItems: 'center' }}>
-                                        <input
-                                            type="text"
-                                            value={person.name}
-                                            onChange={(e) => handleNameChange(person.name, e.target.value)}
-                                            style={{ padding: '5px', marginBottom: '5px', width: '90px', fontSize: '12px', height: '30px' }} // Hacer más corto
-                                        />
-                                        <p style={{ marginLeft: '10px', fontWeight: 'bold', fontSize: '12px' }}>{person.level}</p> {/* Nivel a la derecha */}
-                                    </div>
-                                ))}
+                            <div
+                                style={{
+                                    width: '15%',
+                                    paddingRight: '10px',
+                                    border: '1px solid #ddd',
+                                    padding: '10px',
+                                    borderRadius: '5px',
+                                    backgroundColor: '#f9f9f9',
+                                    boxShadow: '0px 4px 8px rgba(0,0,0,0.1)'
+                                  }}
+                            >
+                              <h3>Lista de Personal</h3>
+                              {planningData.map(person => (
+                                <div key={person.name} style={{ marginBottom: '5px', display: 'flex', alignItems: 'center' }}>
+                                  <input
+                                    type="text"
+                                    value={localValues[person.name]} // Usamos el valor local para cada input
+                                    onChange={e => {
+                                      const updatedLocalValues = {
+                                        ...localValues,
+                                        [person.name]: e.target.value
+                                      };
+                                      setLocalValues(updatedLocalValues); // Actualiza solo el valor local
+                                    }}
+                                    onBlur={() => {
+                                      // Cuando el campo pierde el foco, actualizamos tanto planningData como localValues
+                                      handleNameChange(person.name, localValues[person.name]);
+                                    }}
+                                    style={{
+                                      padding: '5px',
+                                      marginBottom: '5px',
+                                      width: '90px',
+                                      fontSize: '12px',
+                                      height: '30px'
+                                    }}
+                                  />
+                                  <p style={{
+                                      marginLeft: '10px',
+                                      fontWeight: 'bold',
+                                      fontSize: '12px'
+                                    }} >
+                                    {person.level}
+                                  </p>
+                                </div>
+                              ))}
                             </div>
 
                             {/* Tabla de asignaciones */}
-                            <div style={{ width: '80%', overflowX: 'auto' }}> {/* Aumento el tamaño de la tabla */}
+                            <div style={{ width: '80%', overflowX: 'auto' }}>
                                 <table style={{ width: '100%', tableLayout: 'fixed', fontSize: '12px' }}>
                                     <thead>
                                         <tr>
@@ -291,5 +354,6 @@ const AnnualPlanning = () => {
         </div>
     );
 };
+
 
 export default AnnualPlanning;
