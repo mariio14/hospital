@@ -6,6 +6,7 @@ import es.udc.fi.tfg.model.services.exceptions.NoSolutionException;
 import es.udc.fi.tfg.rest.common.ErrorsDto;
 import es.udc.fi.tfg.rest.dtos.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -47,12 +48,13 @@ public class PlanningController {
         Map<String, Map<Integer, String>> planning =
                 planningService.getAnnualPlanning(AnnualPlanningDataConversor.toClingoParams(params));
 
-        return AnnualPlanningConversor.toAnnualPlanningDtos(planning);
+        return AnnualPlanningConversor.toAnnualPlanningDtos(planning, params);
     }
 
     @PostMapping("/monthly")
     public List<AnnualPlanningDto> monthlyPlanning() throws NoSolutionException {
-        return AnnualPlanningConversor.toAnnualPlanningDtos(planningService.getAnnualPlanning(""));
+        return AnnualPlanningConversor.toAnnualPlanningDtos(planningService.getAnnualPlanning(""),
+                new ArrayList<>());
     }
 
     @PostMapping("/weekly")

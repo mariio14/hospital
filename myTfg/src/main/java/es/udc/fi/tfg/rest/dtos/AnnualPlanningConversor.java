@@ -1,6 +1,7 @@
 package es.udc.fi.tfg.rest.dtos;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -26,7 +27,15 @@ public class AnnualPlanningConversor {
             Map.entry("nutrition", "NUTRI")
     );
 
-    public static List<AnnualPlanningDto> toAnnualPlanningDtos(Map<String, Map<Integer, String>> planningMap) {
+    public static List<AnnualPlanningDto> toAnnualPlanningDtos(Map<String, Map<Integer, String>> planningMap,
+                    List<AnnualPlanningDataDto> params) {
+
+        Map<String, String> nameLevelMap = params.stream()
+                .collect(Collectors.toMap(
+                        dto -> dto.getName().toUpperCase(),
+                        AnnualPlanningDataDto::getLevel
+                ));
+
         return planningMap.entrySet()
                 .stream()
                 .map(entry -> {
@@ -36,7 +45,11 @@ public class AnnualPlanningConversor {
                                     e -> e.getKey() - 1,
                                     e -> CONSTANTS_MAP.getOrDefault(e.getValue(), e.getValue())
                             ));
-                    return new AnnualPlanningDto(entry.getKey().toUpperCase(), transformedValues);
+
+                    String level = nameLevelMap.get(entry.getKey().replace("_", " ").toUpperCase());
+
+                    return new AnnualPlanningDto(entry.getKey().replace("_", " ").toUpperCase(),
+                            level, transformedValues);
                 })
                 .collect(Collectors.toList());
     }

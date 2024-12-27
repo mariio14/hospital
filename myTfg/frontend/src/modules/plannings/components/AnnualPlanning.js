@@ -145,7 +145,7 @@ const AnnualPlanning = () => {
                 }
             },
             headStyles: {
-                halign: 'center',  // Centra el texto del encabezado (meses)
+                halign: 'center',
             },
         });
 
