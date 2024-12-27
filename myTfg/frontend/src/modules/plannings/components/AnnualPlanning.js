@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import * as actions from "../actions";
 import * as selectors from "../selectors";
 import "../../../styles/AnnualPlanning.css";
@@ -67,6 +69,66 @@ const AnnualPlanning = () => {
         setPlanningData(updatedPlanning);
     };
 
+    const exportToPDF = () => {
+        const doc = new jsPDF({ orientation: "landscape" });
+        doc.text("Planificación Anual", 10, 10);
+
+        const tableData = (annualPlanning ? annualPlanning : planningData).map((person) => {
+            const assignations = person.assignations || {};
+            const assignationsList = months.map((_, index) => {
+                const value = assignations[index.toString()];
+                return value || "Sin asignación";
+            });
+
+            return [
+                person.name,
+                ...assignationsList
+            ];
+        });
+
+        // Generar la tabla con colores y texto visible
+        doc.autoTable({
+            head: [["Personas", ...months]],
+            body: tableData,
+            styles: { fontSize: 8, cellPadding: 1 },
+            startY: 20,
+            didDrawCell: (data) => {
+                if (data.section === 'body' && data.column.index > 0) {
+                    const activity = data.cell.raw;
+                    const bgColor = colorMap[activity] || "#FFFFFF";
+                    const [r, g, b] = hexToRgb(bgColor);
+
+                    // Establecer el color de fondo
+                    doc.setFillColor(r, g, b);
+                    doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
+
+                    // Establecer el color del texto según la luminosidad
+                    const textColor = getContrastYIQ(r, g, b) > 128 ? "#000000" : "#FFFFFF";
+                    doc.setTextColor(textColor);
+                    doc.text(
+                        activity || "Sin asignación",
+                        data.cell.x + data.cell.width / 2,
+                        data.cell.y + data.cell.height / 2,
+                        { align: "center", baseline: "middle" }
+                    );
+                }
+            },
+        });
+
+        doc.save("planificacion_anual_colores.pdf");
+    };
+
+    // Función para convertir colores HEX a RGB
+    const hexToRgb = (hex) => {
+        const bigint = parseInt(hex.replace("#", ""), 16);
+        return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
+    };
+
+    // Función para calcular el contraste YIQ
+    const getContrastYIQ = (r, g, b) => {
+        return (r * 299 + g * 587 + b * 114) / 1000;
+    };
+
     return (
         <div>
             <h2
@@ -97,6 +159,21 @@ const AnnualPlanning = () => {
                         }}
                     >
                         Generar Planificación
+                    </button>
+                    <button
+                        onClick={exportToPDF}
+                        style={{
+                            padding: "10px 20px",
+                            backgroundColor: "#28a745",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "5px",
+                            cursor: "pointer",
+                            marginBottom: "20px",
+                            marginLeft: "10px"
+                        }}
+                    >
+                        Exportar a PDF
                     </button>
                     {backendErrors ? <p style={{ color: 'red', textAlign: 'center', marginTop: '30px',
                         marginBottom: '20px' }}>{backendErrors}</p> : null}
