@@ -81,12 +81,17 @@ const Header = () => {
                             </Link>
                         </li>
                     )}
+                    <li className="nav-item">
+                        <Link className="nav-link" to="/users/login">
+                            <i className="fas fa-rss"></i> Prioridades
+                        </Link>
+                    </li>
                 </ul>
             </div>
             <Drawer anchor="left" open={drawerOpen} onClose={handleCloseDrawer}>
                 <div className="drawer-content">
                     <List>
-                        {userName && (
+                        {userName ? (
                             <>
                                 <li className="nav-item d-flex align-items-center">
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -116,7 +121,21 @@ const Header = () => {
                                     </Link>
                                 </ListItem>
                             </>
+                        ) : (
+                              <li className="nav-item">
+                                  <Link className="nav-link" to="/users/login">
+                                      <i className="fas fa-sign-in-alt"></i> Login
+                                  </Link>
+                              </li>
                         )}
+                        <>
+                            <ListItem button onClick={handleCloseDrawer}>
+                                <Link className="nav-link2" to="/posts/likedPosts">
+                                    <FontAwesomeIcon icon={faHeart} className="me-2" />
+                                    Prioridades
+                                </Link>
+                            </ListItem>
+                        </>
                     </List>
                 </div>
             </Drawer>

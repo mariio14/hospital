@@ -22,47 +22,67 @@ cost(cas04,3).
 % occup_exact(L,T,N) = persons of level L must have activity T exactly N months
 % occup_max(L,T,N) = persons of level L must have activity T at most N months.
 % occup_consecutive(L, S) The occupation of persons of level L in activity T must be consecutive
-occup_exact(1,nutrition,1).
-occup_exact(2,rea,1).
-occup_exact(2,xray,1).
-occup_exact(3,vascular,1).
-occup_exact(3,thoracic,1).
-occup_exact(4,valencia,1).
 
-% otras
+occup_exact(1,nutrition,1).     % AR01
+occup_exact(2,rea,1).           % AR02
+occup_exact(2,xray,1).          % AR03
+occup_exact(3,vascular,1).      % AR04
+occup_exact(3,thoracic,1).      % AR05
+occup_exact(4,valencia,1).      % AR06
+
+% AR07
 occup_min(4,other,1).
 occup_min(5,other,1).
-
 occup_max(4,other,2).
 occup_max(5,other,2).
 
-% mama 
+% AR08
+occup_min(1,blue,2).
+occup_min(2,blue,2).
+occup_min(3,blue,2).
+occup_min(4,blue,3).
+occup_min(5,blue,3).
+
+% AR09
+occup_exact(2,brown,1).
+occup_exact(3,brown,1).
+occup_exact(4,brown,1).
+occup_exact(5,brown,1).
+
+% AR10
+occup_min(2,red,2).
+occup_min(3,red,2).
+occup_min(4,red,2).
+occup_min(5,red,2).
+
+% AR11
 occup_exact(2,pink,2).
 occup_exact(4,pink,2).
-
 occup_consecutive(2, pink).
 occup_consecutive(4, pink).
 
-% pared
+% AR12
 occup_exact(1,green,4).
 occup_exact(2,green,1).
 occup_exact(3,green,1).
-occup_exact(4,green,1).
+% occup_exact(4,green,1).
 occup_exact(5,green,1).
 
-% urgencias
+% AR13
 occup_min(1,purple,3).
 
-% esofago
+% AR14
 occup_exact(2,yellow,2).
 occup_exact(3,yellow,2).
 occup_exact(4,yellow,2).
 occup_min(5,yellow,2).
 
+% Aplicar las restricciones anteriores (exact, min, max)
 :- level(P,L), occup_exact(L,T,N), #count{X:month_assign(P,X,T)}!=N.   % Actividades a las que se asigna N meses
 :- level(P,L), occup_min(L,T,N), #count{X:month_assign(P,X,T)}<N.      % Actividades a las que se asigna al menos N meses
 :- level(P,L), occup_max(L,T,N), #count{X:month_assign(P,X,T)}>N.      % Actividades a las que se asigna como mucho N meses
 
+% Aplicar las restricciones anteriores (consecutive)
 % :- level(P,L), occup_consecutive(L,T,N), month_assign(P,M,T), not month_assign(P,M-1,T), not month_assign(P,M+N-1,T).
 :- level(P, L), occup_consecutive(S, L),                % Having a Person P, with Level L
     month_assign(P, M, S), not month_assign(P, M+1, S), % Being M the last month assigned
@@ -70,14 +90,15 @@ occup_min(5,yellow,2).
 
 
 % demmand_min(S, N) The service S demands N people.
-demmand_min(blue, 3).
-demmand_min(pink, 1).
-demmand_min(red, 2).
-demmand_min(yellow, 1).
-demmand_min(purple, 1).
-demmand_min(green, 1).
-demmand_min(brown, 1).
+demmand_min(blue, 3).           % AS01
+demmand_min(pink, 1).           % AS02
+demmand_min(red, 2).            % AS03
+demmand_min(yellow, 1).         % AS04
+demmand_min(purple, 1).         % AS05
+demmand_min(green, 1).          % AS06
+demmand_min(brown, 1).          % AS07
 
+% Aplicar las restricciones anteriores de demanda mínima
 :- month(M), turn(T), demmand_min(T,N), % Para cada mes, para un turno con demanda minima N
     #count{X:month_assign(X,M,T)}<N.   % Que haya N o mas personas en turno T en el mes M
 
@@ -108,7 +129,7 @@ demmand_min(brown, 1).
 }.
 
 
-% CAS02
+% CAS02 - peredicados y preparación
 % Predicados auxiliares para verificar la presencia de niveles específicos.
 has_high_level(M, T) :- month_assign(P, M, T), level(P, 4).
 has_high_level(M, T) :- month_assign(P, M, T), level(P, 5).
@@ -137,5 +158,11 @@ multiple_people(M, T) :- month(M), turn(T), #count{P : month_assign(P, M, T)} > 
     month_assign(P, M, T), month_assign(P', M, T), P < P', cost(cas03, V)
 }.
 
+
+% CAS04 - peredicados y preparación
+months_man(S, N) :- service(S), N = #count{P, M : month_assign(P, M, S)}.
+
+% Predicado auxiliar para acumular la suma total de meses-hombre
+total_months_hombre(N') :- N' = #sum{N : months_man(_, N)}.
 
 % CAS04
