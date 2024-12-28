@@ -4,7 +4,6 @@ import java.io.*;
 import java.util.Map;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import es.udc.fi.tfg.model.services.exceptions.IncorrectLoginException;
 import es.udc.fi.tfg.model.services.exceptions.NoSolutionException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

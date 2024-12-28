@@ -1,7 +1,6 @@
 package es.udc.fi.tfg.rest.controllers;
 
 import es.udc.fi.tfg.model.services.PlanningService;
-import es.udc.fi.tfg.model.services.exceptions.IncorrectLoginException;
 import es.udc.fi.tfg.model.services.exceptions.NoSolutionException;
 import es.udc.fi.tfg.rest.common.ErrorsDto;
 import es.udc.fi.tfg.rest.dtos.*;
@@ -11,7 +10,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.checkerframework.checker.units.qual.N;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
