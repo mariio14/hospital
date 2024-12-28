@@ -160,17 +160,8 @@ multiple_people(M, T) :- month(M), turn(T), #count{P : month_assign(P, M, T)} > 
 }.
 
 
-% CAS03
-#minimize { V : person(P), person(P'),
-    service(T), turn(T),
-    month_assign(P, M, T), month_assign(P', M, T), P < P', cost(cas03, V)
-}.
+% CAS03 - peredicados y preparación
+external_service_assign(P, M, S) :- month_assign(P, M, S), service(S).
 
-
-% CAS04 - peredicados y preparación
-months_man(S, N) :- service(S), N = #count{P, M : month_assign(P, M, S)}.
-
-% Predicado auxiliar para acumular la suma total de meses-hombre
-total_months_hombre(N') :- N' = #sum{N : months_man(_, N)}.
-
-% CAS04
+% Contar el número de asignaciones relevantes.
+external_service_assignments(N) :- N = #count { P, M, S : external_service_assign(P, M, S) }.
