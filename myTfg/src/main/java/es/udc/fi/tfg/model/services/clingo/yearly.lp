@@ -3,8 +3,8 @@ service(nutrition;rea;xray;vascular;thoracic;valencia;other).
 turn(T) :- service(T).
 turn(T) :- section(T).
 
-% person(1..15).
-% level(P,(P-1)/3 + 1) :- person(P).
+person(1..15).
+level(P,(P-1)/3 + 1) :- person(P).
 month(1..12).
 
 % Definimos costes para las preferencias
@@ -160,9 +160,15 @@ multiple_people(M, T) :- month(M), turn(T), #count{P : month_assign(P, M, T)} > 
 
 
 % CAS04 - peredicados y preparación
-months_man(S, N) :- service(S), N = #count{P, M : month_assign(P, M, S)}.
+accumulate_months_hombre(S, N) :-
+    service(S),
+    N = #count{P, M : month_assign(P, M, S)}.
 
-% Predicado auxiliar para acumular la suma total de meses-hombre
-total_months_hombre(N') :- N' = #sum{N : months_man(_, N)}.
+% Sumar los resultados de todos los servicios
+total_months_hombre(N) :-
+    N = accumulate_months_hombre(nutrition, N1) + accumulate_months_hombre(rea, N2) +
+        accumulate_months_hombre(xray, N3) + accumulate_months_hombre(vascular, N4) +
+        accumulate_months_hombre(thoracic, N5) + accumulate_months_hombre(valencia, N6) +
+        accumulate_months_hombre(other, N7).
 
 % CAS04
