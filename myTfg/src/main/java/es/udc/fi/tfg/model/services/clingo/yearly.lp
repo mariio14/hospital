@@ -163,5 +163,30 @@ multiple_people(M, T) :- month(M), turn(T), #count{P : month_assign(P, M, T)} > 
 % CAS03 - peredicados y preparación
 external_service_assign(P, M, S) :- month_assign(P, M, S), service(S).
 
-% Contar el número de asignaciones relevantes.
-external_service_assignments(N) :- N = #count { P, M, S : external_service_assign(P, M, S) }.
+
+global_count(N) :-
+    N = #count { P,M : external_service_assign(P,M,S) }.
+
+month_count(M, N) :-
+    month(M),
+    N = #count { P : external_service_assign(P, M, S) }.
+
+difference(M, D) :-
+    month(M),
+    global_count(G),
+    month_count(M, N),
+    D = G - N,
+    D >= 0.
+
+difference(M, D) :-
+    month(M),
+    global_count(G),
+    month_count(M, N),
+    D = N - G,
+    D > 0.
+
+#minimize { D : month(M),
+    difference(M, D)
+    }.
+
+
