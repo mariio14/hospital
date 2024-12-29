@@ -12,8 +12,7 @@ cost(car01,20).
 cost(car02,10).
 cost(cas01,100).
 cost(cas02,25).
-cost(cas03,10).
-cost(cas04,3).
+cost(cas03,3).
 
 % month_assign(P,M,S): Person P at month M is assigned S
 1 {month_assign(P,M,T) : turn(T)} 1:- person(P), month(M).
@@ -163,7 +162,6 @@ multiple_people(M, T) :- month(M), turn(T), #count{P : month_assign(P, M, T)} > 
 % CAS03 - peredicados y preparación
 external_service_assign(P, M, S) :- month_assign(P, M, S), service(S).
 
-
 global_count(N) :-
     N = #count { P,M : external_service_assign(P,M,S) }.
 
@@ -175,18 +173,22 @@ difference(M, D) :-
     month(M),
     global_count(G),
     month_count(M, N),
-    D = G - N,
-    D >= 0.
+    D = G/12 - N,
+    N < G/12.
 
 difference(M, D) :-
     month(M),
     global_count(G),
     month_count(M, N),
-    D = N - G,
-    D > 0.
+    D = N - G/12,
+    N >= G/12.
 
-#minimize { D : month(M),
-    difference(M, D)
-    }.
+% :- month(M), difference(M,D), D>3.
+#show global_count/1.
+#show month_count/2.
+#show difference/2.
 
 
+#minimize { V*N : difference(M,N),
+    cost(cas03, V)
+}.
