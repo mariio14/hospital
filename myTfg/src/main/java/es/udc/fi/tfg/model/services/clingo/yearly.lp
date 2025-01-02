@@ -13,6 +13,11 @@ cost(car02,10).
 cost(cas01,100).
 cost(cas02,25).
 cost(cas03,3).
+cost(cas04,10).
+cost(cas05,3).
+cost(cas06,10).
+cost(cas07,5).
+cost(cas08,10).
 
 % month_assign(P,M,S): Person P at month M is assigned S
 1 {month_assign(P,M,T) : turn(T)} 1:- person(P), month(M).
@@ -97,9 +102,27 @@ demmand_min(purple, 1).         % AS05
 demmand_min(green, 1).          % AS06
 demmand_min(brown, 1).          % AS07
 
+% demmand_max(S, N) The service S should take a maximum of N people.
+demmand_max(pink, 1, V) :- cost(cas04, V).        % CAS04
+demmand_max(yellow, 3, V) :- cost(cas05, V).      % CAS05
+demmand_max(purple, 1, V) :- cost(cas06, V).      % CAS06
+demmand_max(green, 2, V) :- cost(cas07, V).       % CAS07
+demmand_max(brown, 1, V) :- cost(cas08, V).       % CAS08
+
 % Aplicar las restricciones anteriores de demanda mínima
 :- month(M), turn(T), demmand_min(T,N), % Para cada mes, para un turno con demanda minima N
     #count{X:month_assign(X,M,T)}<N.   % Que haya N o mas personas en turno T en el mes M
+
+% Aplicar las preferencias anteriores de demanda máxima
+cost_per_month(C,T,M) :- month(M), turn(T),
+    demmand_max(T, N, V),
+    Count = #count { X : month_assign(X, M, T) },
+    Count > N,
+    C = (Count - N) * V.
+
+#minimize { C : turn(T), month(M),
+    cost_per_month(C, T, M)
+}.
 
 
 % AS08
@@ -184,11 +207,11 @@ difference(M, D) :-
     N >= G/12.
 
 % :- month(M), difference(M,D), D>3.
-#show global_count/1.
-#show month_count/2.
-#show difference/2.
+%#show global_count/1.
+%#show month_count/2.
+%#show difference/2.
 
 
-#minimize { V*N : difference(M,N),
-    cost(cas03, V)
-}.
+%#minimize { V*N : difference(M,N),
+%    cost(cas03, V)
+%}.
