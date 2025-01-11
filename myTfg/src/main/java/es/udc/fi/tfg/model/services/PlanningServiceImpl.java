@@ -14,6 +14,7 @@ public class PlanningServiceImpl implements PlanningService {
 
     // private final String pathname = "/home/mario/TFG/hospital/myTfg/src/main/java/es/udc/fi/tfg/model/services/clingo";
     private final String pathname = "C:/Users/mario/hospital/myTfg/src/main/java/es/udc/fi/tfg/model/services/clingo";
+
     @Override
     public Map<String, Map<Integer, String>> getAnnualPlanning(String params) throws NoSolutionException{
         String command = "python decode.py yearly.lp input.lp";
@@ -61,9 +62,69 @@ public class PlanningServiceImpl implements PlanningService {
     }
 
     @Override
+    public Map<String, Map<Integer, String>> getMonthlyPlanning(String params) throws NoSolutionException {
+        String command = "python decode.py weekly.lp";
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
+            processBuilder.directory(new File(pathname));
+            processBuilder.redirectErrorStream(true);
+
+            Process process = processBuilder.start();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            StringBuilder output = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line);
+            }
+
+            int exitCode = process.waitFor();
+            if (exitCode == 0) {
+                System.out.println("Script ejecutado correctamente.");
+                System.out.println("Salida del script (JSON): " + output);
+
+
+            }  else {
+                System.err.println("Error en la ejecución del script. Código de salida: " + exitCode);
+                throw new RuntimeException("El script Python falló con código de salida: " + exitCode);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Map.of();
+    }
+
+    @Override
     public Map<String, Map<Integer, String>> getWeeklyPlanning() {
         String command = "python decode.py weekly.lp";
-        return Map.of();
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
+            processBuilder.directory(new File(pathname));
+            processBuilder.redirectErrorStream(true);
+
+            Process process = processBuilder.start();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            StringBuilder output = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line);
+            }
+
+            int exitCode = process.waitFor();
+            if (exitCode == 0) {
+                System.out.println("Script ejecutado correctamente.");
+                System.out.println("Salida del script (JSON): " + output);
+
+
+            }  else {
+                System.err.println("Error en la ejecución del script. Código de salida: " + exitCode);
+                throw new RuntimeException("El script Python falló con código de salida: " + exitCode);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private Map<String, Map<Integer, String>> parseJson(String jsonString) throws Exception {

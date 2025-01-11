@@ -50,9 +50,8 @@ public class PlanningController {
     }
 
     @PostMapping("/monthly")
-    public List<AnnualPlanningDto> monthlyPlanning() throws NoSolutionException {
-        return AnnualPlanningConversor.toAnnualPlanningDtos(planningService.getAnnualPlanning(""),
-                new ArrayList<>());
+    public List<MonthlyPlanningDto> monthlyPlanning() throws NoSolutionException {
+        return MonthlyPlanningConversor.toMonthlyPlanningDtos(planningService.getAnnualPlanning(""));
     }
 
     @PostMapping("/weekly")

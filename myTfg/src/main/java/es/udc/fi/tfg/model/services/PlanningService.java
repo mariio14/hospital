@@ -8,5 +8,7 @@ public interface PlanningService {
 
     Map<String, Map<Integer, String>> getAnnualPlanning(String params) throws NoSolutionException;
 
+    Map<String, Map<Integer, String>> getMonthlyPlanning(String params) throws NoSolutionException;
+
     Map<String, Map<Integer, String>> getWeeklyPlanning();
 }
