@@ -1,3 +1,5 @@
+% Planificacion anual
+
 section(blue;red;pink;brown;yellow;green;purple).
 service(nutrition;rea;xray;vascular;thoracic;valencia;other).
 turn(T) :- service(T).
@@ -114,7 +116,7 @@ demmand_max(brown, 1, V) :- cost(cas08, V).       % CAS08
     #count{X:month_assign(X,M,T)}<N.   % Que haya N o mas personas en turno T en el mes M
 
 % Aplicar las preferencias anteriores de demanda máxima
-cost_per_month(C,T,M) :- month(M), turn(T),
+cost_per_month(C,T,M) :- month(M),
     demmand_max(T, N, V),
     Count = #count { X : month_assign(X, M, T) },
     Count > N,
@@ -171,7 +173,7 @@ has_low_level(M, T) :- month_assign(P, M, T), level(P, 3).
 % Regla auxiliar que identifica turnos con más de una persona.
 multiple_people(M, T) :- month(M), turn(T), #count{P : month_assign(P, M, T)} > 1.
 
-% CAS02
+% CAS02 - tarda mucho
 #minimize { V : turn(T), multiple_people(M, T),
     not has_low_level(M, T),
     cost(cas02, V)
@@ -187,6 +189,8 @@ external_service_assign(P, M, S) :- month_assign(P, M, S), service(S).
 
 global_count(N) :-
     N = #count { P,M : external_service_assign(P,M,S) }.
+    
+% el global count se puede obtener mediante el month_count
 
 month_count(M, N) :-
     month(M),
@@ -206,12 +210,18 @@ difference(M, D) :-
     D = N - G/12,
     N >= G/12.
 
-% :- month(M), difference(M,D), D>3.
-%#show global_count/1.
-%#show month_count/2.
-%#show difference/2.
 
 
 %#minimize { V*N : difference(M,N),
 %    cost(cas03, V)
 %}.
+
+
+
+
+
+
+% :- month(M), difference(M,D), D>3.
+%#show global_count/1.
+%#show month_count/2.
+%#show difference/2.
