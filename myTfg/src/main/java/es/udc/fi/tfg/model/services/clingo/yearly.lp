@@ -10,16 +10,8 @@ turn(T) :- section(T).
 month(1..12).
 
 % Definimos costes para las preferencias
-cost(car01,20).
-cost(car02,10).
-cost(cas01,100).
-cost(cas02,25).
-cost(cas03,3).
-cost(cas04,10).
-cost(cas05,3).
-cost(cas06,10).
-cost(cas07,5).
-cost(cas08,10).
+% cost(car01,20). cost(car02,10). cost(cas01,100). cost(cas02,25). cost(cas03,3). cost(cas04,10).
+% cost(cas05,3). cost(cas06,10). cost(cas07,5). cost(cas08,10).
 
 % month_assign(P,M,S): Person P at month M is assigned S
 1 {month_assign(P,M,T) : turn(T)} 1:- person(P), month(M).

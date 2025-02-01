@@ -16,7 +16,7 @@ const PrioritiesList = () => {
     }, [dispatch]);
 
     const handleCostChange = (id, cost) => {
-        dispatch(actions.getPriorities(
+        dispatch(actions.modifyPriority(
             {id: id,
             cost: cost},
             () => setBackendErrors('Ha ocurrido un error')
@@ -25,7 +25,7 @@ const PrioritiesList = () => {
 
     return (
         <div className="p-4">
-            <h2 className="text-xl font-bold mb-4">Priorities List</h2>
+            <h2 className="text-xl font-bold mb-4">Costes y preferencias</h2>
             {priorities && priorities.length > 0 ? (
                 <div className="space-y-4">
                     {priorities.map((priorityGroup, index) => (

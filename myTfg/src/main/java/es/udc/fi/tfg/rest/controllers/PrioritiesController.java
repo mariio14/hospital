@@ -17,7 +17,7 @@ public class PrioritiesController {
     @Autowired
     private PrioritiesService prioritiesService;
 
-    @GetMapping("/")
+    @GetMapping("")
     public List<PriorityGroupDto> getPriorities() throws IOException, ClassNotFoundException {
         return PriorityConversor.toPriorityGroupDtos(prioritiesService.getPriorities());
     }

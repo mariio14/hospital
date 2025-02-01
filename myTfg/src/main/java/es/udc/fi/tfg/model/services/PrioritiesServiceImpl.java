@@ -1,5 +1,6 @@
 package es.udc.fi.tfg.model.services;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import es.udc.fi.tfg.model.entities.Priority;
 import org.springframework.stereotype.Service;
@@ -19,11 +20,11 @@ public class PrioritiesServiceImpl implements PrioritiesService {
     private final String filePath = "src/main/resources/priorities.json";
 
     @Override
-    public Map<String, List<Priority>> getPriorities() throws IOException, ClassNotFoundException {
+    public Map<String, List<Priority>> getPriorities() throws IOException {
         byte[] jsonData = Files.readAllBytes(Paths.get(filePath));
-        return objectMapper.readValue(jsonData,
-                objectMapper.getTypeFactory().constructMapType(Map.class, String.class,
-                        Class.forName(String.valueOf(objectMapper.getTypeFactory().constructCollectionType(List.class, Priority.class)))));
+
+        return objectMapper.readValue(jsonData, new TypeReference<>() {
+        });
     }
 
     @Override

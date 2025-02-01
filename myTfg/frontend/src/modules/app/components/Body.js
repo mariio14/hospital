@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import { useSelector } from 'react-redux';
 import users, {Login, SignUp, UpdateProfile, ChangePassword, Logout} from '../../users';
 import Home from "./Home";
-
+import {PrioritiesList} from '../../priorities';
 
 
 const Body = () => {
@@ -20,6 +20,7 @@ const Body = () => {
 			{loggedIn && <Route path="/users/update-profile" element={<UpdateProfile />} />}
 			{loggedIn && <Route path="/users/change-password" element={<ChangePassword />} />}
 			{loggedIn && <Route path="/users/logout" element={<Logout />} />}
+			<Route path="/priorities" element={<PrioritiesList />} />
 		</Routes>
 	);
 };

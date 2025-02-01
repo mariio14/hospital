@@ -1,10 +1,13 @@
 package es.udc.fi.tfg.rest.controllers;
 
+import es.udc.fi.tfg.model.entities.Priority;
 import es.udc.fi.tfg.model.services.PlanningService;
+import es.udc.fi.tfg.model.services.PrioritiesService;
 import es.udc.fi.tfg.model.services.exceptions.NoSolutionException;
 import es.udc.fi.tfg.rest.common.ErrorsDto;
 import es.udc.fi.tfg.rest.dtos.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -28,6 +31,9 @@ public class PlanningController {
     @Autowired
     private PlanningService planningService;
 
+    @Autowired
+    private PrioritiesService prioritiesService;
+
     @ExceptionHandler(NoSolutionException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
@@ -41,10 +47,12 @@ public class PlanningController {
 
     @PostMapping("/annual")
     public List<AnnualPlanningDto> annualPlanning(@Validated @RequestBody List<AnnualPlanningDataDto> params)
-            throws NoSolutionException {
+            throws NoSolutionException, IOException, ClassNotFoundException {
+
+        List<Priority> costs = prioritiesService.getPriorities().get("Anual");
 
         Map<String, Map<Integer, String>> planning =
-                planningService.getAnnualPlanning(AnnualPlanningDataConversor.toClingoParams(params));
+                planningService.getAnnualPlanning(AnnualPlanningDataConversor.toClingoParams(params, costs));
 
         return AnnualPlanningConversor.toAnnualPlanningDtos(planning, params);
     }

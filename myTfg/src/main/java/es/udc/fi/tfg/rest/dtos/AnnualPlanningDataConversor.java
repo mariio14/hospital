@@ -1,5 +1,7 @@
 package es.udc.fi.tfg.rest.dtos;
 
+import es.udc.fi.tfg.model.entities.Priority;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -23,7 +25,7 @@ public class AnnualPlanningDataConversor {
             Map.entry("nutrition", "NUTRI")
     );
 
-    public static String toClingoParams(List<AnnualPlanningDataDto> annualPlanningList) {
+    public static String toClingoParams(List<AnnualPlanningDataDto> annualPlanningList, List<Priority> costs) {
         StringBuilder clingoParams = new StringBuilder();
 
         for (AnnualPlanningDataDto annualPlanningDto : annualPlanningList) {
@@ -49,6 +51,9 @@ public class AnnualPlanningDataConversor {
                     }
                 }
             }
+        }
+        for (Priority priority: costs) {
+            clingoParams.append(String.format("cost(%s,%d). ", priority.getId(), priority.getCost()));
         }
         return clingoParams.toString();
     }

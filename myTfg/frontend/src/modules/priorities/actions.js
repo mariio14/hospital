@@ -1,13 +1,13 @@
 import * as actionTypes from './actionTypes';
 import backend from '../../backend';
 
-const getPrioritiesCompleted = priorities => ({
+const getPrioritiesCompleted = prioritiesList => ({
     type: actionTypes.GET_PRIORITIES_COMPLETED,
-    priorities
+    prioritiesList
 });
 
 export const getPriorities = (onErrors) => dispatch =>
-    backend.planningService.getPriorities(
+    backend.prioritiesService.getPriorities(
     priorities => dispatch(getPrioritiesCompleted(priorities)), onErrors);
 
 export const modifyPriority = (priorityData, onErrors) => dispatch =>

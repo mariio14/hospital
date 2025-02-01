@@ -82,7 +82,7 @@ const Header = () => {
                         </li>
                     )}
                     <li className="nav-item">
-                        <Link className="nav-link" to="/users/login">
+                        <Link className="nav-link" to="/priorities">
                             <i className="fas fa-rss"></i> Prioridades
                         </Link>
                     </li>
@@ -130,7 +130,7 @@ const Header = () => {
                         )}
                         <>
                             <ListItem button onClick={handleCloseDrawer}>
-                                <Link className="nav-link2" to="/posts/likedPosts">
+                                <Link className="nav-link2" to="/priorities">
                                     <FontAwesomeIcon icon={faHeart} className="me-2" />
                                     Prioridades
                                 </Link>
