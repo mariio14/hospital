@@ -163,20 +163,25 @@ has_low_level(M, T) :- month_assign(P, M, T), level(P, 2).
 has_low_level(M, T) :- month_assign(P, M, T), level(P, 3).
 
 % Regla auxiliar que identifica turnos con más de una persona.
-multiple_people(M, T) :- month(M), turn(T), #count{P : month_assign(P, M, T)} > 1.
+multiple_people(M, T) :- month(M), turn(T), month_assign(P, M, T), month_assign(P', M, T), P<P'.
 
-% CAS02 - tarda mucho
-#minimize { V : turn(T), multiple_people(M, T),
-    not has_low_level(M, T),
-    cost(cas02, V)
-}.
-#minimize { V : turn(T), multiple_people(M, T),
-    not has_high_level(M, T),
-    cost(cas02, V)
-}.
+% CAS02 - tarda mucho (de 0.9s a 201s)
+% #minimize { V : turn(T), multiple_people(M, T),
+%     not has_low_level(M, T),
+%     cost(cas02, V)
+% }.
+% #minimize { V : turn(T), multiple_people(M, T),
+%     not has_high_level(M, T),
+%     cost(cas02, V)
+% }.
+
+unmixed_levels(M, T) :- multiple_people(M, T), not has_high_level(M, T), has_low_level(M, T).
+unmixed_levels(M, T) :- multiple_people(M, T), has_high_level(M, T), not has_low_level(M, T).
+
+% #minimize { V : turn(T), multiple_people(M, T), cost(cas02, V), unmixed_levels(M, T) }. %(con esto 36s. solo con pred. 2s)
 
 
-% CAS03 - peredicados y preparación
+% CAS03 - peredicados y preparación (sin los predicados 0.7s, con ellos 0.9s, con todo +16min)
 external_service_assign(P, M, S) :- month_assign(P, M, S), service(S).
 
 global_count(N) :-
