@@ -29,7 +29,11 @@ const PrioritiesList = () => {
             {priorities && priorities.length > 0 ? (
                 <div className="space-y-4">
                     {priorities.map((priorityGroup, index) => (
-                        <div key={index} className="border p-3 rounded-lg shadow-md">
+                        <div key={index} className="p-4 rounded-xl shadow-lg border"
+                            style={{
+                                backgroundColor: '#F8F9FA'
+                            }}
+                        >
                             <h3 className="text-lg font-semibold">{priorityGroup.type.toUpperCase()}</h3>
                             <ul className="list-disc pl-5 mt-2">
                                 {priorityGroup.priorities.map((priority, pIndex) => (
@@ -39,7 +43,7 @@ const PrioritiesList = () => {
                                             type="number"
                                             value={priority.cost}
                                             onChange={(e) => handleCostChange(priority.id, e.target.value)}
-                                            className="ml-2 border rounded p-1 w-16 text-right"
+                                            className="ml-2 border rounded-full p-2 w-20 text-center shadow-sm focus:ring-2 focus:ring-blue-300 outline-none"
                                         />
                                     </li>
                                 ))}

@@ -21,6 +21,7 @@ const AnnualPlanning = () => {
     const [planningData, setPlanningData] = useState(annualPlanning ? annualPlanning : emptyPlanning);
     const [isExpanded, setIsExpanded] = useState(false);
     const [backendErrors, setBackendErrors] = useState(null);
+     const [isLoading, setIsLoading] = useState(false);
 
     const [localValues, setLocalValues] = useState(
         planningData.reduce((acc, person) => {
@@ -39,10 +40,12 @@ const AnnualPlanning = () => {
     useEffect(() => {
         // Si annualPlanning cambia, actualizamos planningData con el nuevo valor
         setPlanningData(annualPlanning ? annualPlanning : emptyPlanning);
+        setIsLoading(false);
     }, [annualPlanning]);
 
     const handleGeneratePlanning = () => {
         setBackendErrors(null);
+        setIsLoading(true);
         const convertedPlanningData = planningData.map(person => ({
             ...person,
             assignations: Object.values(person.assignations)
@@ -50,7 +53,10 @@ const AnnualPlanning = () => {
 
         dispatch(actions.getAnnualPlanning(
             convertedPlanningData,
-            () => setBackendErrors('Sin solución')
+            () => {
+                setBackendErrors('Sin solución');
+                setIsLoading(false);
+            }
         ));
     };
 
@@ -240,6 +246,7 @@ const AnnualPlanning = () => {
                                 Vaciar Planificación
                             </button>
                         </div>
+                        {isLoading && <div className="loader"></div>}
                         {backendErrors ? <p style={{ color: 'red', textAlign: 'center', marginTop: '30px', marginBottom: '20px' }}>{backendErrors}</p> : null}
 
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
