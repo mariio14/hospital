@@ -5,11 +5,11 @@ service(nutrition;rea;xray;vascular;thoracic;valencia;other).
 turn(T) :- service(T).
 turn(T) :- section(T).
 
-% person(1..15).
-% level(P,(P-1)/3 + 1) :- person(P).
 month(1..12).
 
-% Definimos costes para las preferencias
+% Los siguientes datos vienen del input.lp, descomentar para ejecutar solo yearly.lp
+% person(1..15).
+% level(P,(P-1)/3 + 1) :- person(P).
 % cost(car01,20). cost(car02,10). cost(cas01,100). cost(cas02,25). cost(cas03,3). cost(cas04,10).
 % cost(cas05,3). cost(cas06,10). cost(cas07,5). cost(cas08,10).
 
@@ -114,7 +114,7 @@ cost_per_month(C,T,M) :- month(M),
     Count > N,
     C = (Count - N) * V.
 
-#minimize { C : turn(T), month(M),
+#minimize { C,T,M : turn(T), month(M),
     cost_per_month(C, T, M)
 }.
 
@@ -153,7 +153,7 @@ cost_per_month(C,T,M) :- month(M),
 }.
 
 
-% CAS02 - peredicados y preparación
+% CAS02 - predicados y preparación
 % Predicados auxiliares para verificar la presencia de niveles específicos.
 has_high_level(M, T) :- month_assign(P, M, T), level(P, 4).
 has_high_level(M, T) :- month_assign(P, M, T), level(P, 5).
@@ -162,26 +162,29 @@ has_low_level(M, T) :- month_assign(P, M, T), level(P, 1).
 has_low_level(M, T) :- month_assign(P, M, T), level(P, 2).
 has_low_level(M, T) :- month_assign(P, M, T), level(P, 3).
 
-% Regla auxiliar que identifica turnos con más de una persona.
-multiple_people(M, T) :- month(M), turn(T), month_assign(P, M, T), month_assign(P', M, T), P<P'.
-
-% CAS02 - tarda mucho (de 0.9s a 201s)
-% #minimize { V : turn(T), multiple_people(M, T),
-%     not has_low_level(M, T),
-%     cost(cas02, V)
-% }.
-% #minimize { V : turn(T), multiple_people(M, T),
-%     not has_high_level(M, T),
-%     cost(cas02, V)
-% }.
-
 unmixed_levels(M, T) :- multiple_people(M, T), not has_high_level(M, T), has_low_level(M, T).
 unmixed_levels(M, T) :- multiple_people(M, T), has_high_level(M, T), not has_low_level(M, T).
 
-% #minimize { V : turn(T), multiple_people(M, T), cost(cas02, V), unmixed_levels(M, T) }. %(con esto 36s. solo con pred. 2s)
+% Regla auxiliar que identifica turnos con más de una persona.
+multiple_people(M, T) :- month(M), turn(T), month_assign(P, M, T), month_assign(P', M, T), P<P'.
+
+#minimize { V,T,M : turn(T), multiple_people(M, T),
+    unmixed_levels(M, T),
+    cost(cas02, V)
+}.
+
+%CAS02 - tarda mucho (de 0.9s a 201s)
+%#minimize { V,T,M : turn(T), multiple_people(M, T),
+%    not has_low_level(M, T),
+%    cost(cas02, V)
+%}.
+%#minimize { V,T,M : turn(T), multiple_people(M, T),
+%    not has_high_level(M, T),
+%    cost(cas02, V)
+%}.
 
 
-% CAS03 - peredicados y preparación (sin los predicados 0.7s, con ellos 0.9s, con todo +16min)
+% CAS03 - predicados y preparación
 external_service_assign(P, M, S) :- month_assign(P, M, S), service(S).
 
 global_count(N) :-
@@ -207,18 +210,6 @@ difference(M, D) :-
     D = N - G/12,
     N >= G/12.
 
-
-
 %#minimize { V*N : difference(M,N),
 %    cost(cas03, V)
 %}.
-
-
-
-
-
-
-% :- month(M), difference(M,D), D>3.
-%#show global_count/1.
-%#show month_count/2.
-%#show difference/2.

@@ -1,13 +1,14 @@
 import { useDispatch, useSelector } from "react-redux";
 import * as actions from "../actions";
 import * as selectors from "../selectors";
-import React, { useState, useEffect } from "react";
-
+import React, { useState, useEffect, useRef } from "react";
 
 const PrioritiesList = () => {
     const dispatch = useDispatch();
-    const priorities = useSelector(selectors.getPrioritiesList);
+    const initialPriorities = useSelector(selectors.getPrioritiesList);
+    const [priorities, setPriorities] = useState(initialPriorities);
     const [backendErrors, setBackendErrors] = useState(null);
+    const prioritiesRef = useRef(priorities);
 
     useEffect(() => {
         dispatch(actions.getPriorities(
@@ -15,11 +16,40 @@ const PrioritiesList = () => {
         ));
     }, [dispatch]);
 
-    const handleCostChange = (id, cost) => {
-        dispatch(actions.modifyPriority(
-            {id: id,
-            cost: cost},
-            () => setBackendErrors('Ha ocurrido un error')
+    useEffect(() => {
+        prioritiesRef.current = priorities;
+    }, [priorities]);
+
+    useEffect(() => {
+        setPriorities(initialPriorities);
+    }, [initialPriorities]);
+
+    useEffect(() => {
+        return () => {
+            dispatch(actions.modifyPriorities(
+                prioritiesRef.current,
+                () => setBackendErrors('Ha ocurrido un error')
+            ));
+        };
+    }, []);
+
+    const handleCostChange = (priorityId, newCost) => {
+        setPriorities(prevPriorities =>
+            prevPriorities.map(group => ({
+                ...group,
+                priorities: group.priorities.map(priority =>
+                    priority.id === priorityId ? { ...priority, cost: newCost } : priority
+                )
+            }))
+        );
+    };
+
+    const handlePutOriginal = (groupType) => {
+        console.log("Enviando al backend:", groupType);
+        dispatch(actions.originalPriorities(
+        groupType,
+        result => dispatch(actions.getPriorities()),
+        () => setBackendErrors('Ha ocurrido un error')
         ));
     };
 
@@ -29,22 +59,33 @@ const PrioritiesList = () => {
             {priorities && priorities.length > 0 ? (
                 <div className="space-y-4">
                     {priorities.map((priorityGroup, index) => (
-                        <div key={index} className="p-4 rounded-xl shadow-lg border"
-                            style={{
-                                backgroundColor: '#F8F9FA'
-                            }}
+                        <div key={index} className="p-4 rounded-xl shadow-lg border relative"
+                            style={{ backgroundColor: '#F8F9FA' }}
                         >
-                            <h3 className="text-lg font-semibold">{priorityGroup.type.toUpperCase()}</h3>
+                            <div className="flex justify-between items-center">
+                                <h3 className="text-lg font-semibold">{priorityGroup.type.toUpperCase()}</h3>
+                                <button
+                                    onClick={() => handlePutOriginal(priorityGroup.type)}
+                                    className="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-700"
+                                >
+                                    Acción
+                                </button>
+                            </div>
                             <ul className="list-disc pl-5 mt-2">
                                 {priorityGroup.priorities.map((priority, pIndex) => (
                                     <li key={pIndex} className="flex justify-between">
                                         <span>{priority.title}</span>
-                                        <input
-                                            type="number"
-                                            value={priority.cost}
-                                            onChange={(e) => handleCostChange(priority.id, e.target.value)}
-                                            className="ml-2 border rounded-full p-2 w-20 text-center shadow-sm focus:ring-2 focus:ring-blue-300 outline-none"
-                                        />
+                                        <div className="flex items-center space-x-2">
+                                            <input
+                                                type="range"
+                                                min="0"
+                                                max="100"
+                                                value={priority.cost}
+                                                onChange={(e) => handleCostChange(priority.id, Number(e.target.value))}
+                                                className="w-40 cursor-pointer"
+                                            />
+                                            <span className="w-10 text-center">{priority.cost}</span>
+                                        </div>
                                     </li>
                                 ))}
                             </ul>

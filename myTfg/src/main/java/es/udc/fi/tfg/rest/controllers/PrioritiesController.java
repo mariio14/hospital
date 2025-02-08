@@ -23,7 +23,12 @@ public class PrioritiesController {
     }
 
     @PutMapping("/modify")
-    public void modifyPriority(@Validated @RequestBody PriorityData data) throws IOException, ClassNotFoundException {
-        prioritiesService.modifyPriority(data.getId(), data.getCost());
+    public void modifyPriorities(@Validated @RequestBody List<PriorityGroupDto> priorities) throws IOException, ClassNotFoundException {
+        prioritiesService.modifyPriority(priorities);
+    }
+
+    @PutMapping("/original")
+    public void originalPriorities(@Validated @RequestBody String groupType) throws IOException {
+        prioritiesService.prioritiesToDefaultValue(groupType.replace("\"", "").trim());
     }
 }

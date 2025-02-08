@@ -2,7 +2,9 @@ package es.udc.fi.tfg.model.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import es.udc.fi.tfg.model.entities.Priority;
+import es.udc.fi.tfg.rest.dtos.PriorityGroupDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -18,6 +21,7 @@ public class PrioritiesServiceImpl implements PrioritiesService {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final String filePath = "src/main/resources/priorities.json";
+    private final String originalFilePath = "src/main/resources/original_priorities.json";
 
     @Override
     public Map<String, List<Priority>> getPriorities() throws IOException {
@@ -28,23 +32,34 @@ public class PrioritiesServiceImpl implements PrioritiesService {
     }
 
     @Override
-    public void modifyPriority(String id, Integer cost) throws IOException, ClassNotFoundException {
-        Map<String, List<Priority>> priorities = getPriorities();
+    public void modifyPriority(List<PriorityGroupDto> priorities) throws IOException, ClassNotFoundException {
+        objectMapper.writeValue(Paths.get(filePath).toFile(), transformToMap(priorities));
+    }
 
-        boolean updated = false;
-        for (List<Priority> priorityList : priorities.values()) {
-            for (Priority priority : priorityList) {
-                if (priority.getId().equals(id)) {
-                    priority.setCost(cost);
-                    updated = true;
-                    break;
-                }
-            }
-            if (updated) break;
+    @Override
+    public void prioritiesToDefaultValue(String type) throws IOException {
+        Map<String, List<Priority>> originalPriorities = objectMapper.readValue(
+                Files.readAllBytes(Paths.get(originalFilePath)), new TypeReference<>() {
+                });
+        Map<String, List<Priority>> currentPriorities = objectMapper.readValue(
+                Files.readAllBytes(Paths.get(filePath)), new TypeReference<>() {
+                });
+
+        if (originalPriorities.containsKey(type) && currentPriorities.containsKey(type)) {
+            currentPriorities.get(type).clear();
+            currentPriorities.get(type).addAll(originalPriorities.get(type));
         }
 
-        if (updated) {
-            objectMapper.writeValue(Paths.get(filePath).toFile(), priorities);
-        }
+        objectMapper.writeValue(Paths.get(filePath).toFile(), currentPriorities);
+    }
+
+    public static Map<String, List<Priority>> transformToMap(List<PriorityGroupDto> priorities) {
+        return priorities.stream()
+                .collect(Collectors.toMap(
+                        PriorityGroupDto::getType,
+                        group -> group.getPriorities().stream()
+                                .map(dto -> new Priority(dto.getId(), dto.getTitle(), dto.getCost()))
+                                .collect(Collectors.toList())
+                ));
     }
 }
