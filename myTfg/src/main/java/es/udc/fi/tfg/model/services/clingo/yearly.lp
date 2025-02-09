@@ -153,7 +153,7 @@ cost_per_month(C,T,M) :- month(M),
 }.
 
 
-% CAS02 - predicados y preparación
+% CAS02 - predicados y preparación (sin esto 0.9s, con esto mas de 11min)
 % Predicados auxiliares para verificar la presencia de niveles específicos.
 has_high_level(M, T) :- month_assign(P, M, T), level(P, 4).
 has_high_level(M, T) :- month_assign(P, M, T), level(P, 5).
@@ -162,8 +162,10 @@ has_low_level(M, T) :- month_assign(P, M, T), level(P, 1).
 has_low_level(M, T) :- month_assign(P, M, T), level(P, 2).
 has_low_level(M, T) :- month_assign(P, M, T), level(P, 3).
 
-unmixed_levels(M, T) :- multiple_people(M, T), not has_high_level(M, T), has_low_level(M, T).
-unmixed_levels(M, T) :- multiple_people(M, T), has_high_level(M, T), not has_low_level(M, T).
+%unmixed_levels(M, T) :- multiple_people(M, T), not has_high_level(M, T), has_low_level(M, T).
+%unmixed_levels(M, T) :- multiple_people(M, T), has_high_level(M, T), not has_low_level(M, T).
+
+mixed_levels(M, T) :- has_high_level(M, T), has_low_level(M, T).
 
 % Regla auxiliar que identifica turnos con más de una persona.
 multiple_people(M, T) :- month(M), turn(T), month_assign(P, M, T), month_assign(P', M, T), P<P'.
@@ -173,7 +175,6 @@ multiple_people(M, T) :- month(M), turn(T), month_assign(P, M, T), month_assign(
     cost(cas02, V)
 }.
 
-%CAS02 - tarda mucho (de 0.9s a 201s)
 %#minimize { V,T,M : turn(T), multiple_people(M, T),
 %    not has_low_level(M, T),
 %    cost(cas02, V)
