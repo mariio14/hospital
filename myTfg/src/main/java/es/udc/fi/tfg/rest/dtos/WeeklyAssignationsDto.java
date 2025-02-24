@@ -2,17 +2,20 @@ package es.udc.fi.tfg.rest.dtos;
 
 import java.util.Map;
 
-public class WeeklyPlanningDto {
+public class WeeklyAssignationsDto {
 
     private String name;
 
+    private String level;
+
     private Map<Integer, String> assignations;
 
-    public WeeklyPlanningDto() {
+    public WeeklyAssignationsDto() {
     }
 
-    public WeeklyPlanningDto(String name, Map<Integer, String> assignations) {
+    public WeeklyAssignationsDto(String name, String level, Map<Integer, String> assignations) {
         this.name = name;
+        this.level = level;
         this.assignations = assignations;
     }
 
@@ -22,6 +25,14 @@ public class WeeklyPlanningDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
     }
 
     public Map<Integer, String> getAssignations() {

@@ -11,11 +11,14 @@ public class MonthlyPlanningConversor {
 
     }
 
-    public static List<MonthlyPlanningDto> toMonthlyPlanningDtos(Map<String, Map<Integer, String>> planningMap) {
-        return planningMap.entrySet()
+    public static MonthlyResultDto toMonthlyPlanningDtos(Map<String, Map<Integer, String>> planningMap,
+                                                                 MonthlyDataDto params) {
+        List<MonthlyPlanningDto> list = planningMap.entrySet()
                 .stream()
                 .map(entry -> toMonthlyPlanningDto(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
+
+        return new MonthlyResultDto(params.getMonth(), list);
     }
 
     public static MonthlyPlanningDto toMonthlyPlanningDto(String name, Map<Integer, String> asignations) {

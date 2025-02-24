@@ -8,7 +8,6 @@ import es.udc.fi.tfg.rest.common.ErrorsDto;
 import es.udc.fi.tfg.rest.dtos.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -58,12 +57,26 @@ public class PlanningController {
     }
 
     @PostMapping("/monthly")
-    public List<MonthlyPlanningDto> monthlyPlanning() throws NoSolutionException {
-        return MonthlyPlanningConversor.toMonthlyPlanningDtos(planningService.getAnnualPlanning(""));
+    public MonthlyResultDto monthlyPlanning(@Validated @RequestBody MonthlyDataDto params)
+            throws NoSolutionException, IOException, ClassNotFoundException {
+
+        List<Priority> costs = prioritiesService.getPriorities().get("Mensual");
+
+        Map<String, Map<Integer, String>> planning =
+                planningService.getMonthlyPlanning(MonthlyDataConversor.toClingoParams(params, costs), params.getMonth());
+
+        return MonthlyPlanningConversor.toMonthlyPlanningDtos(planning, params);
     }
 
     @PostMapping("/weekly")
-    public List<WeeklyPlanningDto> weeklyPlanning() {
-        return WeeklyPlanningConversor.toWeeklyPlanningDtos(planningService.getWeeklyPlanning());
+    public WeeklyResultDto weeklyPlanning(@Validated @RequestBody WeeklyDataDto params)
+            throws IOException, ClassNotFoundException, NoSolutionException {
+
+        List<Priority> costs = prioritiesService.getPriorities().get("Semanal");
+
+        Map<String, Map<Integer, String>> planning =
+                planningService.getWeeklyPlanning(WeeklyDataConversor.toClingoParams(params, costs));
+
+        return WeeklyPlanningConversor.toWeeklyPlanningDtos(planning, params.getMonth());
     }
 }

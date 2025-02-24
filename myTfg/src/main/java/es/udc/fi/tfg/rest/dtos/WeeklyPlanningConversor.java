@@ -10,20 +10,19 @@ public class WeeklyPlanningConversor {
     private WeeklyPlanningConversor() {
     }
 
-    public static List<WeeklyPlanningDto> toWeeklyPlanningDtos(Map<String, Map<Integer, String>> planningMap) {
-        return planningMap.entrySet()
+    public static WeeklyResultDto toWeeklyPlanningDtos(Map<String, Map<Integer, String>> planningMap,
+                                                               String month) {
+        List<WeeklyPlanningDto> assignations = planningMap.entrySet()
                 .stream()
                 .map(entry -> toWeeklyPlanningDto(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
+
+        return new WeeklyResultDto(month, assignations);
     }
 
     public static WeeklyPlanningDto toWeeklyPlanningDto(String name, Map<Integer, String> asignations) {
-        Map<String, String> map = new HashMap<>();
-        for (Map.Entry<Integer, String> entry : asignations.entrySet()) {
-            map.put(entry.getKey().toString(), entry.getValue());
-        }
+        Map<Integer, String> map = new HashMap<>(asignations);
 
-        WeeklyPlanningDto weeklyPlanningDto = new WeeklyPlanningDto(name, map);
-        return weeklyPlanningDto;
+        return new WeeklyPlanningDto(name, map);
     }
 }

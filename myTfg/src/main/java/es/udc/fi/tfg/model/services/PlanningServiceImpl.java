@@ -46,7 +46,7 @@ public class PlanningServiceImpl implements PlanningService {
                     throw new NoSolutionException("Sin solucion para los parametros proporcionados.");
                 }
 
-                saveToJsonFile(planning);
+                saveToJsonFile(planning, "/solution.json");
 
                 return planning;
             }  else {
@@ -62,9 +62,11 @@ public class PlanningServiceImpl implements PlanningService {
     }
 
     @Override
-    public Map<String, Map<Integer, String>> getMonthlyPlanning(String params) throws NoSolutionException {
+    public Map<String, Map<Integer, String>> getMonthlyPlanning(String params, String month) throws NoSolutionException {
         String command = "python decode.py weekly.lp";
         try {
+            writeInputFile(params, pathname + "/inputMonthly.lp");
+
             ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
             processBuilder.directory(new File(pathname));
             processBuilder.redirectErrorStream(true);
@@ -83,21 +85,32 @@ public class PlanningServiceImpl implements PlanningService {
                 System.out.println("Script ejecutado correctamente.");
                 System.out.println("Salida del script (JSON): " + output);
 
+                Map<String, Map<Integer, String>> planning = parseJson(output.toString());
 
+                if (planning.isEmpty()) {
+                    throw new NoSolutionException("Sin solucion para los parametros proporcionados.");
+                }
+                saveToJsonFile(planning, "/solutionMonthly.json");
+
+                return planning;
             }  else {
                 System.err.println("Error en la ejecución del script. Código de salida: " + exitCode);
                 throw new RuntimeException("El script Python falló con código de salida: " + exitCode);
             }
+        } catch (NoSolutionException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return Map.of();
+        return null;
     }
 
     @Override
-    public Map<String, Map<Integer, String>> getWeeklyPlanning() {
+    public Map<String, Map<Integer, String>> getWeeklyPlanning(String params) throws NoSolutionException {
         String command = "python decode.py weekly.lp";
         try {
+            writeInputFile(params, pathname + "/inputWeekly.lp");
+
             ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
             processBuilder.directory(new File(pathname));
             processBuilder.redirectErrorStream(true);
@@ -116,11 +129,20 @@ public class PlanningServiceImpl implements PlanningService {
                 System.out.println("Script ejecutado correctamente.");
                 System.out.println("Salida del script (JSON): " + output);
 
+                Map<String, Map<Integer, String>> planning = parseJson(output.toString());
 
+                if (planning.isEmpty()) {
+                    throw new NoSolutionException("Sin solucion para los parametros proporcionados.");
+                }
+                saveToJsonFile(planning, "/solutionWeekly.json");
+
+                return planning;
             }  else {
                 System.err.println("Error en la ejecución del script. Código de salida: " + exitCode);
                 throw new RuntimeException("El script Python falló con código de salida: " + exitCode);
             }
+        } catch (NoSolutionException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -132,7 +154,7 @@ public class PlanningServiceImpl implements PlanningService {
         return mapper.readValue(jsonString, new TypeReference<>() {});
     }
 
-    private void saveToJsonFile(Map<String, Map<Integer, String>> planning) {
+    private void saveToJsonFile(Map<String, Map<Integer, String>> planning, String file) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             File outputFile = new File(pathname + "/solution.json");

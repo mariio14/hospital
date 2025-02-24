@@ -59,33 +59,37 @@ const PrioritiesList = () => {
             {priorities && priorities.length > 0 ? (
                 <div className="space-y-4">
                     {priorities.map((priorityGroup, index) => (
-                        <div key={index} className="p-4 rounded-xl shadow-lg border relative"
-                            style={{ backgroundColor: '#F8F9FA' }}
-                        >
+                        <div key={index} className="p-4 rounded-xl shadow-lg border bg-gray-100">
                             <div className="flex justify-between items-center">
                                 <h3 className="text-lg font-semibold">{priorityGroup.type.toUpperCase()}</h3>
                                 <button
                                     onClick={() => handlePutOriginal(priorityGroup.type)}
-                                    className="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-700"
+                                    style={{
+                                        padding: "5px 15px",
+                                        backgroundColor: "#007BFF",
+                                        color: "#fff",
+                                        border: "none",
+                                        borderRadius: "5px",
+                                        cursor: "pointer",
+                                        display: "block"
+                                    }}
                                 >
-                                    Acción
+                                    Valores originales
                                 </button>
                             </div>
-                            <ul className="list-disc pl-5 mt-2">
+                            <ul className="mt-2">
                                 {priorityGroup.priorities.map((priority, pIndex) => (
-                                    <li key={pIndex} className="flex justify-between">
+                                    <li key={pIndex} className="grid grid-cols-[1fr_auto_auto] gap-4 items-center py-2">
                                         <span>{priority.title}</span>
-                                        <div className="flex items-center space-x-2">
-                                            <input
-                                                type="range"
-                                                min="0"
-                                                max="100"
-                                                value={priority.cost}
-                                                onChange={(e) => handleCostChange(priority.id, Number(e.target.value))}
-                                                className="w-40 cursor-pointer"
-                                            />
-                                            <span className="w-10 text-center">{priority.cost}</span>
-                                        </div>
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max="100"
+                                            value={priority.cost}
+                                            onChange={(e) => handleCostChange(priority.id, Number(e.target.value))}
+                                            className="w-40 cursor-pointer"
+                                        />
+                                        <span className="text-sm font-medium text-gray-700 w-10 text-right">{priority.cost}</span>
                                     </li>
                                 ))}
                             </ul>

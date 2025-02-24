@@ -33,8 +33,8 @@ public class AnnualPlanningDataConversor {
             clingoParams.append(String.format("person(%s). ", personName));
 
             int level = Integer.parseInt(annualPlanningDto.getLevel().replace("R", ""));
-
             clingoParams.append(String.format("level(%s,%d). ", personName, level));
+
             List<String> assignations = annualPlanningDto.getAssignations();
 
             if (assignations != null) {
