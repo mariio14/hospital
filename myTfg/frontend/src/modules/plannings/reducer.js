@@ -3,7 +3,9 @@ import {combineReducers} from 'redux';
 import * as actionTypes from './actionTypes';
 
 const initialState = {
-    annualPlanning: null
+    annualPlanning: null,
+    monthlyPlanning: null,
+    weeklyPlanning: null
 };
 
 const annualPlanning = (state = initialState.annualPlanning, action) => {
@@ -17,8 +19,28 @@ const annualPlanning = (state = initialState.annualPlanning, action) => {
     }
 }
 
+const monthlyPlanning = (state = initialState.monthlyPlanning, action) => {
+    switch (action.type) {
+        case actionTypes.MONTHLY_PLANNING_COMPLETED:
+            return action.monthlyPlanning;
+        default:
+            return state;
+    }
+}
+
+const weeklyPlanning = (state = initialState.weeklyPlanning, action) => {
+    switch (action.type) {
+        case actionTypes.WEEKLY_PLANNING_COMPLETED:
+            return action.weeklyPlanning;
+        default:
+            return state;
+    }
+}
+
 const reducer = combineReducers({
-    annualPlanning
+    annualPlanning,
+    monthlyPlanning,
+    weeklyPlanning
 });
 
 export default reducer;
