@@ -5,4 +5,6 @@ const WeeklyPlanning = () => {
         <h1>Weekly Planning</h1>
         </div>
     );
-}
+};
+
+export default WeeklyPlanning;
