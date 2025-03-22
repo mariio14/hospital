@@ -2,18 +2,8 @@ import React, { useState, useEffect } from "react";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
-// Si usas Redux:
-// import { useDispatch, useSelector } from "react-redux";
-// import * as actions from "../actions";
-// import * as selectors from "../selectors";
-
 const MonthlyPlanning = () => {
-  // Si usas Redux, puedes descomentar e implementar lo que necesites
-  // const dispatch = useDispatch();
-  // const monthlyPlanningFromStore = useSelector(selectors.getMonthlyPlanning);
 
-  // Para este ejemplo, definimos localmente las personas y la estructura de datos.
-  // Ajusta el número de filas y la lógica a tu gusto.
   const personas = [
     "Aloia",
     "Sergio",
@@ -31,25 +21,37 @@ const MonthlyPlanning = () => {
     "Javi",
   ];
 
-  // Creamos una estructura de ejemplo con 31 días y asignaciones iniciales nulas.
-  const emptyPlanning = personas.map((name) => ({
-    name,
-    // Por si quieres usar un "nivel" o cualquier otro dato adicional.
-    level: "R1",
-    // Creamos 31 días para el mes (podrías ajustarlo dinámicamente).
-    assignations: Array(31).fill(null),
-  }));
-
-  // Manejamos el estado de la planificación. Si tuvieras un store, podrías
-  // inicializar con monthlyPlanningFromStore en lugar de emptyPlanning.
-  const [planningData, setPlanningData] = useState(emptyPlanning);
-
-  // Controla la expansión/colapso de la sección
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Manejamos mensajes de error y de carga
   const [backendErrors, setBackendErrors] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
+  const [year, setYear] = useState(new Date().getFullYear());
+
+  const getDaysInMonth = (month, year) => new Date(year, month, 0).getDate();
+  const [daysInMonth, setDaysInMonth] = useState(getDaysInMonth(month, year));
+
+  const emptyPlanning = personas.map((name) => ({
+    name,
+    level: "R1",
+    assignations: Array(daysInMonth).fill(null),
+  }));
+
+  const [planningData, setPlanningData] = useState(emptyPlanning);
+
+
+  useEffect(() => {
+    setDaysInMonth(getDaysInMonth(month, year));
+  }, [month, year]);
+
+  useEffect(() => {
+      setPlanningData(personas.map((name) => ({
+        name,
+        level: "R1",
+        assignations: Array(daysInMonth).fill(null),
+      })));
+    }, [daysInMonth]);
 
   // Valores locales para el input de nombre (similar a tu AnnualPlanning)
   const [localValues, setLocalValues] = useState(
@@ -82,10 +84,6 @@ const MonthlyPlanning = () => {
   // Lista de actividades que el usuario podrá seleccionar en cada celda
   const activities = Object.keys(colorMap);
 
-  // Días del mes (1..31). Si quieres ajustar el número de días,
-  // puedes generar dinámicamente según el mes y el año.
-  const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1);
-
   // Función que se llama cuando el usuario cambia el select de una celda
   const handleSelectChange = (personName, dayIndex, value) => {
     const updatedPlanning = planningData.map((person) => {
@@ -101,14 +99,6 @@ const MonthlyPlanning = () => {
     setPlanningData(updatedPlanning);
   };
 
-  // Función para cambiar el nombre de una persona (blur del input)
-  const handleNameChange = (oldName, newName) => {
-    const updatedPlanning = planningData.map((person) =>
-      person.name === oldName ? { ...person, name: newName } : person
-    );
-    setPlanningData(updatedPlanning);
-  };
-
   // Función para expandir/colapsar la sección
   const toggleSection = () => {
     setIsExpanded(!isExpanded);
@@ -119,24 +109,6 @@ const MonthlyPlanning = () => {
     setBackendErrors(null);
     setIsLoading(true);
 
-    // Aquí podrías preparar la data para enviarla a tu backend
-    // const convertedPlanningData = planningData.map((person) => ({
-    //   ...person,
-    //   assignations: person.assignations, // o un .filter o transform si lo necesitas
-    // }));
-
-    // Simulación de una llamada asíncrona
-    setTimeout(() => {
-      // Si hubiera error:
-      // setBackendErrors("No se ha encontrado una solución");
-      setIsLoading(false);
-
-      // Si usas Redux, podrías despachar una acción:
-      // dispatch(actions.getMonthlyPlanning(
-      //   convertedPlanningData,
-      //   () => setBackendErrors("No se encontró solución")
-      // ));
-    }, 1500);
   };
 
   // Función para exportar a PDF usando jsPDF
@@ -186,7 +158,6 @@ const MonthlyPlanning = () => {
     doc.save("planificacion_mensual.pdf");
   };
 
-  // Funciones auxiliares para manejo de colores
   const hexToRgb = (hex) => {
     const bigint = parseInt(hex.replace("#", ""), 16);
     return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
@@ -196,12 +167,17 @@ const MonthlyPlanning = () => {
     return (r * 299 + g * 587 + b * 114) / 1000;
   };
 
-  // Función para limpiar la planificación y dejar todo vacío
   const handleClearPlanning = () => {
     setBackendErrors(null);
     setPlanningData(emptyPlanning);
-    // Si usas Redux:
-    // dispatch(actions.clearMonthlyPlanning());
+  };
+
+  const handleMonthChange = (event) => {
+    setMonth(parseInt(event.target.value));
+  };
+
+  const handleYearChange = (event) => {
+    setYear(parseInt(event.target.value));
   };
 
   return (
@@ -250,6 +226,17 @@ const MonthlyPlanning = () => {
               >
                 Generar Planificación
               </button>
+
+              <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
+                <label>Mes: </label>
+                <select value={month} onChange={handleMonthChange}>
+                  {[...Array(12).keys()].map((m) => (
+                    <option key={m + 1} value={m + 1}>{new Date(0, m).toLocaleString('es-ES', { month: 'long' })}</option>
+                  ))}
+                </select>
+                <label style={{ marginLeft: "10px" }}>Año: </label>
+                <input type="number" value={year} onChange={handleYearChange} min="2000" max="2100" />
+              </div>
 
               <button
                 onClick={exportToPDF}
@@ -303,61 +290,6 @@ const MonthlyPlanning = () => {
                 marginTop: "20px",
               }}
             >
-              {/* Lista de Personal y Nivel */}
-              <div
-                style={{
-                  width: "15%",
-                  paddingRight: "10px",
-                  border: "1px solid #ddd",
-                  padding: "10px",
-                  borderRadius: "5px",
-                  backgroundColor: "#f9f9f9",
-                  boxShadow: "0px 4px 8px rgba(0,0,0,0.1)",
-                }}
-              >
-                <h3>Lista de Personal</h3>
-                {planningData.map((person) => (
-                  <div
-                    key={person.name}
-                    style={{
-                      marginBottom: "5px",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <input
-                      type="text"
-                      value={localValues[person.name]}
-                      onChange={(e) => {
-                        setLocalValues({
-                          ...localValues,
-                          [person.name]: e.target.value,
-                        });
-                      }}
-                      onBlur={() => {
-                        handleNameChange(person.name, localValues[person.name]);
-                      }}
-                      style={{
-                        padding: "5px",
-                        marginBottom: "5px",
-                        width: "90px",
-                        fontSize: "12px",
-                        height: "30px",
-                      }}
-                    />
-                    <p
-                      style={{
-                        marginLeft: "10px",
-                        fontWeight: "bold",
-                        fontSize: "12px",
-                      }}
-                    >
-                      {person.level}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
               {/* Tabla de asignaciones */}
               <div style={{ width: "80%", overflowX: "auto" }}>
                 <table
@@ -366,8 +298,8 @@ const MonthlyPlanning = () => {
                   <thead>
                     <tr>
                       <th>Persona</th>
-                      {daysInMonth.map((day) => (
-                        <th key={day}>{day}</th>
+                      {[...Array(daysInMonth).keys()].map((day) => (
+                        <th key={day + 1}>{day + 1}</th>
                       ))}
                     </tr>
                   </thead>

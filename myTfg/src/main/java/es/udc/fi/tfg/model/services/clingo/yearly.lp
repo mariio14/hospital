@@ -75,17 +75,23 @@ occup_exact(3,yellow,2).
 occup_exact(4,yellow,2).
 occup_min(5,yellow,2).
 
+occup_min(L,T,N) :- occup_exact(L,T,N).
+occup_max(L,T,N) :- occup_exact(L,T,N).
 % Aplicar las restricciones anteriores (exact, min, max)
-:- level(P,L), occup_exact(L,T,N), #count{X:month_assign(P,X,T)}!=N.   % Actividades a las que se asigna N meses
 :- level(P,L), occup_min(L,T,N), #count{X:month_assign(P,X,T)}<N.      % Actividades a las que se asigna al menos N meses
 :- level(P,L), occup_max(L,T,N), #count{X:month_assign(P,X,T)}>N.      % Actividades a las que se asigna como mucho N meses
 
+%     month_assign(P, M, T),
+%     not month_assign(P, M+1, T),
+%     month_assign(P, M', T), M' > M+1,
+
+nonconsecutive(P,T) :- month_assign(P, M, T), not month_assign(P, M+1, T),
+                         month_assign(P, M', T), M' > M+1.
+
 % Aplicar las restricciones anteriores (consecutive)
 % :- level(P,L), occup_consecutive(L,T,N), month_assign(P,M,T), not month_assign(P,M-1,T), not month_assign(P,M+N-1,T).
-:- level(P, L), occup_consecutive(S, L),                % Having a Person P, with Level L
-    month_assign(P, M, S), not month_assign(P, M+1, S), % Being M the last month assigned
-    month_assign(P, M', S), M' > M+1.                   % Cannot be that exists M' later than M+1
-
+:- level(P, L), occup_consecutive(L,T),                % Having a Person P, with Level L
+    nonconsecutive(P,T).
 
 % demmand_min(S, N) The service S demands N people.
 demmand_min(blue, 3).           % AS01
@@ -118,6 +124,8 @@ cost_per_month(C,T,M) :- month(M),
     cost_per_month(C, T, M)
 }.
 
+% exceeded(M,T) :- month(M), demmand_max(T,N,V), #count { X : month_assign(X, M, T) } > N.
+% #minimize {V,X,M,T: exceeded(M,T),demmand_max(T,_,V), month_assign(X,M,T)}.
 
 % AS08
 :- month(M), service(S),
@@ -127,7 +135,7 @@ cost_per_month(C,T,M) :- month(M),
 
 
 % CAR01
-#minimize { V : person(P), turn(T),
+#minimize { V,P,T : person(P), turn(T),
     month_assign(P, M, T),
     not month_assign(P, M+1, T),
     month_assign(P, M', T), M' > M+1,
@@ -136,21 +144,21 @@ cost_per_month(C,T,M) :- month(M),
 
 
 % CAR02
-#minimize { V : person(P), turn(T),
-    level(P, L), L>3,
-    month_assign(P, M, T),
-    not month_assign(P, M+1, T),
-    month_assign(P, M', T), M' > M+1,
-    cost(car02, V)
-}.
+ #minimize { V,P,T : person(P), turn(T),
+     level(P, L), L>3,
+     month_assign(P,M,T),
+     not month_assign(P, M+1, T),
+     month_assign(P, M', T), M' > M+1,
+     cost(car02, V)
+ }.
 
 
 % CAS01
-#minimize { V : person(P), person(P'),
-    level(P, 5), level(P', 5),
-    turn(T),
-    month_assign(P, M, T), month_assign(P', M, T), P < P', cost(cas01, V)
-}.
+% #minimize { V,M,T : person(P), person(P'),
+%     level(P, 5), level(P', 5),
+%     turn(T),
+%     month_assign(P, M, T), month_assign(P', M, T), P < P', cost(cas01, V)
+% }.
 
 
 % CAS02 - predicados y preparación (sin esto 0.9s, con esto mas de 11min)
@@ -162,18 +170,22 @@ has_low_level(M, T) :- month_assign(P, M, T), level(P, 1).
 has_low_level(M, T) :- month_assign(P, M, T), level(P, 2).
 has_low_level(M, T) :- month_assign(P, M, T), level(P, 3).
 
-%unmixed_levels(M, T) :- multiple_people(M, T), not has_high_level(M, T), has_low_level(M, T).
-%unmixed_levels(M, T) :- multiple_people(M, T), has_high_level(M, T), not has_low_level(M, T).
+unmixed_levels(M, T) :- multiple_people(M, T), not has_high_level(M, T), has_low_level(M, T).
+unmixed_levels(M, T) :- multiple_people(M, T), has_high_level(M, T), not has_low_level(M, T).
+
+% Reformulación sin not:
+%unmixed_levels(M, T) :- multiple_people(M, T), has_high_level(M, T), #count { P : month_assign(P, M, T), has_low_level(M, T) } = 0.
+%unmixed_levels(M, T) :- multiple_people(M, T), has_low_level(M, T), #count { P : month_assign(P, M, T), has_high_level(M, T) } = 0.
 
 mixed_levels(M, T) :- has_high_level(M, T), has_low_level(M, T).
 
 % Regla auxiliar que identifica turnos con más de una persona.
 multiple_people(M, T) :- month(M), turn(T), month_assign(P, M, T), month_assign(P', M, T), P<P'.
 
-#minimize { V,T,M : turn(T), multiple_people(M, T),
-    unmixed_levels(M, T),
-    cost(cas02, V)
-}.
+% #minimize { V,T,M : turn(T), multiple_people(M, T),
+%     unmixed_levels(M, T),
+%     cost(cas02, V)
+% }.
 
 %#minimize { V,T,M : turn(T), multiple_people(M, T),
 %    not has_low_level(M, T),

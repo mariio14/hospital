@@ -14,6 +14,14 @@ public class MonthlyDataConversor {
             clingoParams.append(String.format("day(%d). ", i));
         }
 
+        for (Integer weekend : monthlyDataDto.getWeekends()) {
+            clingoParams.append(String.format("weekend(%d). ", weekend));
+        }
+
+        for (Integer festivo : monthlyDataDto.getFestivos()) {
+            clingoParams.append(String.format("festivo(%d). ", festivo));
+        }
+
         for (MonthlyAssignationsDto monthlyAssignationsDto : monthlyDataDto.getMonthlyAssignationsDtos()) {
             String personName = monthlyAssignationsDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT);
             clingoParams.append(String.format("person(%s). ", personName));
