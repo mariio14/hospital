@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import users, {Login, SignUp, UpdateProfile, ChangePassword, Logout} from '../../users';
 import Home from "./Home";
 import {PrioritiesList} from '../../priorities';
+import {StaffList} from '../../staff';
 
 
 const Body = () => {
@@ -21,6 +22,7 @@ const Body = () => {
 			{loggedIn && <Route path="/users/change-password" element={<ChangePassword />} />}
 			{loggedIn && <Route path="/users/logout" element={<Logout />} />}
 			<Route path="/priorities" element={<PrioritiesList />} />
+			<Route path="/staff" element={<StaffList />} />
 		</Routes>
 	);
 };

@@ -86,6 +86,11 @@ const Header = () => {
                             <i className="fas fa-rss"></i> Prioridades
                         </Link>
                     </li>
+                    <li className="nav-item">
+                        <Link className="nav-link" to="/staff">
+                            <i className="fas fa-rss"></i> Residentes
+                        </Link>
+                    </li>
                 </ul>
             </div>
             <Drawer anchor="left" open={drawerOpen} onClose={handleCloseDrawer}>
@@ -133,6 +138,14 @@ const Header = () => {
                                 <Link className="nav-link2" to="/priorities">
                                     <FontAwesomeIcon icon={faHeart} className="me-2" />
                                     Prioridades
+                                </Link>
+                            </ListItem>
+                        </>
+                        <>
+                            <ListItem button onClick={handleCloseDrawer}>
+                                <Link className="nav-link2" to="/staff">
+                                    <FontAwesomeIcon icon={faHeart} className="me-2" />
+                                    Residentes
                                 </Link>
                             </ListItem>
                         </>
