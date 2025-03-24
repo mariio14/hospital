@@ -12,8 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class PlanningServiceImpl implements PlanningService {
 
-    // private final String pathname = "/home/mario/TFG/hospital/myTfg/src/main/java/es/udc/fi/tfg/model/services/clingo";
-    private final String pathname = "C:/Users/mario/hospital/myTfg/src/main/java/es/udc/fi/tfg/model/services/clingo";
+    private final String pathname = System.getProperty("user.dir") + "/src/main/java/es/udc/fi/tfg/model/services/clingo";
 
     @Override
     public Map<String, Map<Integer, String>> getAnnualPlanning(String params) throws NoSolutionException{
@@ -46,7 +45,7 @@ public class PlanningServiceImpl implements PlanningService {
                     throw new NoSolutionException("Sin solucion para los parametros proporcionados.");
                 }
 
-                saveToJsonFile(planning, "/solution.json");
+                saveToJsonFile(planning, "/solution_yearly.json");
 
                 return planning;
             }  else {
@@ -149,6 +148,11 @@ public class PlanningServiceImpl implements PlanningService {
         return null;
     }
 
+    @Override
+    public Map<String, Map<Integer, String>> getAnnualFromJson() {
+        return Map.of();
+    }
+
     private Map<String, Map<Integer, String>> parseJson(String jsonString) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(jsonString, new TypeReference<>() {});
@@ -157,7 +161,7 @@ public class PlanningServiceImpl implements PlanningService {
     private void saveToJsonFile(Map<String, Map<Integer, String>> planning, String file) {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            File outputFile = new File(pathname + "/solution.json");
+            File outputFile = new File(pathname + file);
             mapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, planning);
         } catch (Exception e) {
             System.err.println("Error al guardar el resultado en un archivo JSON.");

@@ -2,7 +2,6 @@ package es.udc.fi.tfg.model.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import es.udc.fi.tfg.model.entities.Priority;
 import es.udc.fi.tfg.rest.dtos.PriorityGroupDto;
 import org.springframework.stereotype.Service;

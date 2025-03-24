@@ -9,7 +9,7 @@ const initialState = {
 const staffList = (state = initialState.staffList, action) => {
     switch (action.type) {
         case actionTypes.GET_STAFF_COMPLETED:
-            return action.prioritiesList;
+            return action.staffList;
         case actionTypes.GET_STAFF_CLEAR:
             return [];
         default:

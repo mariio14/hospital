@@ -53,6 +53,19 @@ const MonthlyPlanning = () => {
       })));
     }, [daysInMonth]);
 
+  const getDayOfWeek = (day, month, year) => {
+    const daysOfWeek = ["D", "L", "M", "X", "J", "V", "S"];
+    return daysOfWeek[new Date(year, month - 1, day).getDay()];
+  };
+
+  const getMonthName = (month) => {
+    const months = [
+      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+       "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
+    return months[month - 1];
+  };
+
   // Valores locales para el input de nombre (similar a tu AnnualPlanning)
   const [localValues, setLocalValues] = useState(
     planningData.reduce((acc, person) => {
@@ -296,13 +309,19 @@ const MonthlyPlanning = () => {
                   style={{ width: "100%", tableLayout: "fixed", fontSize: "12px" }}
                 >
                   <thead>
-                    <tr>
-                      <th>Persona</th>
-                      {[...Array(daysInMonth).keys()].map((day) => (
-                        <th key={day + 1}>{day + 1}</th>
-                      ))}
-                    </tr>
-                  </thead>
+                      <tr>
+                        <th></th>
+                        {[...Array(daysInMonth).keys()].map((day) => (
+                          <th key={day + 1}>{getDayOfWeek(day + 1, month, year)}</th>
+                        ))}
+                      </tr>
+                      <tr>
+                        <th>{getMonthName(month)}</th>
+                        {[...Array(daysInMonth).keys()].map((day) => (
+                          <th key={day + 1}>{day + 1}</th>
+                        ))}
+                      </tr>
+                    </thead>
                   <tbody>
                     {planningData.map((person) => (
                       <tr key={person.name}>
