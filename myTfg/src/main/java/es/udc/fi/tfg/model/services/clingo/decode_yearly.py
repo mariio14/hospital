@@ -4,7 +4,7 @@ import json
 from collections import OrderedDict
 
 if len(sys.argv) < 2:
-    print("Uso: python decode.py file1 [file2 ... ]")
+    print("Uso: python decode_yearly.py file1 [file2 ... ]")
     sys.exit()
 
 ctl = clingo.Control()
