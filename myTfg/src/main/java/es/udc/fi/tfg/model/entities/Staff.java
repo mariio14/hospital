@@ -2,6 +2,8 @@ package es.udc.fi.tfg.model.entities;
 
 public class Staff {
 
+    private Integer id;
+
     private String name;
 
     private Integer level;
@@ -9,7 +11,8 @@ public class Staff {
     public Staff() {
     }
 
-    public Staff(String name, Integer level) {
+    public Staff(Integer id, String name, Integer level) {
+        this.id = id;
         this.name = name;
         this.level = level;
     }
@@ -28,5 +31,13 @@ public class Staff {
 
     public void setLevel(Integer level) {
         this.level = level;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }

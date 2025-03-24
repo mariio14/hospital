@@ -15,6 +15,6 @@ public class StaffConversor {
     }
 
     public static StaffDto toStaffDto(Staff staff) {
-        return new StaffDto(staff.getName(), staff.getLevel());
+        return new StaffDto(staff.getId(), staff.getName(), staff.getLevel());
     }
 }
