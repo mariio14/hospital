@@ -62,9 +62,9 @@ public class PlanningServiceImpl implements PlanningService {
 
     @Override
     public Map<String, Map<Integer, String>> getMonthlyPlanning(String params, String month) throws NoSolutionException {
-        String command = "python decode_monthly.py monthly.lp";
+        String command = "python decode_monthly.py monthly.lp input_monthly.lp";
         try {
-            writeInputFile(params, pathname + "/inputMonthly.lp");
+            writeInputFile(params, pathname + "/input_monthly.lp");
 
             ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
             processBuilder.directory(new File(pathname));
@@ -106,9 +106,9 @@ public class PlanningServiceImpl implements PlanningService {
 
     @Override
     public Map<String, Map<Integer, String>> getWeeklyPlanning(String params) throws NoSolutionException {
-        String command = "python decode_weekly.py weekly.lp";
+        String command = "python decode_weekly.py weekly.lp input_weekly.lp";
         try {
-            writeInputFile(params, pathname + "/inputWeekly.lp");
+            writeInputFile(params, pathname + "/input_weekly.lp");
 
             ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
             processBuilder.directory(new File(pathname));
