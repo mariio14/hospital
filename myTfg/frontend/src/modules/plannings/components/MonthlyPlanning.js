@@ -1,25 +1,17 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import * as actions from "../actions";
+import * as staffActions from "../../staff/actions"
+import * as selectors from "../selectors";
+import * as staffSelectors from "../../staff/selectors"
 
 const MonthlyPlanning = () => {
 
-  const personas = [
-    "Aloia",
-    "Sergio",
-    "Carlota",
-    "Lucía",
-    "Robla",
-    "Esther",
-    "Óscar",
-    "Wis",
-    "Camila",
-    "Sierra",
-    "Miguel",
-    "Patri",
-    "Andrea",
-    "Javi",
-  ];
+  const dispatch = useDispatch();
+  const staffList = useSelector(staffSelectors.getStaffList);
+  const monthlyPlanning = useSelector(selectors.getMonthlyPlanning);
 
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -32,26 +24,36 @@ const MonthlyPlanning = () => {
   const getDaysInMonth = (month, year) => new Date(year, month, 0).getDate();
   const [daysInMonth, setDaysInMonth] = useState(getDaysInMonth(month, year));
 
-  const emptyPlanning = personas.map((name) => ({
-    name,
-    level: "R1",
-    assignations: Array(daysInMonth).fill(null),
+  const emptyPlanning = staffList.map(person => ({
+      name: person.name,
+      level: `R${person.level}`,
+      assignations: Array(daysInMonth).fill(null)
   }));
 
   const [planningData, setPlanningData] = useState(emptyPlanning);
 
+  useEffect(() => {
+      dispatch(staffActions.getStaff(
+          () => setBackendErrors('No se ha podido obtener la lista de usuarios')
+      ));
+  }, []);
 
   useEffect(() => {
     setDaysInMonth(getDaysInMonth(month, year));
   }, [month, year]);
 
   useEffect(() => {
-      setPlanningData(personas.map((name) => ({
-        name,
-        level: "R1",
-        assignations: Array(daysInMonth).fill(null),
-      })));
+      const emptyPlanning = staffList.map(person => ({
+          name: person.name,
+          level: `R${person.level}`,
+          assignations: Array(daysInMonth).fill(null)
+      }));
     }, [daysInMonth]);
+
+  useEffect(() => {
+      setPlanningData(monthlyPlanning ? monthlyPlanning : emptyPlanning);
+      setIsLoading(false);
+  }, [monthlyPlanning]);
 
   const getDayOfWeek = (day, month, year) => {
     const daysOfWeek = ["D", "L", "M", "X", "J", "V", "S"];
@@ -66,7 +68,6 @@ const MonthlyPlanning = () => {
     return months[month - 1];
   };
 
-  // Valores locales para el input de nombre (similar a tu AnnualPlanning)
   const [localValues, setLocalValues] = useState(
     planningData.reduce((acc, person) => {
       acc[person.name] = person.name;
@@ -74,7 +75,6 @@ const MonthlyPlanning = () => {
     }, {})
   );
 
-  // Actualiza localValues si cambia la planificación
   useEffect(() => {
     const updatedLocalValues = planningData.reduce((acc, person) => {
       acc[person.name] = person.name;
@@ -83,27 +83,20 @@ const MonthlyPlanning = () => {
     setLocalValues(updatedLocalValues);
   }, [planningData]);
 
-  // Mapa de colores para las distintas actividades/tareas que aparecen en la tabla
-  // Ajusta estos colores según tus necesidades.
   const colorMap = {
-    E: "#4CAF50",     // Ejemplo: guardia E
-    G: "#FF9800",     // Ejemplo: guardia G
-    I: "#FFEB3B",     // Ejemplo: incidencia I
-    GP: "#F44336",    // Ejemplo: guardia prolongada
-    VAC: "#2196F3",   // Ejemplo: vacaciones
-    // Añade tantas claves como necesites
+    E: "#4CAF50",
+    G: "#FF9800",
+    I: "#FFEB3B",
+    GP: "#F44336",
+    V: "#2196F3",
   };
 
-  // Lista de actividades que el usuario podrá seleccionar en cada celda
   const activities = Object.keys(colorMap);
 
-  // Función que se llama cuando el usuario cambia el select de una celda
   const handleSelectChange = (personName, dayIndex, value) => {
     const updatedPlanning = planningData.map((person) => {
       if (person.name === personName) {
-        // Creamos una copia de las asignaciones
         const newAssignations = [...person.assignations];
-        // dayIndex coincide con el índice del array
         newAssignations[dayIndex] = value === "-" ? null : value;
         return { ...person, assignations: newAssignations };
       }
@@ -112,7 +105,6 @@ const MonthlyPlanning = () => {
     setPlanningData(updatedPlanning);
   };
 
-  // Función para expandir/colapsar la sección
   const toggleSection = () => {
     setIsExpanded(!isExpanded);
   };
@@ -122,16 +114,41 @@ const MonthlyPlanning = () => {
     setBackendErrors(null);
     setIsLoading(true);
 
+    let firstFriday = 1;
+    while (new Date(year, month - 1, firstFriday).getDay() !== 5) {
+        firstFriday++;
+    }
+
+    const convertedPlanningData = {
+        monthlyAssignationsDtos:
+            planningData.map(person => ({
+                ...person,
+                assignations: Object.values(person.assignations)
+            })),
+        numberOfDays: daysInMonth,
+        month: getMonthName(month),
+        year: year,
+        firstDay: getDayOfWeek(1,month,year),
+        firstFriday: firstFriday,
+        weekends: [],
+        festivos: []
+    }
+
+    dispatch(actions.getMonthlyPlanning(
+        convertedPlanningData,
+        () => {
+            setBackendErrors('Sin solución');
+            setIsLoading(false);
+        }
+    ));
+
   };
 
-  // Función para exportar a PDF usando jsPDF
   const exportToPDF = () => {
     const doc = new jsPDF({ orientation: "landscape" });
     doc.text("Planificación Mensual", 10, 10);
 
-    // Preparamos la data para la tabla
     const tableData = planningData.map((person) => {
-      // Cada fila: [ NombrePersona, Día1, Día2, ..., Día31 ]
       return [
         person.name,
         ...person.assignations.map((assignation) => assignation || "-"),
@@ -144,7 +161,6 @@ const MonthlyPlanning = () => {
       styles: { fontSize: 8, cellPadding: 1 },
       startY: 20,
       didDrawCell: (data) => {
-        // Pintamos la celda con el color correspondiente si es una actividad
         if (data.section === "body" && data.column.index > 0) {
           const activity = data.cell.raw;
           if (activity && activity !== "-") {
@@ -304,7 +320,7 @@ const MonthlyPlanning = () => {
               }}
             >
               {/* Tabla de asignaciones */}
-              <div style={{ width: "80%", overflowX: "auto" }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
                 <table
                   style={{ width: "100%", tableLayout: "fixed", fontSize: "12px" }}
                 >

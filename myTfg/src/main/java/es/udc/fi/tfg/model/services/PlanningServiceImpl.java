@@ -1,6 +1,7 @@
 package es.udc.fi.tfg.model.services;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.Map;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -150,7 +151,16 @@ public class PlanningServiceImpl implements PlanningService {
 
     @Override
     public Map<String, Map<Integer, String>> getMonthFromJson(String month) {
-        return Map.of();
+        ObjectMapper mapper = new ObjectMapper();
+        File outputFile = new File(pathname + "/solutionMonthly.json");
+        Map<String, Map<String, Map<Integer, String>>> existingData = new HashMap<>();
+        try {
+            existingData = mapper.readValue(outputFile, new TypeReference<>() {
+            });
+        } catch (Exception e) {
+            System.err.println("Error al leer el archivo JSON existente. Se usará un mapa vacío.");
+        }
+        return existingData.get(month);
     }
 
     private Map<String, Map<Integer, String>> parseJson(String jsonString) throws Exception {
@@ -171,9 +181,19 @@ public class PlanningServiceImpl implements PlanningService {
 
     private void saveMonthToJsonFile(Map<String, Map<Integer, String>> planning, String file, String month) {
         ObjectMapper mapper = new ObjectMapper();
+        File outputFile = new File(pathname + file);
+        Map<String, Map<String, Map<Integer, String>>> existingData = new HashMap<>();
         try {
-            File outputFile = new File(pathname + file);
-            mapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, planning);
+            existingData = mapper.readValue(outputFile, new TypeReference<>() {
+            });
+        } catch (Exception e) {
+            System.err.println("Error al leer el archivo JSON existente. Se usará un mapa vacío.");
+        }
+
+        existingData.put(month, planning);
+
+        try {
+            mapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, existingData);
         } catch (Exception e) {
             System.err.println("Error al guardar el resultado en un archivo JSON.");
             e.printStackTrace();

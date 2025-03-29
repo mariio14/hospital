@@ -6,7 +6,7 @@ public class MonthlyDataDto {
 
     private String month;
 
-    private String year;
+    private int year;
 
     private int numberOfDays;
 
@@ -24,7 +24,7 @@ public class MonthlyDataDto {
     }
 
     public MonthlyDataDto(String month, int numberOfDays, List<MonthlyAssignationsDto> monthlyAssignationsDtos,
-                          List<Integer> weekends, List<Integer> festivos, String year, String firstDay, int firstFriday) {
+                          List<Integer> weekends, List<Integer> festivos, int year, String firstDay, int firstFriday) {
         this.month = month;
         this.numberOfDays = numberOfDays;
         this.monthlyAssignationsDtos = monthlyAssignationsDtos;
@@ -75,11 +75,11 @@ public class MonthlyDataDto {
         this.festivos = festivos;
     }
 
-    public String getYear() {
+    public int getYear() {
         return year;
     }
 
-    public void setYear(String year) {
+    public void setYear(int year) {
         this.year = year;
     }
 

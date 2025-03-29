@@ -42,6 +42,16 @@ const StaffList = () => {
         );
     };
 
+    const handleLevelChange = (userId, change) => {
+        setUsers(prevUsers =>
+            prevUsers.map(user =>
+                user.id === userId
+                    ? { ...user, level: Math.min(5, Math.max(1, user.level + change)) }
+                    : user
+            )
+        );
+    };
+
     return (
          <div className="p-4">
             <h2 className="text-xl font-bold mb-4">Lista de Personal</h2>
@@ -55,7 +65,23 @@ const StaffList = () => {
                                 onChange={(e) => handleNameChange(user.id, e.target.value)}
                                 className="border rounded px-2 py-1 w-40"
                             />
-                            <span className="text-sm font-medium text-gray-700">Nivel: {user.level}</span>
+                            <div className="flex items-center">
+                                <button
+                                    className="px-2 py-1 bg-gray-300 rounded-l"
+                                    onClick={() => handleLevelChange(user.id, -1)}
+                                    disabled={user.level === 1}
+                                >
+                                    ◀
+                                </button>
+                                <span className="text-sm font-medium text-gray-700 mx-2">Nivel: {user.level}</span>
+                                <button
+                                    className="px-2 py-1 bg-gray-300 rounded-r"
+                                    onClick={() => handleLevelChange(user.id, 1)}
+                                    disabled={user.level === 5}
+                                >
+                                    ▶
+                                </button>
+                            </div>
                         </div>
                     ))}
                 </div>

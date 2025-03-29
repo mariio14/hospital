@@ -3,18 +3,19 @@ import { useDispatch, useSelector } from "react-redux";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import * as actions from "../actions";
+import * as staffActions from "../../staff/actions"
 import * as selectors from "../selectors";
+import * as staffSelectors from "../../staff/selectors"
 import "../../../styles/AnnualPlanning.css";
 
 const AnnualPlanning = () => {
     const dispatch = useDispatch();
     const annualPlanning = useSelector(selectors.getAnnualPlanning);
+    const staffList = useSelector(staffSelectors.getStaffList);
 
-    const personas = Array.from({ length: 15 }, (_, index) => `Persona ${String(index + 1).padStart(2, '0')}`);
-
-    const emptyPlanning = Array.from({ length: 15 }, (_, index) => ({
-        name: personas[index],
-        level: `R${Math.floor(index / 3) + 1}`,
+    const emptyPlanning = staffList.map(person => ({
+        name: person.name,
+        level: `R${person.level}`,
         assignations: Array(12).fill(null)
     }));
 
@@ -23,20 +24,12 @@ const AnnualPlanning = () => {
     const [backendErrors, setBackendErrors] = useState(null);
      const [isLoading, setIsLoading] = useState(false);
 
-    const [localValues, setLocalValues] = useState(
-        planningData.reduce((acc, person) => {
-          acc[person.name] = person.name; // Inicializa los valores locales
-          return acc;
-        }, {})
-    );
-
     useEffect(() => {
-        const updatedLocalValues = planningData.reduce((acc, person) => {
-          acc[person.name] = person.name;
-          return acc;
-        }, {});
-        setLocalValues(updatedLocalValues);
-    }, [planningData]);
+        dispatch(staffActions.getStaff(
+            () => setBackendErrors('No se ha podido obtener la lista de usuarios')
+        ));
+    }, []);
+
     useEffect(() => {
         // Si annualPlanning cambia, actualizamos planningData con el nuevo valor
         setPlanningData(annualPlanning ? annualPlanning : emptyPlanning);
@@ -106,13 +99,6 @@ const AnnualPlanning = () => {
             }
             return person;
         });
-        setPlanningData(updatedPlanning);
-    };
-
-    const handleNameChange = (name, newName) => {
-        const updatedPlanning = planningData.map(person =>
-          person.name === name ? { ...person, name: newName } : person
-        );
         setPlanningData(updatedPlanning);
     };
 
@@ -250,128 +236,77 @@ const AnnualPlanning = () => {
                         {backendErrors ? <p style={{ color: 'red', textAlign: 'center', marginTop: '30px', marginBottom: '20px' }}>{backendErrors}</p> : null}
 
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-
-                            {/* Lista de Personal y su Nivel */}
-                            <div
-                                style={{
-                                    width: '15%',
-                                    paddingRight: '10px',
-                                    border: '1px solid #ddd',
-                                    padding: '10px',
-                                    borderRadius: '5px',
-                                    backgroundColor: '#f9f9f9',
-                                    boxShadow: '0px 4px 8px rgba(0,0,0,0.1)'
-                                  }}
-                            >
-                              <h3>Lista de Personal</h3>
-                              {planningData.map(person => (
-                                <div key={person.name} style={{ marginBottom: '5px', display: 'flex', alignItems: 'center' }}>
-                                  <input
-                                    type="text"
-                                    value={localValues[person.name]} // Usamos el valor local para cada input
-                                    onChange={e => {
-                                      const updatedLocalValues = {
-                                        ...localValues,
-                                        [person.name]: e.target.value
-                                      };
-                                      setLocalValues(updatedLocalValues); // Actualiza solo el valor local
-                                    }}
-                                    onBlur={() => {
-                                      // Cuando el campo pierde el foco, actualizamos tanto planningData como localValues
-                                      handleNameChange(person.name, localValues[person.name]);
-                                    }}
-                                    style={{
-                                      padding: '5px',
-                                      marginBottom: '5px',
-                                      width: '90px',
-                                      fontSize: '12px',
-                                      height: '30px'
-                                    }}
-                                  />
-                                  <p style={{
-                                      marginLeft: '10px',
-                                      fontWeight: 'bold',
-                                      fontSize: '12px'
-                                    }} >
-                                    {person.level}
-                                  </p>
-                                </div>
-                              ))}
-                            </div>
-
                             {/* Tabla de asignaciones */}
-                            <div style={{ width: '80%', overflowX: 'auto' }}>
-                                <table style={{ width: '100%', tableLayout: 'fixed', fontSize: '12px' }}>
-                                    <thead>
-                                        <tr>
-                                            <th>Personas</th>
-                                            {months.map((month) => (
-                                                <th key={month}>{month}</th>
-                                            ))}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {planningData.map((person) => (
-                                            <tr
-                                                key={person.name}
-                                                style={{
-                                                    backgroundColor: "#E0E0E0",
-                                                    color: "#000"
-                                                }}
-                                            >
-                                                <td>{person.name}</td>
-                                                {months.map((month, index) => {
-                                                    const activity = person.assignations[index];
-                                                    return (
-                                                        <td
-                                                            key={`${person.name}-${month}`}
+                            <table style={{ width: '100%', tableLayout: 'fixed', fontSize: '12px' }}>
+                                <thead>
+                                    <tr>
+                                        <th>Personas</th>
+                                        {months.map((month) => (
+                                            <th key={month}>{month}</th>
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {planningData.map((person) => (
+                                        <tr
+                                            key={person.name}
+                                            style={{
+                                                backgroundColor: "#E0E0E0",
+                                                color: "#000"
+                                            }}
+                                        >
+                                            <td>{person.name}</td>
+                                            {months.map((month, index) => {
+                                                const activity = person.assignations[index];
+                                                return (
+                                                    <td
+                                                        key={`${person.name}-${month}`}
+                                                        style={{
+                                                            backgroundColor: colorMap[activity] || "#E0E0E0",
+                                                            color: "#000",
+                                                            textAlign: "center",
+                                                            fontWeight: "bold",
+                                                            cursor: activity ? "pointer" : "default"
+                                                        }}
+                                                        title={activity || "Sin asignación"}
+                                                    >
+                                                        <select
+                                                            value={activity || ""}
+                                                            onChange={(e) =>
+                                                                handleSelectChange(person.name, month, e.target.value)
+                                                            }
                                                             style={{
-                                                                backgroundColor: colorMap[activity] || "#E0E0E0",
+                                                                backgroundColor: "transparent",
+                                                                border: "none",
                                                                 color: "#000",
+                                                                cursor: "pointer",
+                                                                width: "100%",
                                                                 textAlign: "center",
                                                                 fontWeight: "bold",
-                                                                cursor: activity ? "pointer" : "default"
+                                                                appearance: "none"
                                                             }}
-                                                            title={activity || "Sin asignación"}
                                                         >
-                                                            <select
-                                                                value={activity || ""}
-                                                                onChange={(e) =>
-                                                                    handleSelectChange(person.name, month, e.target.value)
-                                                                }
-                                                                style={{
-                                                                    backgroundColor: "transparent",
-                                                                    border: "none",
-                                                                    color: "#000",
-                                                                    cursor: "pointer",
-                                                                    width: "100%",
-                                                                    textAlign: "center",
-                                                                    fontWeight: "bold",
-                                                                    appearance: "none"
-                                                                }}
-                                                            >
-                                                                <option value="-">-</option>
-                                                                {activities.map((act) => (
-                                                                    <option
-                                                                        key={act}
-                                                                        value={act}
-                                                                        style={{
-                                                                            backgroundColor: colorMap[act],
-                                                                            color: "#000"
-                                                                        }}
-                                                                    >
-                                                                        {act}
-                                                                    </option>
-                                                                ))}
-                                                            </select>
-                                                        </td>
-                                                    );
-                                                })}
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                                            <option value="-">-</option>
+                                                            {activities.map((act) => (
+                                                                <option
+                                                                    key={act}
+                                                                    value={act}
+                                                                    style={{
+                                                                        backgroundColor: colorMap[act],
+                                                                        color: "#000"
+                                                                    }}
+                                                                >
+                                                                    {act}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </td>
+                                                );
+                                            })}
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 )}

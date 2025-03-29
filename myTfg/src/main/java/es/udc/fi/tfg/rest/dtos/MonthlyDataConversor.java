@@ -39,7 +39,7 @@ public class MonthlyDataConversor {
                 for (String assignation : assignations) {
                     i++;
                     if (assignation != null) {
-                        clingoParams.append(String.format("day_assign(%s,%d,%s). ", personName, i, assignation));
+                        clingoParams.append(String.format("day_assign(%s,%d,%s). ", personName, i, assignation.toLowerCase()));
                     }
                 }
             }
