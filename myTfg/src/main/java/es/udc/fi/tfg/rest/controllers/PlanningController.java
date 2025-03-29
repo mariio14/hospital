@@ -62,8 +62,11 @@ public class PlanningController {
 
         List<Priority> costs = prioritiesService.getPriorities().get("Mensual");
 
+        Map<String, Map<Integer, String>> previousMonthPlanning = planningService.getMonthFromJson(params.getMonth());
+
         Map<String, Map<Integer, String>> planning =
-                planningService.getMonthlyPlanning(MonthlyDataConversor.toClingoParams(params, costs), params.getMonth());
+                planningService.getMonthlyPlanning(MonthlyDataConversor.toClingoParams(
+                        params, costs, previousMonthPlanning), params.getMonth());
 
         return MonthlyPlanningConversor.toMonthlyPlanningDtos(planning, params);
     }

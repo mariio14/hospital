@@ -12,10 +12,9 @@ day(1..31).
 weekend(-1;6;13;20;27). % Marcado por los viernes
 holiday(7;28).
 person(1..15).
-vacation(1,4). % Person, day
-vacation(1,5).
-vacation(13,29).
-vacation(13,30).
+day_assign(1,5,v). % Person P on vacation
+day_assign(13,29,v).
+day_assign(13,30,v).
 level(P,(P-1)/3 + 1) :- person(P).
 day_assign(1,4,gp).
 day_assign(1,13,gp). % MensualR_G4

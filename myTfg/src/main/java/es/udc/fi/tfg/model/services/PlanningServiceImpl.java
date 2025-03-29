@@ -89,7 +89,7 @@ public class PlanningServiceImpl implements PlanningService {
                 if (planning.isEmpty()) {
                     throw new NoSolutionException("Sin solucion para los parametros proporcionados.");
                 }
-                saveToJsonFile(planning, "/solutionMonthly.json");
+                saveMonthToJsonFile(planning, "/solutionMonthly.json", month);
 
                 return planning;
             }  else {
@@ -149,7 +149,7 @@ public class PlanningServiceImpl implements PlanningService {
     }
 
     @Override
-    public Map<String, Map<Integer, String>> getAnnualFromJson() {
+    public Map<String, Map<Integer, String>> getMonthFromJson(String month) {
         return Map.of();
     }
 
@@ -159,6 +159,17 @@ public class PlanningServiceImpl implements PlanningService {
     }
 
     private void saveToJsonFile(Map<String, Map<Integer, String>> planning, String file) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            File outputFile = new File(pathname + file);
+            mapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, planning);
+        } catch (Exception e) {
+            System.err.println("Error al guardar el resultado en un archivo JSON.");
+            e.printStackTrace();
+        }
+    }
+
+    private void saveMonthToJsonFile(Map<String, Map<Integer, String>> planning, String file, String month) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             File outputFile = new File(pathname + file);

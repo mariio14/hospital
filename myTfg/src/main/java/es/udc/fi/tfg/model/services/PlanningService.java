@@ -12,5 +12,5 @@ public interface PlanningService {
 
     Map<String, Map<Integer, String>> getWeeklyPlanning(String params) throws NoSolutionException;
 
-    Map<String, Map<Integer, String>> getAnnualFromJson();
+    Map<String, Map<Integer, String>> getMonthFromJson(String month);
 }
