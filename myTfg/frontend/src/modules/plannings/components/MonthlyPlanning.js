@@ -72,11 +72,12 @@ const MonthlyPlanning = () => {
   };
 
   const colorMap = {
-    E: "#4CAF50",
-    G: "#FF9800",
-    I: "#FFEB3B",
-    GP: "#F44336",
+    E: "#81C784",
+    G: "#E57373",
+    I: "#FF9800",
+    GP: "#E57373",
     V: "#2196F3",
+    C: "#FFFFFF"
   };
 
   const activities = Object.keys(colorMap);
