@@ -160,6 +160,7 @@ const MonthlyPlanning = () => {
       body: tableData,
       styles: { fontSize: 8, cellPadding: 1 },
       startY: 20,
+      bodyStyles: { halign: "center" },
       didDrawCell: (data) => {
         if (data.section === "body" && data.column.index > 0) {
           const activity = data.cell.raw;

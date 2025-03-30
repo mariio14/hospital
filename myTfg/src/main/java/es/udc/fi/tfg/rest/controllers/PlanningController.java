@@ -44,6 +44,12 @@ public class PlanningController {
         return new ErrorsDto(errorMessage);
     }
 
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorsDto handleUnexpectedException(Exception exception) {
+        return new ErrorsDto("Se ha producido un error inesperado: " + exception.getMessage());
+    }
+
     @PostMapping("/annual")
     public List<AnnualPlanningDto> annualPlanning(@Validated @RequestBody List<AnnualPlanningDataDto> params)
             throws NoSolutionException, IOException, ClassNotFoundException {
