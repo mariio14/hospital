@@ -1,7 +1,10 @@
 package es.udc.fi.tfg.model.services;
 
 import java.io.*;
+import java.time.Month;
+import java.time.format.TextStyle;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -150,7 +153,9 @@ public class PlanningServiceImpl implements PlanningService {
     }
 
     @Override
-    public Map<String, Map<Integer, String>> getMonthFromJson(String month) {
+    public Map<String, Map<Integer, String>> getMonthFromJson(String currentMonth) {
+
+        String month = getPreviousMonth(currentMonth);
         ObjectMapper mapper = new ObjectMapper();
         File outputFile = new File(pathname + "/solutionMonthly.json");
         Map<String, Map<String, Map<Integer, String>>> existingData = new HashMap<>();
@@ -207,5 +212,23 @@ public class PlanningServiceImpl implements PlanningService {
             e.printStackTrace();
             throw new RuntimeException("Error al escribir el archivo de entrada LP", e);
         }
+    }
+
+    private String getPreviousMonth(String month) {
+        Map<String, String> previousMonthMap = new HashMap<>();
+        previousMonthMap.put("Enero", "Diciembre");
+        previousMonthMap.put("Febrero", "Enero");
+        previousMonthMap.put("Marzo", "Febrero");
+        previousMonthMap.put("Abril", "Marzo");
+        previousMonthMap.put("Mayo", "Abril");
+        previousMonthMap.put("Junio", "Mayo");
+        previousMonthMap.put("Julio", "Junio");
+        previousMonthMap.put("Agosto", "Julio");
+        previousMonthMap.put("Septiembre", "Agosto");
+        previousMonthMap.put("Octubre", "Septiembre");
+        previousMonthMap.put("Noviembre", "Octubre");
+        previousMonthMap.put("Diciembre", "Noviembre");
+
+        return previousMonthMap.getOrDefault(month, "Enero");
     }
 }

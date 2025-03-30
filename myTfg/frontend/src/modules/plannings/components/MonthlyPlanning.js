@@ -24,11 +24,22 @@ const MonthlyPlanning = () => {
   const getDaysInMonth = (month, year) => new Date(year, month, 0).getDate();
   const [daysInMonth, setDaysInMonth] = useState(getDaysInMonth(month, year));
 
-  const emptyPlanning = staffList.map(person => ({
+  const getMonthName = (month) => {
+    const months = [
+      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
+    return months[month - 1];
+  };
+
+  const emptyPlanning = {
+    month: getMonthName(month),
+    monthlyPlanningDtos: staffList.map(person => ({
       name: person.name,
       level: `R${person.level}`,
       assignations: Array(daysInMonth).fill(null)
-  }));
+    }))
+  };
 
   const [planningData, setPlanningData] = useState(emptyPlanning);
 
@@ -60,29 +71,6 @@ const MonthlyPlanning = () => {
     return daysOfWeek[new Date(year, month - 1, day).getDay()];
   };
 
-  const getMonthName = (month) => {
-    const months = [
-      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-       "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-    ];
-    return months[month - 1];
-  };
-
-  const [localValues, setLocalValues] = useState(
-    planningData.reduce((acc, person) => {
-      acc[person.name] = person.name;
-      return acc;
-    }, {})
-  );
-
-  useEffect(() => {
-    const updatedLocalValues = planningData.reduce((acc, person) => {
-      acc[person.name] = person.name;
-      return acc;
-    }, {});
-    setLocalValues(updatedLocalValues);
-  }, [planningData]);
-
   const colorMap = {
     E: "#4CAF50",
     G: "#FF9800",
@@ -94,15 +82,22 @@ const MonthlyPlanning = () => {
   const activities = Object.keys(colorMap);
 
   const handleSelectChange = (personName, dayIndex, value) => {
-    const updatedPlanning = planningData.map((person) => {
-      if (person.name === personName) {
-        const newAssignations = [...person.assignations];
-        newAssignations[dayIndex] = value === "-" ? null : value;
-        return { ...person, assignations: newAssignations };
-      }
-      return person;
-    });
-    setPlanningData(updatedPlanning);
+    console.log(personName)
+    console.log(dayIndex)
+    console.log(value)
+    setPlanningData((prevPlanning) => ({
+      ...month,
+      monthlyPlanningDtos: prevPlanning.monthlyPlanningDtos.map((person) =>
+        person.name === personName
+          ? {
+              ...person,
+              assignations: person.assignations.map((shift, index) =>
+                index === dayIndex ? (value === "-" ? null : value) : shift
+              ),
+            }
+          : person
+      ),
+    }));
   };
 
   const toggleSection = () => {
@@ -120,11 +115,15 @@ const MonthlyPlanning = () => {
     }
 
     const convertedPlanningData = {
-        monthlyAssignationsDtos:
-            planningData.map(person => ({
+        monthlyAssignationsDtos: planningData.monthlyPlanningDtos.map(person => {
+            const staffMember = staffList.find(staff => staff.name.toLowerCase() === person.name.toLowerCase());
+
+            return {
                 ...person,
-                assignations: Object.values(person.assignations)
-            })),
+                assignations: Object.values(person.assignations),
+                level: staffMember ? staffMember.level : null
+            };
+        }),
         numberOfDays: daysInMonth,
         month: getMonthName(month),
         year: year,
@@ -148,7 +147,7 @@ const MonthlyPlanning = () => {
     const doc = new jsPDF({ orientation: "landscape" });
     doc.text("Planificación Mensual", 10, 10);
 
-    const tableData = planningData.map((person) => {
+    const tableData = monthlyPlanning.monthlyPlanningDtos.map((person) => {
       return [
         person.name,
         ...person.assignations.map((assignation) => assignation || "-"),
@@ -156,7 +155,7 @@ const MonthlyPlanning = () => {
     });
 
     doc.autoTable({
-      head: [["Persona", ...daysInMonth.map((d) => `Día ${d}`)]],
+      head: [["Persona", ...Array.from({ length: daysInMonth }, (_, i) => `Día ${i + 1}`)]],
       body: tableData,
       styles: { fontSize: 8, cellPadding: 1 },
       startY: 20,
@@ -339,7 +338,7 @@ const MonthlyPlanning = () => {
                       </tr>
                     </thead>
                   <tbody>
-                    {planningData.map((person) => (
+                    {planningData.monthlyPlanningDtos.map((person) => (
                       <tr key={person.name}>
                         <td
                           style={{
@@ -351,7 +350,7 @@ const MonthlyPlanning = () => {
                         >
                           {person.name}
                         </td>
-                        {person.assignations.map((activity, dayIndex) => {
+                        {Object.entries(person.assignations).map(([dayIndex, activity]) => {
                           return (
                             <td
                               key={`${person.name}-${dayIndex}`}
@@ -368,7 +367,7 @@ const MonthlyPlanning = () => {
                                 onChange={(e) =>
                                   handleSelectChange(
                                     person.name,
-                                    dayIndex,
+                                    Number(dayIndex),
                                     e.target.value
                                   )
                                 }
