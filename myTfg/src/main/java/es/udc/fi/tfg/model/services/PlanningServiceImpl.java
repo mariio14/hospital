@@ -160,7 +160,7 @@ public class PlanningServiceImpl implements PlanningService {
         } catch (Exception e) {
             System.err.println("Error al leer el archivo JSON existente. Se usará un mapa vacío.");
         }
-        return existingData.get(month);
+        return existingData.get(month) == null ? new HashMap<>() : existingData.get(month);
     }
 
     private Map<String, Map<Integer, String>> parseJson(String jsonString) throws Exception {

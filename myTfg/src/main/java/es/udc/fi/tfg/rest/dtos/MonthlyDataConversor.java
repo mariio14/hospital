@@ -48,7 +48,7 @@ public class MonthlyDataConversor {
             clingoParams.append(String.format("cost(%s,%d). ", priority.getId(), priority.getCost()));
         }
 
-        for (int i= monthlyDataDto.getFirstFriday(); i< monthlyDataDto.getNumberOfDays(); i=+7) {
+        for (int i= monthlyDataDto.getFirstFriday(); i< monthlyDataDto.getNumberOfDays(); i+=7) {
             clingoParams.append(String.format("weekend(%d). ", i));
         }
 
