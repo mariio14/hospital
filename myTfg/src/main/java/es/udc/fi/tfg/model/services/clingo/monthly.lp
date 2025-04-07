@@ -64,16 +64,14 @@ day_assign_guard(P,D,G) :- guard(G), day_assign(P,D,G).
 :- level(P,1), level(P',1), day_assign(P,D,g), day_assign(P',D,g), P!=P'.
 
 % Predicate for MensualP_G09
-veteran_in_guard(D) :- day_assign_guard(P,D,_), level(P,3).
-veteran_in_guard(D) :- day_assign_guard(P,D,_), level(P,4).
-veteran_in_guard(D) :- day_assign_guard(P,D,_), level(P,5).
+veteran_in_guard(D) :- day_assign_guard(P,D,_), level(P,L), L>=3.
 % MensualP_G09 (de 0.035 a 0.045 mas o menos)
 #minimize { V,D :
     day(D), not veteran_in_guard(D),
     cost(g09,V)
 }.
 
-% Predicate for MensualP_G10
+% Predicate for MensualP_G10 - rehacer con weekend(D,D)
 people_in_task_in_weekend(N,T,D) :- task(T, _), weekend(D), N = #count{P: day_assign(P,D,T), 
 day_assign(P,D+1,T), day_assign(P,D+2,T)}.
 
@@ -84,16 +82,16 @@ day_assign(P,D+1,T), day_assign(P,D+2,T)}.
 }.
 
 % Predicates for MensualP_G12 (algo esta mal, probar)
-person_weekend_presential(P,D) :- person(P), weekend(D), day_assign_guard(P,D,_).
-person_weekend_presential(P,D) :- person(P), weekend(D), day_assign_guard(P,D+1,_).
-person_weekend_presential(P,D) :- person(P), weekend(D), day_assign_guard(P,D+2,_).
-presential_weekends(P,N) :- person(P), N = #count{D: person_weekend_presential(P,D)}.
+%person_weekend_presential(P,D) :- person(P), weekend(D), day_assign_guard(P,D,_).
+%person_weekend_presential(P,D) :- person(P), weekend(D), day_assign_guard(P,D+1,_).
+%person_weekend_presential(P,D) :- person(P), weekend(D), day_assign_guard(P,D+2,_).
+%presential_weekends(P,N) :- person(P), N = #count{D: person_weekend_presential(P,D)}.
 % MensualP_G12
-#minimize { V*(N-2),P :
-    person(P),
-    presential_weekends(P,N), N>2,
-    cost(g12,V)
-}.
+%#minimize { V*(N-2),P :
+%    person(P),
+%    presential_weekends(P,N), N>2,
+%    cost(g12,V)
+%}.
 
 % MensualP_L04 (de 0.045 a 0.051)
 #minimize { V,P,D : day_assign(P,D,i),
@@ -108,10 +106,10 @@ presential_weekends(P,N) :- person(P), N = #count{D: person_weekend_presential(P
 % comentarios explicando predicados
 % cambiar vacaciones por vacation
 
-% Los nuevos lo contamos como inputs
+% Los R1 nuevos lo contamos como inputs
 % R1 nuevos pueden hacer de comodin?
-% En los dias habiles tambien tiene que haber 2g, 1e y 1i? 
-% comodin cuenta como tarea a minimizar en los weekends
+% En los dias habiles tambien tiene que haber 2g, 1e y 1i?
+% comodin cuenta como tarea a minimizar en los weekends - no cuenta
 
 
 % G03, G12, G13, L03, L05
