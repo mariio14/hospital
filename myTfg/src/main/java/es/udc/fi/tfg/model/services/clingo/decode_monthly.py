@@ -22,6 +22,9 @@ with ctl.solve(yield_=True) as handle:
                 day = atom.arguments[1].number
                 activity = str(atom.arguments[2])
 
+                if day in (0, -1):
+                    continue
+
                 if person not in assignments:
                     assignments[person] = {}
                 assignments[person][day] = activity
