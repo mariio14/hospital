@@ -8,20 +8,26 @@ task(c,1).
 guard(g;gp).
 
 % Comentar estas lineas si se ejecuta con input.lp
-%day(1..31).
-%weekend(-1;6;13;20;27). % Marcado por los viernes
-%holiday(7;28).
-%person(1..15).
-%day_assign(1,5,v). % Person P on vacation
-%day_assign(13,29,v).
-%day_assign(13,30,v).
-%level(P,(P-1)/3 + 1) :- person(P).
-%day_assign(1,4,gp).
-%day_assign(1,13,gp). % MensualR_G04
-%day_assign(1,24,gp).
-%day_assign(2,7,gp).
-%day_assign(2,11,gp).
-%day_assign(2,22,gp).
+day(1..31).
+weekend(-1;6;13;20;27). % Marcado por los viernes
+weekend_day(-1,-1). weekend_day(-1,0). weekend_day(-1,1).
+weekend_day(6,6). weekend_day(6,7). weekend_day(6,8).
+weekend_day(13,13). weekend_day(13,14). weekend_day(13,15).
+weekend_day(20,20). weekend_day(20,21). weekend_day(20,22).
+weekend_day(27,27). weekend_day(27,28). weekend_day(27,29).
+
+holiday(7;28).
+person(1..15).
+vacation(1,5). % Person P on vacation
+vacation(13,29).
+vacation(13,30).
+level(P,(P-1)/3 + 1) :- person(P).
+day_assign(1,4,gp).
+day_assign(1,13,gp). % MensualR_G04
+day_assign(1,24,gp).
+day_assign(2,7,gp).
+day_assign(2,11,gp).
+day_assign(2,22,gp).
 
 cost(g07, 10).
 cost(g09, 50).
@@ -30,7 +36,7 @@ cost(g12, 35).
 cost(l04, 20).
 
 % MensualR_C01, MensualR_G01,
-N {day_assign(P,D,T) : person(P)} N :- task(T, N), day(D).  % meter dias habiles?
+N {day_assign(P,D,T) : person(P), not vacation(P,D)} N :- task(T, N), day(D).  % meter dias habiles?
 % Alternativa: (probar ambas) (antes habia vacation(P,D), ahora no se si hace falta)
 % N {day_assign(P,D,T) : person(P)} N :- task(T, N), day(D).
 % :- day_assign(P,D,v), day_assign(P,D,_).
@@ -68,12 +74,12 @@ veteran_in_guard(D) :- day_assign_guard(P,D,_), level(P,L), L>=3.
 }.
 
 % Predicate for MensualP_G10 - rehacer con weekend(D,D)
-people_in_task_in_weekend(N,T,D) :- task(T, _), weekend(D), N = #count{P: day_assign(P,D,T), 
-day_assign(P,D+1,T), day_assign(P,D+2,T)}.
+people_in_task_in_weekend(N,T,D) :- task(T, _), weekend(D), N = #count{P: weekend_day(D,D'),
+ day_assign(P,D',T)}.
 
-% MensualP_G10, MensualP_G11 (separar?)  (sin esto entre 0.014 y 0.022) (con entre 0.21 a 0.31)
+% MensualP_G10, MensualP_G11 (separar?)  (sube mucho tiempo, revisar resultado)
 #minimize { V*P,D,T : weekend(D), task(T, _),
-    people_in_task_in_weekend(P,D+1,T),
+    people_in_task_in_weekend(P,T,D),
     cost(g10, V)
 }.
 
@@ -103,7 +109,6 @@ day_assign(P,D+1,T), day_assign(P,D+2,T)}.
 % cambiar vacaciones por vacation
 
 % Los R1 nuevos lo contamos como inputs
-% R1 nuevos pueden hacer de comodin?
 % En los dias habiles tambien tiene que haber 2g, 1e y 1i?
 % comodin cuenta como tarea a minimizar en los weekends - no cuenta
 
