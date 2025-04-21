@@ -8,32 +8,33 @@ task(c,1).
 guard(g;gp).
 
 % Comentar estas lineas si se ejecuta con input.lp
-day(1..31).
-weekend(-1;6;13;20;27). % Marcado por los viernes
-weekend_day(-1,-1). weekend_day(-1,0). weekend_day(-1,1).
-weekend_day(6,6). weekend_day(6,7). weekend_day(6,8).
-weekend_day(13,13). weekend_day(13,14). weekend_day(13,15).
-weekend_day(20,20). weekend_day(20,21). weekend_day(20,22).
-weekend_day(27,27). weekend_day(27,28). weekend_day(27,29).
+%day(1..31).
+%weekend(-1;6;13;20;27). % Marcado por los viernes
+%weekend_day(-1,-1). weekend_day(-1,0). weekend_day(-1,1).
+%weekend_day(6,6). weekend_day(6,7). weekend_day(6,8).
+%weekend_day(13,13). weekend_day(13,14). weekend_day(13,15).
+%weekend_day(20,20). weekend_day(20,21). weekend_day(20,22).
+%weekend_day(27,27). weekend_day(27,28). weekend_day(27,29).
 
-holiday(7;28).
-person(1..15).
-vacation(1,5). % Person P on vacation
-vacation(13,29).
-vacation(13,30).
-level(P,(P-1)/3 + 1) :- person(P).
-day_assign(1,4,gp).
-day_assign(1,13,gp). % MensualR_G04
-day_assign(1,24,gp).
-day_assign(2,7,gp).
-day_assign(2,11,gp).
-day_assign(2,22,gp).
+%holiday(7;28).
+%person(1..15).
+%vacation(1,5). % Person P on vacation
+%vacation(13,29).
+%vacation(13,30).
+%level(P,(P-1)/3 + 1) :- person(P).
+%day_assign(1,4,gp).
+%day_assign(1,13,gp). % MensualR_G04
+%day_assign(1,24,gp).
+%day_assign(2,7,gp).
+%day_assign(2,11,gp).
+%day_assign(2,22,gp).
 
-cost(g07, 10).
-cost(g09, 50).
-cost(g10, 5).
-cost(g12, 35).
-cost(l04, 20).
+%cost(g07, 10).
+%cost(g09, 50).
+%cost(g10, 5).
+%cost(g12, 35).
+%cost(l04, 20).
+
 
 % MensualR_C01, MensualR_G01,
 N {day_assign(P,D,T) : person(P), not vacation(P,D)} N :- task(T, N), day(D).  % meter dias habiles?
