@@ -28,6 +28,7 @@ public class MonthlyDataConversor {
             clingoParams.append(String.format("holiday(%d). ", festivo));
         }
 
+        boolean vacation = false;
         for (MonthlyAssignationsDto monthlyAssignationsDto : monthlyDataDto.getMonthlyAssignationsDtos()) {
             String personName = monthlyAssignationsDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT);
             clingoParams.append(String.format("person(%s). ", personName));
@@ -39,7 +40,6 @@ public class MonthlyDataConversor {
 
             if (assignations != null) {
                 int i = 0;
-                boolean vacation = false;
                 for (String assignation : assignations) {
                     i++;
                     if (assignation != null) {
@@ -50,10 +50,10 @@ public class MonthlyDataConversor {
                             clingoParams.append(String.format("day_assign(%s,%d,%s). ", personName, i, assignation.toLowerCase()));
                     }
                 }
-                if (!vacation) {
-                    clingoParams.append("vacation(dummyName,0). ");
-                }
             }
+        }
+        if (!vacation) {
+            clingoParams.append("vacation(dummyName,0). ");
         }
         for (Priority priority: costs) {
             clingoParams.append(String.format("cost(%s,%d). ", priority.getId(), priority.getCost()));
