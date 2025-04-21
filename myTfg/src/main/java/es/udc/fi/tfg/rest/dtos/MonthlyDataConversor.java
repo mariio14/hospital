@@ -39,14 +39,19 @@ public class MonthlyDataConversor {
 
             if (assignations != null) {
                 int i = 0;
+                boolean vacation = false;
                 for (String assignation : assignations) {
                     i++;
                     if (assignation != null) {
-                        if (assignation.equals("v") || assignation.equals("V"))
-                            clingoParams.append(String.format("vacation(%s,%d). ", personName,i));
-                        else
+                        if (assignation.equals("v") || assignation.equals("V")) {
+                            clingoParams.append(String.format("vacation(%s,%d). ", personName, i));
+                            vacation = true;
+                        } else
                             clingoParams.append(String.format("day_assign(%s,%d,%s). ", personName, i, assignation.toLowerCase()));
                     }
+                }
+                if (!vacation) {
+                    clingoParams.append("vacation(dummyName,0). ");
                 }
             }
         }
