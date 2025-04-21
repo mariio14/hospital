@@ -19,6 +19,9 @@ public class MonthlyDataConversor {
 
         for (Integer weekend : monthlyDataDto.getWeekends()) {
             clingoParams.append(String.format("weekend(%d). ", weekend));
+            clingoParams.append(String.format("weekend_day(%d,%d). ", weekend, weekend));
+            clingoParams.append(String.format("weekend_day(%d,%d). ", weekend, weekend+1));
+            clingoParams.append(String.format("weekend_day(%d,%d). ", weekend, weekend+2));
         }
 
         for (Integer festivo : monthlyDataDto.getFestivos()) {
@@ -39,7 +42,10 @@ public class MonthlyDataConversor {
                 for (String assignation : assignations) {
                     i++;
                     if (assignation != null) {
-                        clingoParams.append(String.format("day_assign(%s,%d,%s). ", personName, i, assignation.toLowerCase()));
+                        if (assignation.equals("v") || assignation.equals("V"))
+                            clingoParams.append(String.format("vacation(%s,%d). ", personName,i));
+                        else
+                            clingoParams.append(String.format("day_assign(%s,%d,%s). ", personName, i, assignation.toLowerCase()));
                     }
                 }
             }
@@ -50,6 +56,9 @@ public class MonthlyDataConversor {
 
         for (int i= monthlyDataDto.getFirstFriday(); i< monthlyDataDto.getNumberOfDays(); i+=7) {
             clingoParams.append(String.format("weekend(%d). ", i));
+            clingoParams.append(String.format("weekend_day(%d,%d). ", i, i));
+            clingoParams.append(String.format("weekend_day(%d,%d). ", i, i+1));
+            clingoParams.append(String.format("weekend_day(%d,%d). ", i, i+2));
         }
 
         if (Objects.equals(monthlyDataDto.getFirstDay(), "S")) {
