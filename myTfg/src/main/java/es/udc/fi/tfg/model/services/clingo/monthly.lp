@@ -5,6 +5,10 @@ task(e,1).
 task(i,1).
 task(c,1).
 
+task_real(g,2).
+task_real(e,1).
+task_real(i,1).
+
 guard(g;gp).
 
 % Comentar estas lineas si se ejecuta con input.lp
@@ -31,7 +35,7 @@ guard(g;gp).
 
 cost(g07, 10).
 cost(g09, 50).
-cost(g10, 5).
+cost(g10, 70).
 cost(g12, 35).
 cost(l04, 20).
 
@@ -75,12 +79,16 @@ veteran_in_guard(D) :- day_assign_guard(P,D,_), level(P,L), L>=3.
 }.
 
 % Predicate for MensualP_G10 - rehacer con weekend(D,D)
-people_in_task_in_weekend(N,T,D) :- task(T, _), weekend(D), N = #count{P: weekend_day(D,D'),
- day_assign(P,D',T)}.
+people_in_task_in_weekend(N,T,D) :- task_real(T, _), weekend(D), 
+    N = #count{P: weekend_day(D,D'),day_assign(P,D',T)}.
 
-% MensualP_G10, MensualP_G11 (separar?)  (sube mucho tiempo, revisar resultado)
-#minimize { V*P,D,T : weekend(D), task(T, _),
-    people_in_task_in_weekend(P,T,D),
+% MensualP_G10, MensualP_G11 (separar? seria solo hacer un coste mayor para las guardias)
+#minimize { V*(P-4),D,T : weekend(D), task_real(g, _),
+    people_in_task_in_weekend(P,T,D), P>4,
+    cost(g10, V)
+}.
+#minimize { V*(P-2),D,T : weekend(D), task_real(T, _), T!=g,
+    people_in_task_in_weekend(P,T,D), P>2,
     cost(g10, V)
 }.
 
