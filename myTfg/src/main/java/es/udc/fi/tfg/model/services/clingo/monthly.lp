@@ -36,6 +36,7 @@ guard(g;gp).
 cost(g07, 10).
 cost(g09, 50).
 cost(g10, 70).
+cost(g11, 40).
 cost(g12, 35).
 cost(l04, 20).
 
@@ -82,27 +83,27 @@ veteran_in_guard(D) :- day_assign_guard(P,D,_), level(P,L), L>=3.
 people_in_task_in_weekend(N,T,D) :- task_real(T, _), weekend(D), 
     N = #count{P: weekend_day(D,D'),day_assign(P,D',T)}.
 
-% MensualP_G10, MensualP_G11 (separar? seria solo hacer un coste mayor para las guardias)
+% MensualP_G10(0.075s)
 #minimize { V*(P-4),D,T : weekend(D), task_real(g, _),
     people_in_task_in_weekend(P,T,D), P>4,
     cost(g10, V)
 }.
+% MensualP_G11 (0.075s)
 #minimize { V*(P-1),D,T : weekend(D), task_real(T, _), T!=g,
     people_in_task_in_weekend(P,T,D), P>1,
-    cost(g10, V)
+    cost(g11, V)
 }.
 
-% Predicates for MensualP_G12 (algo esta mal, probar)
-%person_weekend_presential(P,D) :- person(P), weekend(D), day_assign_guard(P,D,_).
-%person_weekend_presential(P,D) :- person(P), weekend(D), day_assign_guard(P,D+1,_).
-%person_weekend_presential(P,D) :- person(P), weekend(D), day_assign_guard(P,D+2,_).
-%presential_weekends(P,N) :- person(P), N = #count{D: person_weekend_presential(P,D)}.
+% Predicates for MensualP_G12 (de 0.075 a 0.085)
+person_working_in_weekend(P,D) :- person(P), weekend_day(D,D'),
+    day_assign(P,D,T), task_real(T,_).
+working_weekends(P,N) :- person(P), N = #count{D: person_working_in_weekend(P,D)}.
 % MensualP_G12
-%#minimize { V*(N-2),P :
-%    person(P),
-%    presential_weekends(P,N), N>2,
-%    cost(g12,V)
-%}.
+#minimize { V*(N-2),P :
+    person(P),
+    working_weekends(P,N), N>2,
+    cost(g12,V)
+}.
 
 % MensualP_L04 (de 0.045 a 0.051)
 #minimize { V,P,D : day_assign(P,D,i),
@@ -112,13 +113,15 @@ people_in_task_in_weekend(N,T,D) :- task_real(T, _), weekend(D),
 
 #show day_assign/3.
 
-
 % comentarios explicando predicados
-% cambiar vacaciones por vacation
-
-% Los R1 nuevos lo contamos como inputs
-% En los dias habiles tambien tiene que haber 2g, 1e y 1i?
-% comodin cuenta como tarea a minimizar en los weekends - no cuenta
 
 
-% G03, G12^, G13, L03, L05^
+% en el pdf de restricciones original pone que no se puede estar en localizado y presencial
+%       a la vez pero en la imagen pasa
+% pdf: guardia no se puede antes de vacaciones, pero pasa en la imagen tmb
+% penalizar por separado +1 finde presencial y +2 findes de trabajo?
+% pdf: r5 no hacen guardias juntos, lo metemos como restriccion?
+
+% g03 cuando se penaliza? cuando alguien tenga numGuardias!=5?
+
+% G03, G12 (probar), G13, L03, L05
