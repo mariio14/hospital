@@ -53,7 +53,7 @@ public class MonthlyDataConversor {
             }
         }
         if (!vacation) {
-            clingoParams.append("vacation(dummyName,0). ");
+            clingoParams.append("vacation(dummyname,0). ");
         }
         for (Priority priority: costs) {
             clingoParams.append(String.format("cost(%s,%d). ", priority.getId(), priority.getCost()));
