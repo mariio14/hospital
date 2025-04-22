@@ -20,23 +20,22 @@ with ctl.solve(yield_=True) as handle:
     for model in handle:
         optimal_model = model
 
-assignments = {}
+    assignments = {}
 
-if optimal_model:
-    for atom in optimal_model.symbols(shown=True):
-        if atom.name == "day_assign" and len(atom.arguments) == 3:
-            person = str(atom.arguments[0])
-            day = atom.arguments[1].number
-            activity = str(atom.arguments[2])
+    if optimal_model:
+        for atom in optimal_model.symbols(shown=True):
+            if atom.name == "day_assign" and len(atom.arguments) == 3:
+                person = str(atom.arguments[0])
+                day = atom.arguments[1].number
+                activity = str(atom.arguments[2])
 
-            if day in (0, -1):
-                continue
+                if day in (0, -1):
+                    continue
 
-            if person not in assignments:
-                assignments[person] = {}
-            assignments[person][day] = activity
+                if person not in assignments:
+                    assignments[person] = {}
+                assignments[person][day] = activity
 
-# Ordenar para salida bonita
 ordered_assignments = OrderedDict(
     sorted(
         {person: OrderedDict(sorted(days.items())) for person, days in assignments.items()}.items()

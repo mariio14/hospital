@@ -29,11 +29,11 @@ guard(g;gp).
 %day_assign(2,11,gp).
 %day_assign(2,22,gp).
 
-%cost(g07, 10).
-%cost(g09, 50).
-%cost(g10, 5).
-%cost(g12, 35).
-%cost(l04, 20).
+cost(g07, 10).
+cost(g09, 50).
+cost(g10, 5).
+cost(g12, 35).
+cost(l04, 20).
 
 
 % MensualR_C01, MensualR_G01,
@@ -105,7 +105,6 @@ people_in_task_in_weekend(N,T,D) :- task(T, _), weekend(D), N = #count{P: weeken
 #show day_assign/3.
 
 
-% por cada finde y cada tarea minimizar el n de personas asignadas
 % comentarios explicando predicados
 % cambiar vacaciones por vacation
 
