@@ -87,8 +87,8 @@ people_in_task_in_weekend(N,T,D) :- task_real(T, _), weekend(D),
     people_in_task_in_weekend(P,T,D), P>4,
     cost(g10, V)
 }.
-#minimize { V*(P-2),D,T : weekend(D), task_real(T, _), T!=g,
-    people_in_task_in_weekend(P,T,D), P>2,
+#minimize { V*(P-1),D,T : weekend(D), task_real(T, _), T!=g,
+    people_in_task_in_weekend(P,T,D), P>1,
     cost(g10, V)
 }.
 
