@@ -121,4 +121,4 @@ people_in_task_in_weekend(N,T,D) :- task_real(T, _), weekend(D),
 % comodin cuenta como tarea a minimizar en los weekends - no cuenta
 
 
-% G03, G12, G13, L03, L05
+% G03, G12^, G13, L03, L05^
