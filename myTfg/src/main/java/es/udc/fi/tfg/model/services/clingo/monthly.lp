@@ -1,13 +1,8 @@
 % Planificacion mensual
 
-task(g,2).
-task(e,1).
-task(i,1).
-task(c,1).
-
-task_real(g,2).
-task_real(e,1).
-task_real(i,1).
+% task(T,N) -> task T has N people assigned to it every day
+task(g,2). task(e,1). task(i,1). task(c,1).
+task_real(g,2). task_real(e,1). task_real(i,1).
 
 guard(g;gp).
 
@@ -41,13 +36,13 @@ cost(g12, 35).
 cost(l04, 20).
 
 
-% MensualR_C01, MensualR_G01,
-N {day_assign(P,D,T) : person(P), not vacation(P,D)} N :- task(T, N), day(D).  % meter dias habiles?
-% Alternativa: (probar ambas) (antes habia vacation(P,D), ahora no se si hace falta)
+% MensualR_C01, MensualR_G01
+N {day_assign(P,D,T) : person(P), not vacation(P,D)} N :- task(T, N), day(D).
+% Alternativa: (probar ambas)
 % N {day_assign(P,D,T) : person(P)} N :- task(T, N), day(D).
-% :- day_assign(P,D,v), day_assign(P,D,_).
+% :- vacation(P,D), day_assign(P,D,_).
 
-% MensualR_L02   meter en choice rule?
+% MensualR_L02
 :- level(P,1), day_assign(P,_,e).
 :- level(P,2), day_assign(P,_,e).
 
@@ -55,11 +50,12 @@ N {day_assign(P,D,T) : person(P), not vacation(P,D)} N :- task(T, N), day(D).  %
 :- day_assign(P,D,T), day_assign(P,D,T'), T!=T'.
 
 % MensualR_G05
+%   day_assign_guard(P,D,G) -> person P is assigned to guard G on day D
 day_assign_guard(P,D,G) :- guard(G), day_assign(P,D,G).
 :- person(P), #count{D:day_assign_guard(P,D,_)}<4.
 :- person(P), #count{D:day_assign_guard(P,D,_)}>6.
 
-% MensualR_G06 (revisar)
+% MensualR_G06
 :- day_assign_guard(P,D,_), day_assign_guard(P,D+1,_).
 
 % MensualP_G07 (tarda muy poco)
@@ -71,7 +67,7 @@ day_assign_guard(P,D,G) :- guard(G), day_assign(P,D,G).
 % MensualR_G08
 :- level(P,1), level(P',1), day_assign(P,D,g), day_assign(P',D,g), P!=P'.
 
-% Predicate for MensualP_G09
+% Predicate for MensualP_G09   veteran_in_guard(D) -> there is a veteran in guard at day D
 veteran_in_guard(D) :- day_assign_guard(P,D,_), level(P,L), L>=3.
 % MensualP_G09 (de 0.035 a 0.045 mas o menos)
 #minimize { V,D :
@@ -79,8 +75,8 @@ veteran_in_guard(D) :- day_assign_guard(P,D,_), level(P,L), L>=3.
     cost(g09,V)
 }.
 
-% Predicate for MensualP_G10 - rehacer con weekend(D,D)
-people_in_task_in_weekend(N,T,D) :- task_real(T, _), weekend(D), 
+% Predicate for MensualP_G10    people_in_task_in_weekend(N,T,D) -> there is N people assigned to task T on weekend D
+people_in_task_in_weekend(N,T,D) :- task_real(T, _), weekend(D),
     N = #count{P: weekend_day(D,D'),day_assign(P,D',T)}.
 
 % MensualP_G10(0.075s)
@@ -95,6 +91,8 @@ people_in_task_in_weekend(N,T,D) :- task_real(T, _), weekend(D),
 }.
 
 % Predicates for MensualP_G12 (de 0.075 a 0.085)
+    % person_working_in_weekend(P,D) -> person P is working on weekend D
+    % working_weekends(P,N) -> person P is working N weekends
 person_working_in_weekend(P,D) :- person(P), weekend_day(D,D'),
     day_assign(P,D,T), task_real(T,_).
 working_weekends(P,N) :- person(P), N = #count{D: person_working_in_weekend(P,D)}.
@@ -112,8 +110,6 @@ working_weekends(P,N) :- person(P), N = #count{D: person_working_in_weekend(P,D)
 }.
 
 #show day_assign/3.
-
-% comentarios explicando predicados
 
 
 % en el pdf de restricciones original pone que no se puede estar en localizado y presencial
