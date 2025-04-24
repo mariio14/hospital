@@ -15,6 +15,8 @@ public class MonthlyDataConversor {
 
         for (int i=1; i<=monthlyDataDto.getNumberOfDays(); i++) {
             clingoParams.append(String.format("day(%d). ", i));
+            clingoParams.append(String.format("numDays(%d). ", monthlyDataDto.getNumberOfDays()));
+            clingoParams.append(String.format("numLocations(%d). ", monthlyDataDto.getNumberOfDays()*2));
         }
 
         for (Integer weekend : monthlyDataDto.getWeekends()) {

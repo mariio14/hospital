@@ -28,11 +28,13 @@ guard(g;gp).
 %day_assign(2,11,gp).
 %day_assign(2,22,gp).
 
+cost(g03, 2).
 cost(g07, 10).
 cost(g09, 50).
 cost(g10, 70).
 cost(g11, 40).
 cost(g12, 35).
+cost(l03, 1).
 cost(l04, 20).
 
 
@@ -109,15 +111,49 @@ working_weekends(P,N) :- person(P), N = #count{D: person_working_in_weekend(P,D)
     cost(l04, V)
 }.
 
-#show day_assign/3.
+% MensualP_G3 (de 0.080 a 0.105)
+numGuardias(P,N) :- person(P), N=#count{D: day_assign_guard(P,D,_)}.
 
+#minimize { V*(N-5),P :
+    numGuardias(P,N),
+    N>5,
+    cost(g03,V)
+}.
+
+%#minimize { V*(5-N),P :
+%    numGuardias(P,N),
+%    N<5,
+%    cost(g03,V)
+%}.
+
+
+% MensualP_L3 (de 0.1 a 1.625 con 30 dias; con 31 dias se va de tiempo)
+day_assign_location(P,D,e) :- day_assign(P,D,e).
+day_assign_location(P,D,i) :- day_assign(P,D,i).
+numLocation_per_person(P,N) :- person(P), N = #count{D : day_assign_location(P,D,_)}.
+
+%#minimize { V*(N'-N*15),P :
+%    numLocation_per_person(P,N),
+%    numLocations(N'),
+%    N*15<N',
+%    cost(l03,V)
+%}.
+
+%#minimize { V*(N*15-N),P :
+%    numLocation_per_person(P,N),
+%    numLocations(N'),
+%    N*15>N',
+%    cost(l03, V)
+%}.
+
+#show numLocation_per_person/2.
+
+% g03 compensa el penalizar por 4 guardias?
 
 % en el pdf de restricciones original pone que no se puede estar en localizado y presencial
 %       a la vez pero en la imagen pasa
 % pdf: guardia no se puede antes de vacaciones, pero pasa en la imagen tmb
-% penalizar por separado +1 finde presencial y +2 findes de trabajo?
+% g12: penalizar por separado +1 finde presencial y +2 findes de trabajo?
 % pdf: r5 no hacen guardias juntos, lo metemos como restriccion?
 
-% g03 cuando se penaliza? cuando alguien tenga numGuardias!=5?
-
-% G03, G12 (probar), G13, L03, L05
+% G13, L03, L05

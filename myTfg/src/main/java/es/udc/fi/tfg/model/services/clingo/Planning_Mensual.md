@@ -21,7 +21,7 @@ Inputs y otras cosas:
 
 - *MensualR_G1*: Cada día hábil (L-V) del mes debe de estar exactamente 2* residentes asignados a **G**. (nº residentes = 2, podría ser una preferencia)
 - *MensualR_G2*: No puede ser que el mismo residente esté asignado a dos tareas el mismo día.
-- *MensualR_G3*: Repartir equitativamente las guardias del mes (intentar aproximarse a 5 cada uno)
+- *MensualP_G3*: Repartir equitativamente las guardias del mes (intentar aproximarse a 5 cada uno)
 - *MensualR_G4*: R1 tienen 3 GPs
 - *MensualR_G5*: Mismo residente GPs + G < 6
 - *MensualR_G6*: No se puede estar de guardia (G/GP) dos días consecutivos
