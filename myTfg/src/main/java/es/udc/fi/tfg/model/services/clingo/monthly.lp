@@ -37,7 +37,7 @@ cost(l04, 20).
 
 
 % MensualR_C01, MensualR_G01
-N {day_assign(P,D,T) : person(P), not vacation(P,D)} N :- task(T, N), day(D).
+N {day_assign(P,D,T) : person(P), not vacation(P,D), not day_not_assign(P,D,T)} N :- task(T, N), day(D).
 % Alternativa: (probar ambas)
 % N {day_assign(P,D,T) : person(P)} N :- task(T, N), day(D).
 % :- vacation(P,D), day_assign(P,D,_).

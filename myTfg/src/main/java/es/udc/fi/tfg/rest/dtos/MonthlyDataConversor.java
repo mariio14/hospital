@@ -51,6 +51,19 @@ public class MonthlyDataConversor {
                     }
                 }
             }
+            List<List<String>> notValidAssignations = monthlyAssignationsDto.getNotValidAssignations();
+
+            if (notValidAssignations != null) {
+                int i = 0;
+                for (List<String> notValidAssignationList : notValidAssignations) {
+                    i++;
+                    if (notValidAssignationList != null) {
+                        for (String notValidAssignation : notValidAssignationList) {
+                            clingoParams.append(String.format("day_not_assign(%s,%d,%s). ", personName, i, notValidAssignation.toLowerCase()));
+                        }
+                    }
+                }
+            }
         }
         if (!vacation) {
             clingoParams.append("vacation(dummyname,0). ");

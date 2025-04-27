@@ -25,6 +25,6 @@ public class MonthlyPlanningConversor {
         List<String> list = new ArrayList<>(Collections.nCopies(days, null));
         asignations.forEach((key, value) -> list.set(key - 1, value.toUpperCase()));
 
-        return new MonthlyPlanningDto(name, list);
+        return new MonthlyPlanningDto(name, list, days);
     }
 }

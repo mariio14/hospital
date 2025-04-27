@@ -1,7 +1,7 @@
 package es.udc.fi.tfg.rest.dtos;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class MonthlyPlanningDto {
 
@@ -9,12 +9,19 @@ public class MonthlyPlanningDto {
 
     private List<String> assignations;
 
+    private List<List<String>> notValidAssignations;
+
     public MonthlyPlanningDto() {
     }
 
-    public MonthlyPlanningDto(String name, List<String> assignations) {
+    public MonthlyPlanningDto(String name, List<String> assignations, int days) {
         this.assignations = assignations;
         this.name = name;
+        this.notValidAssignations = new ArrayList<>();
+
+        for (int i = 0; i < days; i++) {
+            this.notValidAssignations.add(new ArrayList<>());
+        }
     }
 
     public String getName() {
@@ -31,5 +38,13 @@ public class MonthlyPlanningDto {
 
     public void setAssignations(List<String> assignations) {
         this.assignations = assignations;
+    }
+
+    public List<List<String>> getNotValidAssignations() {
+        return notValidAssignations;
+    }
+
+    public void setNotValidAssignations(List<List<String>> notValidAssignations) {
+        this.notValidAssignations = notValidAssignations;
     }
 }

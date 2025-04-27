@@ -24,6 +24,8 @@ const MonthlyPlanning = () => {
   const getDaysInMonth = (month, year) => new Date(year, month, 0).getDate();
   const [daysInMonth, setDaysInMonth] = useState(getDaysInMonth(month, year));
 
+  const [rightClickData, setRightClickData] = useState(null);
+
   const getMonthName = (month) => {
     const months = [
       "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -37,7 +39,8 @@ const MonthlyPlanning = () => {
     monthlyPlanningDtos: staffList.map(person => ({
       name: person.name,
       level: `R${person.level}`,
-      assignations: Array(daysInMonth).fill(null)
+      assignations: Array(daysInMonth).fill(null),
+      notValidAssignations: Array(daysInMonth).fill([])
     }))
   };
 
@@ -57,7 +60,8 @@ const MonthlyPlanning = () => {
       const emptyPlanning = staffList.map(person => ({
           name: person.name,
           level: `R${person.level}`,
-          assignations: Array(daysInMonth).fill(null)
+          assignations: Array(daysInMonth).fill(null),
+          notValidAssignations: Array(daysInMonth).fill([])
       }));
     }, [daysInMonth]);
 
@@ -82,10 +86,9 @@ const MonthlyPlanning = () => {
 
   const activities = Object.keys(colorMap);
 
+  const activities_real = activities.filter(activity => activity !== "GP");
+
   const handleSelectChange = (personName, dayIndex, value) => {
-    console.log(personName)
-    console.log(dayIndex)
-    console.log(value)
     setPlanningData((prevPlanning) => ({
       ...month,
       monthlyPlanningDtos: prevPlanning.monthlyPlanningDtos.map((person) =>
@@ -101,11 +104,26 @@ const MonthlyPlanning = () => {
     }));
   };
 
+  const toggleNotValidActivity = (personName, dayIndex, activity) => {
+    setPlanningData(prev => ({
+      ...prev,
+      monthlyPlanningDtos: prev.monthlyPlanningDtos.map(person => {
+        if (person.name !== personName) return person;
+        const currentProhibited = person.notValidAssignations[dayIndex] || [];
+        const updatedProhibited = currentProhibited.includes(activity)
+          ? currentProhibited.filter(act => act !== activity)
+          : [...currentProhibited, activity];
+        const newNotValidAssignations = [...person.notValidAssignations];
+        newNotValidAssignations[dayIndex] = updatedProhibited;
+        return { ...person, notValidAssignations: newNotValidAssignations };
+      })
+    }));
+  };
+
   const toggleSection = () => {
     setIsExpanded(!isExpanded);
   };
 
-  // Función para "Generar" la planificación (simulando una llamada al backend)
   const handleGeneratePlanning = () => {
     setBackendErrors(null);
     setIsLoading(true);
@@ -114,6 +132,7 @@ const MonthlyPlanning = () => {
     while (new Date(year, month - 1, firstFriday).getDay() !== 5) {
         firstFriday++;
     }
+    console.log(planningData);
 
     const convertedPlanningData = {
         monthlyAssignationsDtos: planningData.monthlyPlanningDtos.map(person => {
@@ -122,6 +141,7 @@ const MonthlyPlanning = () => {
             return {
                 ...person,
                 assignations: Object.values(person.assignations),
+                notValidAssignations: Object.values(person.notValidAssignations),
                 level: staffMember ? staffMember.level : null
             };
         }),
@@ -208,6 +228,11 @@ const MonthlyPlanning = () => {
 
   const handleYearChange = (event) => {
     setYear(parseInt(event.target.value));
+  };
+
+  const handleRightClick = (e, personName, dayIndex) => {
+    e.preventDefault();
+    setRightClickData({ x: e.pageX, y: e.pageY, personName, dayIndex });
   };
 
   return (
@@ -362,8 +387,37 @@ const MonthlyPlanning = () => {
                                 textAlign: "center",
                                 fontWeight: "bold",
                               }}
+                              onContextMenu={(e) => handleRightClick(e, person.name, Number(dayIndex))}
                               title={activity || "Sin asignación"}
                             >
+                              {rightClickData && (
+                                <div
+                                  style={{
+                                    position: "absolute",
+                                    top: rightClickData.y,
+                                    left: rightClickData.x,
+                                    backgroundColor: "#fff",
+                                    border: "1px solid #ccc",
+                                    borderRadius: "5px",
+                                    padding: "10px",
+                                    zIndex: 1000,
+                                  }}
+                                >
+                                  {activities_real.map((activity) => (
+                                    <div key={activity}>
+                                      <input
+                                        type="checkbox"
+                                        checked={planningData.monthlyPlanningDtos
+                                          .find(p => p.name === rightClickData.personName)
+                                          .notValidAssignations[rightClickData.dayIndex]?.includes(activity)}
+                                        onChange={() => toggleNotValidActivity(rightClickData.personName, rightClickData.dayIndex, activity)}
+                                      />
+                                      <label style={{ marginLeft: "5px" }}>{activity}</label>
+                                    </div>
+                                  ))}
+                                  <button onClick={() => setRightClickData(null)}>Cerrar</button>
+                                </div>
+                              )}
                               <select
                                 value={activity || ""}
                                 onChange={(e) =>
