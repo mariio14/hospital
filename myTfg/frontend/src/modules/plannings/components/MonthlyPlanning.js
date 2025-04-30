@@ -193,6 +193,61 @@ const MonthlyPlanning = () => {
       }
     };
 
+    const isActivityFullyProhibitedInMonth = (personName, activity) => {
+      const person = planningData.monthlyPlanningDtos.find(p => p.name === personName);
+      if (!person) return false;
+      return person.notValidAssignations.every(dayList => dayList.includes(activity));
+    };
+
+    const isAllActivitiesProhibitedInMonth = (personName) => {
+      const person = planningData.monthlyPlanningDtos.find(p => p.name === personName);
+      if (!person) return false;
+      return person.notValidAssignations.every(
+        (dayList) =>
+          activities_real.every((act) => dayList.includes(act))
+      );
+    };
+
+    const toggleActivityForFullMonth = (personName, activity) => {
+      const person = planningData.monthlyPlanningDtos.find(p => p.name === personName);
+      if (!person) return;
+
+      const currentlyProhibited = isActivityFullyProhibitedInMonth(personName, activity);
+
+      setPlanningData(prev => ({
+        ...prev,
+        monthlyPlanningDtos: prev.monthlyPlanningDtos.map(p => {
+          if (p.name !== personName) return p;
+          const newNotValidAssignations = p.notValidAssignations.map(dayList => {
+            const filtered = currentlyProhibited
+              ? dayList.filter(a => a !== activity) // desmarcar
+              : [...new Set([...dayList, activity])]; // marcar
+            return filtered;
+          });
+          return { ...p, notValidAssignations: newNotValidAssignations };
+        })
+      }));
+    };
+
+    const toggleProhibitAllMonth = (personName) => {
+      const currentlyAllProhibited = isAllActivitiesProhibitedInMonth(personName);
+
+      setPlanningData(prev => ({
+        ...prev,
+        monthlyPlanningDtos: prev.monthlyPlanningDtos.map(person => {
+          if (person.name !== personName) return person;
+
+          const newNotValidAssignations = person.notValidAssignations.map(() =>
+            currentlyAllProhibited ? [] : [...activities_real]
+          );
+
+          return {
+            ...person,
+            notValidAssignations: newNotValidAssignations
+          };
+        })
+      }));
+    };
 
   const toggleSection = () => {
     setIsExpanded(!isExpanded);
@@ -454,6 +509,10 @@ const MonthlyPlanning = () => {
                     {planningData.monthlyPlanningDtos.map((person) => (
                       <tr key={person.name}>
                         <td
+                          onContextMenu={(e) => {
+                            e.preventDefault();
+                            setRightClickData({ x: e.pageX, y: e.pageY, personName: person.name, isRow: true });
+                          }}
                           style={{
                             backgroundColor: "#E0E0E0",
                             color: "#000",
@@ -498,22 +557,54 @@ const MonthlyPlanning = () => {
                                     <div key={activity}>
                                       <input
                                         type="checkbox"
-                                        checked={planningData.monthlyPlanningDtos
-                                          .find(p => p.name === rightClickData.personName)
-                                          .notValidAssignations[rightClickData.dayIndex]?.includes(activity)}
-                                        onChange={() => toggleNotValidActivity(rightClickData.personName, rightClickData.dayIndex, activity)}
+                                        checked={
+                                          rightClickData.isRow
+                                            ? isActivityFullyProhibitedInMonth(rightClickData.personName, activity)
+                                            : planningData.monthlyPlanningDtos
+                                                .find(p => p.name === rightClickData.personName)
+                                                ?.notValidAssignations[rightClickData.dayIndex]
+                                                ?.includes(activity)
+                                        }
+                                        onChange={() => {
+                                          if (rightClickData.isRow) {
+                                            toggleActivityForFullMonth(rightClickData.personName, activity);
+                                          } else {
+                                            toggleNotValidActivity(
+                                              rightClickData.personName,
+                                              rightClickData.dayIndex,
+                                              activity
+                                            );
+                                          }
+                                        }}
                                       />
                                       <label style={{ marginLeft: "5px" }}>{activity}</label>
                                     </div>
                                   ))}
-                                  <div>
-                                    <input
-                                      type="checkbox"
-                                      checked={isAllProhibited(rightClickData.personName, rightClickData.dayIndex)}
-                                      onChange={() => toggleProhibitAll(rightClickData.personName, rightClickData.dayIndex)}
-                                    />
-                                    <label style={{ marginLeft: "5px" }}>Prohibir todas</label>
-                                  </div>
+                                    <div>
+                                      {rightClickData.isRow ? (
+                                        <>
+                                          <input
+                                            type="checkbox"
+                                            checked={isAllActivitiesProhibitedInMonth(rightClickData.personName)}
+                                            onChange={() =>
+                                              toggleProhibitAllMonth(rightClickData.personName)
+                                            }
+                                          />
+                                          <label style={{ marginLeft: "5px" }}>Prohibir todas</label>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <input
+                                            type="checkbox"
+                                            checked={isAllProhibited(rightClickData.personName, rightClickData.dayIndex)}
+                                            onChange={() =>
+                                              toggleProhibitAll(rightClickData.personName, rightClickData.dayIndex)
+                                            }
+                                          />
+                                          <label style={{ marginLeft: "5px" }}>Prohibir todas</label>
+                                        </>
+                                      )}
+                                    </div>
                                   <button onClick={() => setRightClickData(null)}>Cerrar</button>
                                 </div>
                               )}
