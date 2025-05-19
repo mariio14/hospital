@@ -10,13 +10,16 @@ public class MonthlyAssignationsDto {
 
     private List<String> assignations;
 
+    private List<List<String>> notValidAssignations;
+
     public MonthlyAssignationsDto() {
     }
 
-    public MonthlyAssignationsDto(String name, String level, List<String> assignations) {
+    public MonthlyAssignationsDto(String name, String level, List<String> assignations, List<List<String>> notValidAssignations) {
         this.name = name;
         this.level = level;
         this.assignations = assignations;
+        this.notValidAssignations = notValidAssignations;
     }
 
     public String getName() {
@@ -41,5 +44,13 @@ public class MonthlyAssignationsDto {
 
     public void setAssignations(List<String> assignations) {
         this.assignations = assignations;
+    }
+
+    public List<List<String>> getNotValidAssignations() {
+        return notValidAssignations;
+    }
+
+    public void setNotValidAssignations(List<List<String>> notValidAssignations) {
+        this.notValidAssignations = notValidAssignations;
     }
 }

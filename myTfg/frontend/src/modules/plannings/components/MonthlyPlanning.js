@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -24,6 +24,9 @@ const MonthlyPlanning = () => {
   const getDaysInMonth = (month, year) => new Date(year, month, 0).getDate();
   const [daysInMonth, setDaysInMonth] = useState(getDaysInMonth(month, year));
 
+  const [rightClickData, setRightClickData] = useState(null);
+  const prohibitedMenuRef = useRef(null);
+
   const getMonthName = (month) => {
     const months = [
       "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -37,7 +40,8 @@ const MonthlyPlanning = () => {
     monthlyPlanningDtos: staffList.map(person => ({
       name: person.name,
       level: `R${person.level}`,
-      assignations: Array(daysInMonth).fill(null)
+      assignations: Array(daysInMonth).fill(null),
+      notValidAssignations: Array(daysInMonth).fill([])
     }))
   };
 
@@ -57,7 +61,8 @@ const MonthlyPlanning = () => {
       const emptyPlanning = staffList.map(person => ({
           name: person.name,
           level: `R${person.level}`,
-          assignations: Array(daysInMonth).fill(null)
+          assignations: Array(daysInMonth).fill(null),
+          notValidAssignations: Array(daysInMonth).fill([])
       }));
     }, [daysInMonth]);
 
@@ -65,6 +70,20 @@ const MonthlyPlanning = () => {
       setPlanningData(monthlyPlanning ? monthlyPlanning : emptyPlanning);
       setIsLoading(false);
   }, [monthlyPlanning]);
+
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (prohibitedMenuRef.current && !prohibitedMenuRef.current.contains(event.target)) {
+          setRightClickData(null);
+        }
+      };
+
+      document.addEventListener("mousedown", handleClickOutside);
+
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, []);
 
   const getDayOfWeek = (day, month, year) => {
     const daysOfWeek = ["D", "L", "M", "X", "J", "V", "S"];
@@ -82,10 +101,9 @@ const MonthlyPlanning = () => {
 
   const activities = Object.keys(colorMap);
 
+  const activities_real = activities.filter(activity => activity !== "GP");
+
   const handleSelectChange = (personName, dayIndex, value) => {
-    console.log(personName)
-    console.log(dayIndex)
-    console.log(value)
     setPlanningData((prevPlanning) => ({
       ...month,
       monthlyPlanningDtos: prevPlanning.monthlyPlanningDtos.map((person) =>
@@ -101,11 +119,140 @@ const MonthlyPlanning = () => {
     }));
   };
 
+  const toggleNotValidActivity = (personName, dayIndex, activity) => {
+    setPlanningData(prev => ({
+      ...prev,
+      monthlyPlanningDtos: prev.monthlyPlanningDtos.map(person => {
+        if (person.name !== personName) return person;
+        const currentProhibited = person.notValidAssignations[dayIndex] || [];
+        const updatedProhibited = currentProhibited.includes(activity)
+          ? currentProhibited.filter(act => act !== activity)
+          : [...currentProhibited, activity];
+        const newNotValidAssignations = [...person.notValidAssignations];
+        newNotValidAssignations[dayIndex] = updatedProhibited;
+        return { ...person, notValidAssignations: newNotValidAssignations };
+      })
+    }));
+  };
+
+    const prohibitAllActivities = (personName, dayIndex) => {
+      setPlanningData((prev) => ({
+        ...prev,
+        monthlyPlanningDtos: prev.monthlyPlanningDtos.map((person) => {
+          if (person.name !== personName) return person;
+          const allActivities = activities.filter(activity => activity !== "GP");
+          const updatedProhibited = [...allActivities];
+          const newNotValidAssignations = [...person.notValidAssignations];
+          newNotValidAssignations[dayIndex] = updatedProhibited;
+          return { ...person, notValidAssignations: newNotValidAssignations };
+        }),
+      }));
+    };
+
+    const toggleProhibitAll = (personName, dayIndex) => {
+      const currentPerson = planningData.monthlyPlanningDtos.find(
+        (person) => person.name === personName
+      );
+
+      // Comprobamos si todas las actividades (excepto "GP") están prohibidas
+      const isAllProhibited =
+        activities.filter((activity) => activity !== "GP").every((activity) =>
+          currentPerson.notValidAssignations[dayIndex]?.includes(activity)
+        );
+
+      // Si todas las actividades están prohibidas, las desmarcamos
+      if (isAllProhibited) {
+        setPlanningData((prev) => ({
+          ...prev,
+          monthlyPlanningDtos: prev.monthlyPlanningDtos.map((person) => {
+            if (person.name !== personName) return person;
+            const newNotValidAssignations = [...person.notValidAssignations];
+            newNotValidAssignations[dayIndex] = []; // Desmarcamos todas las actividades
+            return {
+              ...person,
+              notValidAssignations: newNotValidAssignations,
+            };
+          }),
+        }));
+      } else {
+        // Si no todas las actividades están prohibidas, las marcamos como prohibidas
+        setPlanningData((prev) => ({
+          ...prev,
+          monthlyPlanningDtos: prev.monthlyPlanningDtos.map((person) => {
+            if (person.name !== personName) return person;
+            const newNotValidAssignations = [...person.notValidAssignations];
+            newNotValidAssignations[dayIndex] = activities.filter(
+              (activity) => activity !== "GP"
+            ); // Marcamos todas las actividades como prohibidas (excepto "GP")
+            return {
+              ...person,
+              notValidAssignations: newNotValidAssignations,
+            };
+          }),
+        }));
+      }
+    };
+
+    const isActivityFullyProhibitedInMonth = (personName, activity) => {
+      const person = planningData.monthlyPlanningDtos.find(p => p.name === personName);
+      if (!person) return false;
+      return person.notValidAssignations.every(dayList => dayList.includes(activity));
+    };
+
+    const isAllActivitiesProhibitedInMonth = (personName) => {
+      const person = planningData.monthlyPlanningDtos.find(p => p.name === personName);
+      if (!person) return false;
+      return person.notValidAssignations.every(
+        (dayList) =>
+          activities_real.every((act) => dayList.includes(act))
+      );
+    };
+
+    const toggleActivityForFullMonth = (personName, activity) => {
+      const person = planningData.monthlyPlanningDtos.find(p => p.name === personName);
+      if (!person) return;
+
+      const currentlyProhibited = isActivityFullyProhibitedInMonth(personName, activity);
+
+      setPlanningData(prev => ({
+        ...prev,
+        monthlyPlanningDtos: prev.monthlyPlanningDtos.map(p => {
+          if (p.name !== personName) return p;
+          const newNotValidAssignations = p.notValidAssignations.map(dayList => {
+            const filtered = currentlyProhibited
+              ? dayList.filter(a => a !== activity) // desmarcar
+              : [...new Set([...dayList, activity])]; // marcar
+            return filtered;
+          });
+          return { ...p, notValidAssignations: newNotValidAssignations };
+        })
+      }));
+    };
+
+    const toggleProhibitAllMonth = (personName) => {
+      const currentlyAllProhibited = isAllActivitiesProhibitedInMonth(personName);
+
+      setPlanningData(prev => ({
+        ...prev,
+        monthlyPlanningDtos: prev.monthlyPlanningDtos.map(person => {
+          if (person.name !== personName) return person;
+
+          const newNotValidAssignations = person.notValidAssignations.map(() =>
+            currentlyAllProhibited ? [] : [...activities_real]
+          );
+
+          return {
+            ...person,
+            notValidAssignations: newNotValidAssignations
+          };
+        })
+      }));
+    };
+
   const toggleSection = () => {
     setIsExpanded(!isExpanded);
   };
 
-  // Función para "Generar" la planificación (simulando una llamada al backend)
   const handleGeneratePlanning = () => {
     setBackendErrors(null);
     setIsLoading(true);
@@ -114,6 +261,7 @@ const MonthlyPlanning = () => {
     while (new Date(year, month - 1, firstFriday).getDay() !== 5) {
         firstFriday++;
     }
+    console.log(planningData);
 
     const convertedPlanningData = {
         monthlyAssignationsDtos: planningData.monthlyPlanningDtos.map(person => {
@@ -122,6 +270,7 @@ const MonthlyPlanning = () => {
             return {
                 ...person,
                 assignations: Object.values(person.assignations),
+                notValidAssignations: Object.values(person.notValidAssignations),
                 level: staffMember ? staffMember.level : null
             };
         }),
@@ -208,6 +357,23 @@ const MonthlyPlanning = () => {
 
   const handleYearChange = (event) => {
     setYear(parseInt(event.target.value));
+  };
+
+  const handleRightClick = (e, personName, dayIndex) => {
+    e.preventDefault();
+    setRightClickData({ x: e.pageX, y: e.pageY, personName, dayIndex });
+  };
+
+  const isAllProhibited = (personName, dayIndex) => {
+    const currentPerson = planningData.monthlyPlanningDtos.find(
+      (person) => person.name === personName
+    );
+    return (
+      currentPerson &&
+      activities.filter((activity) => activity !== "GP").every((activity) =>
+        currentPerson.notValidAssignations[dayIndex]?.includes(activity)
+      )
+    );
   };
 
   return (
@@ -343,6 +509,10 @@ const MonthlyPlanning = () => {
                     {planningData.monthlyPlanningDtos.map((person) => (
                       <tr key={person.name}>
                         <td
+                          onContextMenu={(e) => {
+                            e.preventDefault();
+                            setRightClickData({ x: e.pageX, y: e.pageY, personName: person.name, isRow: true });
+                          }}
                           style={{
                             backgroundColor: "#E0E0E0",
                             color: "#000",
@@ -353,6 +523,10 @@ const MonthlyPlanning = () => {
                           {person.name}
                         </td>
                         {Object.entries(person.assignations).map(([dayIndex, activity]) => {
+                          const prohibitedActivities = person.notValidAssignations[dayIndex] || [];
+                          const availableActivities = activities.filter(
+                            (activity) => !prohibitedActivities.includes(activity)
+                          );
                           return (
                             <td
                               key={`${person.name}-${dayIndex}`}
@@ -362,8 +536,78 @@ const MonthlyPlanning = () => {
                                 textAlign: "center",
                                 fontWeight: "bold",
                               }}
+                              onContextMenu={(e) => handleRightClick(e, person.name, Number(dayIndex))}
                               title={activity || "Sin asignación"}
                             >
+                              {rightClickData && (
+                                <div
+                                  ref={prohibitedMenuRef}
+                                  style={{
+                                    position: "absolute",
+                                    top: rightClickData.y,
+                                    left: rightClickData.x,
+                                    backgroundColor: "#fff",
+                                    border: "1px solid #ccc",
+                                    borderRadius: "5px",
+                                    padding: "10px",
+                                    zIndex: 1000,
+                                  }}
+                                >
+                                  {activities_real.map((activity) => (
+                                    <div key={activity}>
+                                      <input
+                                        type="checkbox"
+                                        checked={
+                                          rightClickData.isRow
+                                            ? isActivityFullyProhibitedInMonth(rightClickData.personName, activity)
+                                            : planningData.monthlyPlanningDtos
+                                                .find(p => p.name === rightClickData.personName)
+                                                ?.notValidAssignations[rightClickData.dayIndex]
+                                                ?.includes(activity)
+                                        }
+                                        onChange={() => {
+                                          if (rightClickData.isRow) {
+                                            toggleActivityForFullMonth(rightClickData.personName, activity);
+                                          } else {
+                                            toggleNotValidActivity(
+                                              rightClickData.personName,
+                                              rightClickData.dayIndex,
+                                              activity
+                                            );
+                                          }
+                                        }}
+                                      />
+                                      <label style={{ marginLeft: "5px" }}>{activity}</label>
+                                    </div>
+                                  ))}
+                                    <div>
+                                      {rightClickData.isRow ? (
+                                        <>
+                                          <input
+                                            type="checkbox"
+                                            checked={isAllActivitiesProhibitedInMonth(rightClickData.personName)}
+                                            onChange={() =>
+                                              toggleProhibitAllMonth(rightClickData.personName)
+                                            }
+                                          />
+                                          <label style={{ marginLeft: "5px" }}>Prohibir todas</label>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <input
+                                            type="checkbox"
+                                            checked={isAllProhibited(rightClickData.personName, rightClickData.dayIndex)}
+                                            onChange={() =>
+                                              toggleProhibitAll(rightClickData.personName, rightClickData.dayIndex)
+                                            }
+                                          />
+                                          <label style={{ marginLeft: "5px" }}>Prohibir todas</label>
+                                        </>
+                                      )}
+                                    </div>
+                                  <button onClick={() => setRightClickData(null)}>Cerrar</button>
+                                </div>
+                              )}
                               <select
                                 value={activity || ""}
                                 onChange={(e) =>
@@ -385,7 +629,7 @@ const MonthlyPlanning = () => {
                                 }}
                               >
                                 <option value="-">-</option>
-                                {activities.map((act) => (
+                                {availableActivities.map((act) => (
                                   <option
                                     key={act}
                                     value={act}

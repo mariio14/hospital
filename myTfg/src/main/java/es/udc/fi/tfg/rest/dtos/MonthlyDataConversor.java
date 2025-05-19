@@ -31,6 +31,7 @@ public class MonthlyDataConversor {
         }
 
         boolean vacation = false;
+        boolean notValid = false;
         for (MonthlyAssignationsDto monthlyAssignationsDto : monthlyDataDto.getMonthlyAssignationsDtos()) {
             String personName = monthlyAssignationsDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT);
             clingoParams.append(String.format("person(%s). ", personName));
@@ -53,9 +54,25 @@ public class MonthlyDataConversor {
                     }
                 }
             }
+            List<List<String>> notValidAssignations = monthlyAssignationsDto.getNotValidAssignations();
+            if (notValidAssignations != null) {
+                int i = 0;
+                for (List<String> notValidAssignationList : notValidAssignations) {
+                    i++;
+                    if (notValidAssignationList != null) {
+                        for (String notValidAssignation : notValidAssignationList) {
+                            notValid = true;
+                            clingoParams.append(String.format("day_not_assign(%s,%d,%s). ", personName, i, notValidAssignation.toLowerCase()));
+                        }
+                    }
+                }
+            }
         }
         if (!vacation) {
             clingoParams.append("vacation(dummyname,0). ");
+        }
+        if (!notValid) {
+            clingoParams.append("day_not_assign(dummyName,0,x). ");
         }
         for (Priority priority: costs) {
             clingoParams.append(String.format("cost(%s,%d). ", priority.getId(), priority.getCost()));
