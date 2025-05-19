@@ -105,13 +105,23 @@ working_weekends(P,N) :- person(P), N = #count{D: person_working_in_weekend(P,D)
     cost(g12,V)
 }.
 
+% MensualR_G14
+:- day_assign(P,D,g), day_assign(P',D,g), 
+    P!=P', level(P,5), level(P',5).
+
 % MensualP_L04 (de 0.045 a 0.051)
 #minimize { V,P,D : day_assign(P,D,i),
     day_assign_guard(P,D+1,_),
     cost(l04, V)
 }.
 
-% MensualP_G3 (de 0.080 a 0.105)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% MensualP_G03 (de 0.080 a +36s) 
 numGuardias(P,N) :- person(P), N=#count{D: day_assign_guard(P,D,_)}.
 
 #minimize { V*(N-5),P :
@@ -127,10 +137,10 @@ numGuardias(P,N) :- person(P), N=#count{D: day_assign_guard(P,D,_)}.
 %}.
 
 
-% MensualP_L3 (de 0.1 a 1.625 con 30 dias; con 31 dias se va de tiempo)
-day_assign_location(P,D,e) :- day_assign(P,D,e).
-day_assign_location(P,D,i) :- day_assign(P,D,i).
-numLocation_per_person(P,N) :- person(P), N = #count{D : day_assign_location(P,D,_)}.
+% MensualP_L03 (de 0.1 a 1.625 con 30 dias; con 31 dias se va de tiempo)
+%day_assign_location(P,D,e) :- day_assign(P,D,e).
+%day_assign_location(P,D,i) :- day_assign(P,D,i).
+%numLocation_per_person(P,N) :- person(P), N = #count{D : day_assign_location(P,D,_)}.
 
 %#minimize { V*(N'-N*15),P :
 %    numLocation_per_person(P,N),
@@ -146,7 +156,11 @@ numLocation_per_person(P,N) :- person(P), N = #count{D : day_assign_location(P,D
 %    cost(l03, V)
 %}.
 
-#show numLocation_per_person/2.
+
+
+% MensualP_G13
+
+#show day_assign/3.
 
 % g03 compensa el penalizar por 4 guardias?
 
@@ -154,6 +168,7 @@ numLocation_per_person(P,N) :- person(P), N = #count{D : day_assign_location(P,D
 %       a la vez pero en la imagen pasa
 % pdf: guardia no se puede antes de vacaciones, pero pasa en la imagen tmb
 % g12: penalizar por separado +1 finde presencial y +2 findes de trabajo?
-% pdf: r5 no hacen guardias juntos, lo metemos como restriccion?
 
-% G13, L03, L05
+% G13, L05 (lo mismo que L03?)
+
+% g03 va lento, L03 va lento.

@@ -47,6 +47,8 @@ Lo lógico en este caso parece no implementar ninguna preferencia y que ellos lo
 - *MensualP_G13*: (cuidadín con esta en términos de esfuerzo computacional) repartir las tareas (G, GP, E, I) a lo largo del mes para la misma persona
     - dicho de otra forma: no poner todo junto al principio o al final
 
+- *MensualR_G14*: R5 no hacen guardias juntos
+
 ## Guardias Localizadas: E (extracciones) e I (implantes)
 
 Cada día hábil (L-V) del mes debe de estar (al menos) un residente asignado a **E** y **I**. (en el ejemplo no pasa, posible caso de ignorar)
