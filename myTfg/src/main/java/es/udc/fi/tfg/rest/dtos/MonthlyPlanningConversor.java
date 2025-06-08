@@ -10,14 +10,13 @@ public class MonthlyPlanningConversor {
     }
 
     public static MonthlyResultDto toMonthlyPlanningDtos(Map<String, Map<Integer, String>> planningMap,
-                                                                 MonthlyDataDto params) {
+                                                                 String month, int numDays) {
         List<MonthlyPlanningDto> list = planningMap.entrySet()
                 .stream()
-                .map(entry -> toMonthlyPlanningDto(entry.getKey(), entry.getValue(),
-                        params.getNumberOfDays()))
+                .map(entry -> toMonthlyPlanningDto(entry.getKey(), entry.getValue(), numDays))
                 .collect(Collectors.toList());
 
-        return new MonthlyResultDto(params.getMonth(), list);
+        return new MonthlyResultDto(month, list);
     }
 
     public static MonthlyPlanningDto toMonthlyPlanningDto(String name, Map<Integer, String> asignations, int days) {

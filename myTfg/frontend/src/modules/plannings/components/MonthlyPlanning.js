@@ -54,17 +54,16 @@ const MonthlyPlanning = () => {
   }, []);
 
   useEffect(() => {
-    setDaysInMonth(getDaysInMonth(month, year));
-  }, [month, year]);
+    const numDays = getDaysInMonth(month, year);
+    setDaysInMonth(numDays);
 
-  useEffect(() => {
-      const emptyPlanning = staffList.map(person => ({
-          name: person.name,
-          level: `R${person.level}`,
-          assignations: Array(daysInMonth).fill(null),
-          notValidAssignations: Array(daysInMonth).fill([])
-      }));
-    }, [daysInMonth]);
+    dispatch(actions.getSavedMonthlyPlanning(
+        getMonthName(month),
+        year,
+        numDays,
+        () => setBackendErrors("No se ha podido cargar la planificación guardada.")
+    ));
+  }, [month, year]);
 
   useEffect(() => {
       setPlanningData(monthlyPlanning ? monthlyPlanning : emptyPlanning);

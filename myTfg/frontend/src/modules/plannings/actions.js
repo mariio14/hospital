@@ -6,8 +6,8 @@ const getAnnualPlanningCompleted = annualPlanning => ({
     annualPlanning
 });
 
-export const getAnnualPlanning = (planningData, onErrors) => dispatch =>
-    backend.planningService.annualPlanning(planningData,
+export const getAnnualPlanning = (planningData, year, onErrors) => dispatch =>
+    backend.planningService.annualPlanning(planningData, year,
     annualPlanning => dispatch(getAnnualPlanningCompleted(annualPlanning)), onErrors);
 
 export const clearAnnualPlanning = () => ({
@@ -23,6 +23,9 @@ export const getMonthlyPlanning = (planningData, onErrors) => dispatch =>
     backend.planningService.monthlyPlanning(planningData,
     monthlyPlanning => dispatch(getMonthlyPlanningCompleted(monthlyPlanning)), onErrors);
 
+export const getSavedMonthlyPlanning = (month, year, numDays, onErrors) => dispatch =>
+    backend.planningService.getMonthlyPlanning(month, year, numDays,
+    monthlyPlanning => dispatch(getMonthlyPlanningCompleted(monthlyPlanning)), onErrors);
 
 const getWeeklyPlanningCompleted = weeklyPlanning => ({
     type: actionTypes.WEEKLY_PLANNING_COMPLETED,

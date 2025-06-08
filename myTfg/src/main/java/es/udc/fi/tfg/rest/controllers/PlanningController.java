@@ -51,13 +51,13 @@ public class PlanningController {
     }
 
     @PostMapping("/annual")
-    public List<AnnualPlanningDto> annualPlanning(@Validated @RequestBody List<AnnualPlanningDataDto> params)
+    public List<AnnualPlanningDto> annualPlanning(@Validated @RequestBody List<AnnualPlanningDataDto> params, @RequestParam int year)
             throws NoSolutionException, IOException, ClassNotFoundException {
 
         List<Priority> costs = prioritiesService.getPriorities().get("Anual");
 
         Map<String, Map<Integer, String>> planning =
-                planningService.getAnnualPlanning(AnnualPlanningDataConversor.toClingoParams(params, costs));
+                planningService.getAnnualPlanning(AnnualPlanningDataConversor.toClingoParams(params, costs), year);
 
         return AnnualPlanningConversor.toAnnualPlanningDtos(planning, params);
     }
@@ -68,13 +68,23 @@ public class PlanningController {
 
         List<Priority> costs = prioritiesService.getPriorities().get("Mensual");
 
-        Map<String, Map<Integer, String>> previousMonthPlanning = planningService.getMonthFromJson(params.getMonth());
+        Map<String, Map<Integer, String>> previousMonthPlanning = planningService.getMonthFromJson(params.getMonth(), params.getYear(), true);
 
         Map<String, Map<Integer, String>> planning =
                 planningService.getMonthlyPlanning(MonthlyDataConversor.toClingoParams(
                         params, costs, previousMonthPlanning), params.getMonth(), params.getYear());
 
-        return MonthlyPlanningConversor.toMonthlyPlanningDtos(planning, params);
+        return MonthlyPlanningConversor.toMonthlyPlanningDtos(planning, params.getMonth(), params.getNumberOfDays());
+    }
+
+    @GetMapping("/monthly")
+    public MonthlyResultDto getMonthlyPlanning(@RequestParam String month, @RequestParam int year,
+                                               @RequestParam Integer numDays)
+            throws NoSolutionException, IOException, ClassNotFoundException {
+
+        Map<String, Map<Integer, String>> monthPlanning = planningService.getMonthFromJson(month, year, false);
+
+        return MonthlyPlanningConversor.toMonthlyPlanningDtos(monthPlanning, month, numDays);
     }
 
     @PostMapping("/weekly")

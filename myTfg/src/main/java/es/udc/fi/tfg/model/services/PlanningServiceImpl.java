@@ -1,14 +1,14 @@
 package es.udc.fi.tfg.model.services;
 
 import java.io.*;
-import java.time.Month;
-import java.time.format.TextStyle;
 import java.util.HashMap;
-import java.util.Locale;
+import java.util.List;
 import java.util.Map;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import es.udc.fi.tfg.model.entities.Staff;
 import es.udc.fi.tfg.model.services.exceptions.NoSolutionException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,10 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class PlanningServiceImpl implements PlanningService {
 
+    @Autowired
+    private StaffService staffService;
+
     private final String pathname = System.getProperty("user.dir") + "/src/main/java/es/udc/fi/tfg/model/services/clingo";
 
     @Override
-    public Map<String, Map<Integer, String>> getAnnualPlanning(String params) throws NoSolutionException{
+    public Map<String, Map<Integer, String>> getAnnualPlanning(String params, int year) throws NoSolutionException{
         String command = "python decode_yearly.py yearly.lp input_yearly.lp";
 
         try {
@@ -49,7 +52,7 @@ public class PlanningServiceImpl implements PlanningService {
                     throw new NoSolutionException("Sin solucion para los parametros proporcionados.");
                 }
 
-                saveToJsonFile(planning, "/solution_yearly.json");
+                saveYearJsonFile(planning, "/solution_yearly.json", year);
 
                 return planning;
             }  else {
@@ -153,19 +156,36 @@ public class PlanningServiceImpl implements PlanningService {
     }
 
     @Override
-    public Map<String, Map<Integer, String>> getMonthFromJson(String currentMonth) {
+    public Map<String, Map<Integer, String>> getMonthFromJson(String currentMonth, int year, boolean previous) throws IOException, ClassNotFoundException {
 
-        String month = getPreviousMonth(currentMonth);
+        String month = currentMonth;
+        if (previous)
+            month = getPreviousMonth(currentMonth);
         ObjectMapper mapper = new ObjectMapper();
         File outputFile = new File(pathname + "/solutionMonthly.json");
-        Map<String, Map<String, Map<Integer, String>>> existingData = new HashMap<>();
+
+        Map<String, Map<String, Map<String, Map<Integer, String>>>> existingData = new HashMap<>();
         try {
-            existingData = mapper.readValue(outputFile, new TypeReference<>() {
-            });
+            existingData = mapper.readValue(outputFile, new TypeReference<>() {});
         } catch (Exception e) {
             System.err.println("Error al leer el archivo JSON existente. Se usará un mapa vacío.");
         }
-        return existingData.get(month) == null ? new HashMap<>() : existingData.get(month);
+
+        List<Staff> staffList =  staffService.getStaff();
+
+        Map<String, Map<Integer, String>> yearData = existingData.get(String.valueOf(year)) != null
+                ? existingData.get(String.valueOf(year)).get(month)
+                : null;
+
+        if (yearData != null) {
+            return yearData;
+        } else {
+            Map<String, Map<Integer, String>> emptyData = new HashMap<>();
+            for (Staff staff : staffList) {
+                emptyData.put(staff.getName(), new HashMap<>());
+            }
+            return emptyData;
+        }
     }
 
     private Map<String, Map<Integer, String>> parseJson(String jsonString) throws Exception {
@@ -183,6 +203,20 @@ public class PlanningServiceImpl implements PlanningService {
             e.printStackTrace();
         }
     }
+
+    private void saveYearJsonFile(Map<String, Map<Integer, String>> planning, String file, int year) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            Map<Integer, Map<String, Map<Integer, String>>> wrappedPlanning = new HashMap<>();
+            wrappedPlanning.put(year, planning);
+            File outputFile = new File(pathname + file);
+            mapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, wrappedPlanning);
+        } catch (Exception e) {
+            System.err.println("Error al guardar el resultado en un archivo JSON.");
+            e.printStackTrace();
+        }
+    }
+
 
     private void saveMonthToJsonFile(Map<String, Map<Integer, String>> planning, String file, String month, int year) {
         ObjectMapper mapper = new ObjectMapper();

@@ -23,6 +23,8 @@ const AnnualPlanning = () => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [backendErrors, setBackendErrors] = useState(null);
      const [isLoading, setIsLoading] = useState(false);
+     const currentYear = new Date().getFullYear();
+     const [year, setYear] = useState(currentYear);
 
     useEffect(() => {
         dispatch(staffActions.getStaff(
@@ -46,6 +48,7 @@ const AnnualPlanning = () => {
 
         dispatch(actions.getAnnualPlanning(
             convertedPlanningData,
+            year,
             () => {
                 setBackendErrors('Sin solución');
                 setIsLoading(false);
@@ -166,6 +169,11 @@ const AnnualPlanning = () => {
         dispatch(actions.clearAnnualPlanning());
     };
 
+    const handleYearChange = (event) => {
+        const year = parseInt(event.target.value, 10);
+        setYear(year);
+    };
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column' }}>
 
@@ -186,6 +194,10 @@ const AnnualPlanning = () => {
                 {isExpanded && (
                     <div style={{ border: '1px solid #ddd', padding: '20px', borderRadius: '5px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+                          <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
+                            <label style={{ marginLeft: "10px" }}>Año: </label>
+                            <input type="number" value={year} onChange={handleYearChange} min="2000" max="2100" />
+                          </div>
                             <button
                                 onClick={handleGeneratePlanning}
                                 style={{
