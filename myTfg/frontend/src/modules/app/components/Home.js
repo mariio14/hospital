@@ -2,6 +2,7 @@ import React from "react";
 import "./App.css";
 import {AnnualPlanning} from "../../plannings";
 import {MonthlyPlanning} from "../../plannings";
+import {WeeklyPlanning} from "../../plannings";
 import '../../../styles/Home.css';
 
 const Home = () => {
@@ -12,6 +13,9 @@ const Home = () => {
              </div>
              <div className="container">
                 <MonthlyPlanning />
+             </div>
+             <div className="container">
+               <WeeklyPlanning />
              </div>
          </div>
       );

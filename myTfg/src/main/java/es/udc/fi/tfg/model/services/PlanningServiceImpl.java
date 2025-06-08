@@ -65,7 +65,7 @@ public class PlanningServiceImpl implements PlanningService {
     }
 
     @Override
-    public Map<String, Map<Integer, String>> getMonthlyPlanning(String params, String month) throws NoSolutionException {
+    public Map<String, Map<Integer, String>> getMonthlyPlanning(String params, String month, int year) throws NoSolutionException {
         String command = "python decode_monthly.py monthly.lp input_monthly.lp";
         try {
             writeInputFile(params, pathname + "/input_monthly.lp");
@@ -93,7 +93,7 @@ public class PlanningServiceImpl implements PlanningService {
                 if (planning.isEmpty()) {
                     throw new NoSolutionException("Sin solucion para los parametros proporcionados.");
                 }
-                saveMonthToJsonFile(planning, "/solutionMonthly.json", month);
+                saveMonthToJsonFile(planning, "/solutionMonthly.json", month, year);
 
                 return planning;
             }  else {
@@ -184,19 +184,18 @@ public class PlanningServiceImpl implements PlanningService {
         }
     }
 
-    private void saveMonthToJsonFile(Map<String, Map<Integer, String>> planning, String file, String month) {
+    private void saveMonthToJsonFile(Map<String, Map<Integer, String>> planning, String file, String month, int year) {
         ObjectMapper mapper = new ObjectMapper();
         File outputFile = new File(pathname + file);
-        Map<String, Map<String, Map<Integer, String>>> existingData = new HashMap<>();
+        Map<Integer, Map<String, Map<String, Map<Integer, String>>>> existingData = new HashMap<>();
         try {
-            existingData = mapper.readValue(outputFile, new TypeReference<>() {
-            });
+            existingData = mapper.readValue(outputFile, new TypeReference<>() {});
         } catch (Exception e) {
             System.err.println("Error al leer el archivo JSON existente. Se usará un mapa vacío.");
         }
-
-        existingData.put(month, planning);
-
+        Map<String, Map<String, Map<Integer, String>>> yearMap = existingData.getOrDefault(year, new HashMap<>());
+        yearMap.put(month, planning);
+        existingData.put(year, yearMap);
         try {
             mapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, existingData);
         } catch (Exception e) {

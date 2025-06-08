@@ -72,7 +72,7 @@ public class PlanningController {
 
         Map<String, Map<Integer, String>> planning =
                 planningService.getMonthlyPlanning(MonthlyDataConversor.toClingoParams(
-                        params, costs, previousMonthPlanning), params.getMonth());
+                        params, costs, previousMonthPlanning), params.getMonth(), params.getYear());
 
         return MonthlyPlanningConversor.toMonthlyPlanningDtos(planning, params);
     }
