@@ -108,7 +108,7 @@ working_weekends(P,N) :- person(P), N = #count{D: person_working_in_weekend(P,D)
 }.
 
 % MensualR_G14
-:- day_assign(P,D,g), day_assign(P',D,g), 
+:- day_assign(P,D,g), day_assign(P',D,g),
     P!=P', level(P,5), level(P',5).
 
 % MensualP_L04 (de 0.045 a 0.051)
@@ -123,7 +123,7 @@ working_weekends(P,N) :- person(P), N = #count{D: person_working_in_weekend(P,D)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% MensualP_G03 (de 0.080 a +36s) 
+% MensualP_G03 (de 0.080 a +36s)
 numGuardias(P,N) :- person(P), N=#count{D: day_assign_guard(P,D,_)}.
 
 #minimize { V*(N-5)@2,P :
@@ -137,19 +137,19 @@ day_assign_location(P,D,e) :- day_assign(P,D,e).
 day_assign_location(P,D,i) :- day_assign(P,D,i).
 numLocation_per_person(P,N) :- person(P), N = #count{D : day_assign_location(P,D,_)}.
 
-%#minimize { V*(N'-N*15),P :
-%    numLocation_per_person(P,N),
-%    numLocations(N'),
-%    N*15<N',
-%    cost(l03,V)
-%}.
+#minimize { V*(N'/15-N),P :
+    numLocation_per_person(P,N),
+    numLocations(N'),
+    N<N'/15,
+    cost(l03,V)
+}.
 
-%#minimize { V*(N*15-N),P :
-%    numLocation_per_person(P,N),
-%    numLocations(N'),
-%    N*15>N',
-%    cost(l03, V)
-%}.
+#minimize { V*(N-N'),P :
+    numLocation_per_person(P,N),
+    numLocations(N'),
+    N>N'/15,
+    cost(l03, V)
+}.
 
 
 
