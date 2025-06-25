@@ -62,6 +62,15 @@ public class PlanningController {
         return AnnualPlanningConversor.toAnnualPlanningDtos(planning, params);
     }
 
+    @PostMapping("/savedYearly")
+    public List<AnnualPlanningDto> getAnnualPlanning(@RequestParam int year, @Validated @RequestBody List<AnnualPlanningDataDto> params)
+            throws NoSolutionException, IOException, ClassNotFoundException {
+
+        Map<String, Map<Integer, String>> annualPlanning = planningService.getYearFromJson(year);
+
+        return AnnualPlanningConversor.toAnnualPlanningDtos(annualPlanning, params);
+    }
+
     @PostMapping("/monthly")
     public MonthlyResultDto monthlyPlanning(@Validated @RequestBody MonthlyDataDto params)
             throws NoSolutionException, IOException, ClassNotFoundException {
@@ -94,8 +103,20 @@ public class PlanningController {
         List<Priority> costs = prioritiesService.getPriorities().get("Semanal");
 
         Map<String, Map<Integer, String>> planning =
-                planningService.getWeeklyPlanning(WeeklyDataConversor.toClingoParams(params, costs));
+                planningService.getWeeklyPlanning(WeeklyDataConversor.toClingoParams(params, costs),
+                        params.getYear(), params.getMonth(), params.getWeek());
 
-        return WeeklyPlanningConversor.toWeeklyPlanningDtos(planning, params.getMonth());
+        return WeeklyPlanningConversor.toWeeklyPlanningDtos(planning, params.getYear(),
+                params.getMonth(), params.getWeek());
+    }
+
+    @GetMapping("/weekly")
+    public WeeklyResultDto getWeeklyPlanning(@RequestParam String month, @RequestParam int year,
+                                             @RequestParam String week)
+            throws NoSolutionException, IOException, ClassNotFoundException {
+
+        Map<String, Map<Integer, String>> monthPlanning = planningService.getWeekFromJson(year, month, week);
+
+        return WeeklyPlanningConversor.toWeeklyPlanningDtos(monthPlanning, year, month, week);
     }
 }

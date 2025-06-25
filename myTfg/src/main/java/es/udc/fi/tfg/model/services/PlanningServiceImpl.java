@@ -112,7 +112,7 @@ public class PlanningServiceImpl implements PlanningService {
     }
 
     @Override
-    public Map<String, Map<Integer, String>> getWeeklyPlanning(String params) throws NoSolutionException {
+    public Map<String, Map<Integer, String>> getWeeklyPlanning(String params, int year, String month, String week) throws NoSolutionException {
         String command = "python decode_weekly.py weekly.lp input_weekly.lp";
         try {
             writeInputFile(params, pathname + "/input_weekly.lp");
@@ -140,7 +140,7 @@ public class PlanningServiceImpl implements PlanningService {
                 if (planning.isEmpty()) {
                     throw new NoSolutionException("Sin solucion para los parametros proporcionados.");
                 }
-                saveToJsonFile(planning, "/solutionWeekly.json");
+                saveWeekToJsonFile(planning, "/solutionWeekly.json", year, month, week);
 
                 return planning;
             }  else {
@@ -179,6 +179,65 @@ public class PlanningServiceImpl implements PlanningService {
 
         if (yearData != null) {
             return yearData;
+        } else {
+            Map<String, Map<Integer, String>> emptyData = new HashMap<>();
+            for (Staff staff : staffList) {
+                emptyData.put(staff.getName(), new HashMap<>());
+            }
+            return emptyData;
+        }
+    }
+
+    @Override
+    public Map<String, Map<Integer, String>> getYearFromJson(int year) throws IOException, ClassNotFoundException {
+
+        ObjectMapper mapper = new ObjectMapper();
+        File outputFile = new File(pathname + "/solution_yearly.json");
+
+        Map<String, Map<String, Map<Integer, String>>> existingData = new HashMap<>();
+        try {
+            existingData = mapper.readValue(outputFile, new TypeReference<>() {});
+        } catch (Exception e) {
+            System.err.println("Error al leer el archivo JSON existente. Se usará un mapa vacío.");
+        }
+
+        List<Staff> staffList =  staffService.getStaff();
+
+        Map<String, Map<Integer, String>> yearData = existingData.get(String.valueOf(year));
+
+        if (yearData != null) {
+            return yearData;
+        } else {
+            Map<String, Map<Integer, String>> emptyData = new HashMap<>();
+            for (Staff staff : staffList) {
+                emptyData.put(staff.getName(), new HashMap<>());
+            }
+            return emptyData;
+        }
+    }
+
+    @Override
+    public Map<String, Map<Integer, String>> getWeekFromJson(int year, String month, String week) throws IOException, ClassNotFoundException {
+        ObjectMapper mapper = new ObjectMapper();
+        File outputFile = new File(pathname + "/solutionWeekly.json");
+
+        Map<String, Map<String, Map<String, Map<String, Map<Integer, String>>>>> existingData = new HashMap<>();
+        try {
+            existingData = mapper.readValue(outputFile, new TypeReference<>() {});
+        } catch (Exception e) {
+            System.err.println("Error al leer el archivo JSON existente. Se usará un mapa vacío.");
+        }
+
+        List<Staff> staffList =  staffService.getStaff();
+
+        Map<String, Map<Integer, String>> weekData = existingData.get(String.valueOf(year)) != null
+                ? existingData.get(String.valueOf(year)).get(month) != null
+                    ? existingData.get(String.valueOf(year)).get(month).get(week)
+                    : null
+                : null;
+
+        if (weekData != null) {
+            return weekData;
         } else {
             Map<String, Map<Integer, String>> emptyData = new HashMap<>();
             for (Staff staff : staffList) {
@@ -229,6 +288,29 @@ public class PlanningServiceImpl implements PlanningService {
         }
         Map<String, Map<String, Map<Integer, String>>> yearMap = existingData.getOrDefault(year, new HashMap<>());
         yearMap.put(month, planning);
+        existingData.put(year, yearMap);
+        try {
+            mapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, existingData);
+        } catch (Exception e) {
+            System.err.println("Error al guardar el resultado en un archivo JSON.");
+            e.printStackTrace();
+        }
+    }
+
+    private void saveWeekToJsonFile(Map<String, Map<Integer, String>> planning, String file,
+                                    int year, String month, String week) {
+        ObjectMapper mapper = new ObjectMapper();
+        File outputFile = new File(pathname + file);
+        Map<Integer, Map<String, Map<String, Map<String, Map<Integer, String>>>>> existingData = new HashMap<>();
+        try {
+            existingData = mapper.readValue(outputFile, new TypeReference<>() {});
+        } catch (Exception e) {
+            System.err.println("Error al leer el archivo JSON existente. Se usará un mapa vacío.");
+        }
+        Map<String, Map<String, Map<String, Map<Integer, String>>>> yearMap = existingData.getOrDefault(year, new HashMap<>());
+        Map<String, Map<String, Map<Integer, String>>> monthMap = yearMap.getOrDefault(month, new HashMap<>());
+        monthMap.put(week, planning);
+        yearMap.put(month, monthMap);
         existingData.put(year, yearMap);
         try {
             mapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, existingData);

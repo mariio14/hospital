@@ -4,16 +4,38 @@ import java.util.List;
 
 public class WeeklyResultDto {
 
+    private int year;
+
     private String month;
+
+    private String week;
 
     private List<WeeklyPlanningDto> assignations;
 
     public WeeklyResultDto() {
     }
 
-    public WeeklyResultDto(String month, List<WeeklyPlanningDto> assignations) {
+    public WeeklyResultDto(int year, String month, String week, List<WeeklyPlanningDto> assignations) {
+        this.year = year;
         this.month = month;
+        this.week = week;
         this.assignations = assignations;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public String getWeek() {
+        return week;
+    }
+
+    public void setWeek(String week) {
+        this.week = week;
     }
 
     public String getMonth() {

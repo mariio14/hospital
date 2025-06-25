@@ -11,13 +11,13 @@ public class WeeklyPlanningConversor {
     }
 
     public static WeeklyResultDto toWeeklyPlanningDtos(Map<String, Map<Integer, String>> planningMap,
-                                                               String month) {
+                                                               int year, String month, String week) {
         List<WeeklyPlanningDto> assignations = planningMap.entrySet()
                 .stream()
                 .map(entry -> toWeeklyPlanningDto(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
 
-        return new WeeklyResultDto(month, assignations);
+        return new WeeklyResultDto(year, month, week, assignations);
     }
 
     public static WeeklyPlanningDto toWeeklyPlanningDto(String name, Map<Integer, String> asignations) {

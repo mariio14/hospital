@@ -167,7 +167,6 @@ numGuardias(P,N) :- person(P), N=#count{D: day_assign_guard(P,D,_)}.
 % en el pdf de restricciones original pone que no se puede estar en localizado y presencial
 %       a la vez pero en la imagen pasa
 % pdf: guardia no se puede antes de vacaciones, pero pasa en la imagen tmb
-% g12: penalizar por separado +1 finde presencial y +2 findes de trabajo?
 
 % G13, L05 (lo mismo que L03?)
 

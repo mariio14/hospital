@@ -11,7 +11,11 @@ public interface PlanningService {
 
     Map<String, Map<Integer, String>> getMonthlyPlanning(String params, String month, int year) throws NoSolutionException;
 
-    Map<String, Map<Integer, String>> getWeeklyPlanning(String params) throws NoSolutionException;
+    Map<String, Map<Integer, String>> getWeeklyPlanning(String params, int year, String month, String week) throws NoSolutionException;
 
     Map<String, Map<Integer, String>> getMonthFromJson(String month, int year, boolean previous) throws IOException, ClassNotFoundException;
+
+    Map<String, Map<Integer, String>> getYearFromJson(int year) throws IOException, ClassNotFoundException;
+
+    Map<String, Map<Integer, String>> getWeekFromJson(int year, String month, String week) throws IOException, ClassNotFoundException;
 }

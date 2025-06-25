@@ -56,6 +56,18 @@ const AnnualPlanning = () => {
         ));
     };
 
+    useEffect(() => {
+        const convertedPlanningData = planningData.map(person => ({
+                ...person,
+                assignations: Object.values(person.assignations)
+            }));
+        dispatch(actions.getSavedAnnualPlanning(
+            convertedPlanningData,
+            year,
+            () => setBackendErrors("No se ha podido cargar la planificación guardada.")
+        ));
+    }, [year]);
+
     const toggleSection = () => {
         setIsExpanded(!isExpanded);
     };

@@ -6,6 +6,9 @@ import {
 export const annualPlanning = (planningData, year, onSuccess, onErrors) =>
   appFetch(`/plannings/annual?year=${year}`, fetchConfig("POST", planningData), onSuccess, onErrors);
 
+export const getAnnualPlanning = (planningData, year, onSuccess, onErrors) =>
+  appFetch(`/plannings/savedYearly?year=${year}`, fetchConfig("POST", planningData), onSuccess, onErrors);
+
 export const monthlyPlanning = (planningData, onSuccess, onErrors) =>
   appFetch(`/plannings/monthly`, fetchConfig("POST", planningData), onSuccess, onErrors);
 
@@ -14,3 +17,6 @@ export const getMonthlyPlanning = (month, year, numDays, onSuccess, onErrors) =>
 
 export const weeklyPlanning = (planningData, onSuccess, onErrors) =>
   appFetch(`/plannings/weekly`, fetchConfig("POST", planningData), onSuccess, onErrors);
+
+export const getWeeklyPlanning = (month, year, week, onSuccess, onErrors) =>
+  appFetch(`/plannings/monthly?month=${month}&year=${year}&week=${week}`, fetchConfig("GET"), onSuccess, onErrors);
