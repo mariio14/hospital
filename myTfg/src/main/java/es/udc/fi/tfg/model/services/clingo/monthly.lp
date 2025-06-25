@@ -144,7 +144,7 @@ numLocation_per_person(P,N) :- person(P), N = #count{D : day_assign_location(P,D
     cost(l03,V)
 }.
 
-#minimize { V*(N-N'),P :
+#minimize { V*(N-N'/15),P :
     numLocation_per_person(P,N),
     numLocations(N'),
     N>N'/15,
