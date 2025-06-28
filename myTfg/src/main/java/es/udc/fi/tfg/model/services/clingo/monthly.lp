@@ -137,25 +137,26 @@ day_assign_location(P,D,e) :- day_assign(P,D,e).
 day_assign_location(P,D,i) :- day_assign(P,D,i).
 numLocation_per_person(P,N) :- person(P), N = #count{D : day_assign_location(P,D,_)}.
 
-#minimize { V*(N'/15-N),P :
-    numLocation_per_person(P,N),
-    numLocations(N'),
-    N<N'/15,
-    cost(l03,V)
-}.
+%#minimize { V*(N'/15-N),P :
+%    numLocation_per_person(P,N),
+%    numLocations(N'),
+%    N<N'/15,
+%    cost(l03,V)
+%}.
 
-#minimize { V*(N-N'),P :
-    numLocation_per_person(P,N),
-    numLocations(N'),
-    N>N'/15,
-    cost(l03, V)
-}.
+%#minimize { V*(N-N'),P :
+%    numLocation_per_person(P,N),
+%    numLocations(N'),
+%    N>N'/15,
+%    cost(l03, V)
+%}.
 
 
 
 % MensualP_G13
 
 #show day_assign/3.
+#show vacation/2
 
 % g03 compensa el penalizar por 4 guardias?
 

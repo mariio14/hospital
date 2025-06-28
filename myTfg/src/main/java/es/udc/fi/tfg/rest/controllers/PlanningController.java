@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.time.YearMonth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -102,8 +103,15 @@ public class PlanningController {
 
         List<Priority> costs = prioritiesService.getPriorities().get("Semanal");
 
+        int daysInMonth = YearMonth.of(params.getYear(), java.time.Month.valueOf(
+                params.getMonth().toUpperCase()).getValue()).lengthOfMonth();
+
+        MonthlyResultDto monthData = getMonthlyPlanning(params.getMonth(), params.getYear(), daysInMonth);
+
+        Map<String, Map<Integer, String>> annualData = planningService.getYearFromJson(params.getYear());
+
         Map<String, Map<Integer, String>> planning =
-                planningService.getWeeklyPlanning(WeeklyDataConversor.toClingoParams(params, costs),
+                planningService.getWeeklyPlanning(WeeklyDataConversor.toClingoParams(params, costs, annualData, monthData),
                         params.getYear(), params.getMonth(), params.getWeek());
 
         return WeeklyPlanningConversor.toWeeklyPlanningDtos(planning, params.getYear(),

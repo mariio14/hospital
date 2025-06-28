@@ -36,6 +36,17 @@ with ctl.solve(yield_=True) as handle:
                     assignments[person] = {}
                 assignments[person][day] = activity
 
+            if atom.name == "vacation" and len(atom.arguments) == 2:
+                person = str(atom.arguments[0])
+                day = atom.arguments[1].number
+
+                if day in (0, -1):
+                    continue
+
+                if person not in assignments:
+                    assignments[person] = {}
+                assignments[person][day] = "v"
+
 ordered_assignments = OrderedDict(
     sorted(
         {person: OrderedDict(sorted(days.items())) for person, days in assignments.items()}.items()

@@ -7,7 +7,8 @@ import java.util.Locale;
 import java.util.Map;
 
 public class WeeklyDataConversor {
-    public static String toClingoParams(WeeklyDataDto weeklyDataDto, List<Priority> costs) {
+    public static String toClingoParams(WeeklyDataDto weeklyDataDto, List<Priority> costs,
+                     Map<String, Map<Integer, String>> yearData, MonthlyResultDto monthData) {
 
         StringBuilder clingoParams = new StringBuilder();
 
@@ -35,6 +36,21 @@ public class WeeklyDataConversor {
         }
         for (Priority priority: costs) {
             clingoParams.append(String.format("cost(%s,%d). ", priority.getId(), priority.getCost()));
+        }
+        for (Map.Entry<String, Map<Integer, String>> entry : yearData.entrySet()) {
+            String personName = entry.getKey().replace(" ", "_").toLowerCase(Locale.ROOT);
+            for (Map.Entry<Integer, String> entry2: entry.getValue().entrySet()) {
+                clingoParams.append(String.format("month_assign(%s,%s). ", personName, entry2.getValue()));
+            }
+        }
+        for (MonthlyPlanningDto monthlyPlanningDto : monthData.getMonthlyPlanningDtos()) {
+            int i=1;
+            for (String assignation : monthlyPlanningDto.getAssignations()) {
+                clingoParams.append(String.format("day_assign_from_month(%s,%d,%s). ",
+                        monthlyPlanningDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT),
+                        i, assignation));
+                i++;
+            }
         }
         return clingoParams.toString();
     }
