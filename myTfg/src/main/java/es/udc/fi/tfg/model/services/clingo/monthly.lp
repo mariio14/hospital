@@ -156,7 +156,7 @@ numLocation_per_person(P,N) :- person(P), N = #count{D : day_assign_location(P,D
 % MensualP_G13
 
 #show day_assign/3.
-#show vacation/2
+#show vacation/2.
 
 % g03 compensa el penalizar por 4 guardias?
 
