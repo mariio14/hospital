@@ -42,9 +42,6 @@ cost(l04, 20).
 
 % MensualR_C01, MensualR_G01
 N {day_assign(P,D,T) : person(P), not vacation(P,D), not day_not_assign(P,D,T)} N :- task(T, N), day(D).
-% Alternativa: (probar ambas)
-% N {day_assign(P,D,T) : person(P)} N :- task(T, N), day(D).
-% :- vacation(P,D), day_assign(P,D,_).
 
 % MensualR_L02
 :- level(P,1), day_assign(P,_,e).
@@ -62,7 +59,7 @@ day_assign_guard(P,D,G) :- guard(G), day_assign(P,D,G).
 % MensualR_G06
 :- day_assign_guard(P,D,_), day_assign_guard(P,D+1,_).
 
-% MensualP_G07 (tarda muy poco)
+% MensualP_G07
 #minimize { V,P,D :
     day_assign_guard(P,D,_), day_assign(P,D+1,_),
     cost(g07,V)
@@ -73,7 +70,7 @@ day_assign_guard(P,D,G) :- guard(G), day_assign(P,D,G).
 
 % Predicate for MensualP_G09   veteran_in_guard(D) -> there is a veteran in guard at day D
 veteran_in_guard(D) :- day_assign_guard(P,D,_), level(P,L), L>=3.
-% MensualP_G09 (de 0.035 a 0.045 mas o menos)
+% MensualP_G09
 #minimize { V,D :
     day(D), not veteran_in_guard(D),
     cost(g09,V)
@@ -83,18 +80,18 @@ veteran_in_guard(D) :- day_assign_guard(P,D,_), level(P,L), L>=3.
 people_in_task_in_weekend(N,T,D) :- task_real(T, _), weekend(D),
     N = #count{P: weekend_day(D,D'),day_assign(P,D',T)}.
 
-% MensualP_G10(0.075s)
+% MensualP_G10
 #minimize { V*(P-4),D,T : weekend(D), task_real(g, _),
     people_in_task_in_weekend(P,T,D), P>4,
     cost(g10, V)
 }.
-% MensualP_G11 (0.075s)
+% MensualP_G11
 #minimize { V*(P-1),D,T : weekend(D), task_real(T, _), T!=g,
     people_in_task_in_weekend(P,T,D), P>1,
     cost(g11, V)
 }.
 
-% Predicates for MensualP_G12 (de 0.075 a 0.085)
+% Predicates for MensualP_G12
     % person_working_in_weekend(P,D) -> person P is working on weekend D
     % working_weekends(P,N) -> person P is working N weekends
 person_working_in_weekend(P,D) :- person(P), weekend_day(D,D'),
@@ -111,7 +108,7 @@ working_weekends(P,N) :- person(P), N = #count{D: person_working_in_weekend(P,D)
 :- day_assign(P,D,g), day_assign(P',D,g),
     P!=P', level(P,5), level(P',5).
 
-% MensualP_L04 (de 0.045 a 0.051)
+% MensualP_L04
 #minimize { V,P,D : day_assign(P,D,i),
     day_assign_guard(P,D+1,_),
     cost(l04, V)
@@ -123,11 +120,11 @@ working_weekends(P,N) :- person(P), N = #count{D: person_working_in_weekend(P,D)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% MensualP_G03 (de 0.080 a +36s)
-numGuardias(P,N) :- person(P), N=#count{D: day_assign_guard(P,D,_)}.
+% MensualP_G03
+numGuards(P,N) :- person(P), N=#count{D: day_assign_guard(P,D,_)}.
 
 #minimize { V*(N-5)@2,P :
-    numGuardias(P,N),
+    numGuards(P,N),
     N>5,
     cost(g03,V)
 }.
@@ -158,12 +155,8 @@ numLocation_per_person(P,N) :- person(P), N = #count{D : day_assign_location(P,D
 #show day_assign/3.
 #show vacation/2.
 
-% g03 compensa el penalizar por 4 guardias?
-
 % en el pdf de restricciones original pone que no se puede estar en localizado y presencial
 %       a la vez pero en la imagen pasa
 % pdf: guardia no se puede antes de vacaciones, pero pasa en la imagen tmb
 
 % G13
-
-% g03 va lento, L03 va lento.
