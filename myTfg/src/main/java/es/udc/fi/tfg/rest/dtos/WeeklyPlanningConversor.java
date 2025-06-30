@@ -1,8 +1,6 @@
 package es.udc.fi.tfg.rest.dtos;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class WeeklyPlanningConversor {
@@ -18,6 +16,16 @@ public class WeeklyPlanningConversor {
                 .collect(Collectors.toList());
 
         return new WeeklyResultDto(year, month, week, assignations);
+    }
+
+    public static WeeklyResultDto toWeeklyPlanningDtosFromData(Map<String, Map<Integer, String>> planningMap,
+                                                               WeeklyDataDto data) {
+        List<WeeklyPlanningDto> list = new ArrayList<>();
+        for (WeeklyAssignationsDto dto : data.getAssignationsDtos()) {
+            Map<Integer, String> value = planningMap.get(dto.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+            list.add(toWeeklyPlanningDto(dto.getName(), value));
+        }
+        return new WeeklyResultDto(data.getYear(), data.getMonth(), data.getWeek(), list);
     }
 
     public static WeeklyPlanningDto toWeeklyPlanningDto(String name, Map<Integer, String> asignations) {

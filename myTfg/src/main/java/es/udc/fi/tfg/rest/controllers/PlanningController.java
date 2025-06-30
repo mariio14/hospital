@@ -84,7 +84,7 @@ public class PlanningController {
                 planningService.getMonthlyPlanning(MonthlyDataConversor.toClingoParams(
                         params, costs, previousMonthPlanning), params.getMonth(), params.getYear());
 
-        return MonthlyPlanningConversor.toMonthlyPlanningDtos(planning, params.getMonth(), params.getNumberOfDays());
+        return MonthlyPlanningConversor.toMonthlyPlanningDtosFromData(planning, params);
     }
 
     @GetMapping("/monthly")
@@ -114,8 +114,7 @@ public class PlanningController {
                 planningService.getWeeklyPlanning(WeeklyDataConversor.toClingoParams(params, costs, annualData, monthData),
                         params.getYear(), params.getMonth(), params.getWeek());
 
-        return WeeklyPlanningConversor.toWeeklyPlanningDtos(planning, params.getYear(),
-                params.getMonth(), params.getWeek());
+        return WeeklyPlanningConversor.toWeeklyPlanningDtosFromData(planning, params);
     }
 
     @GetMapping("/weekly")
