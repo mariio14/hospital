@@ -5,6 +5,7 @@ import es.udc.fi.tfg.model.entities.Priority;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 public class WeeklyDataConversor {
     public static String toClingoParams(WeeklyDataDto weeklyDataDto, List<Priority> costs,
@@ -46,10 +47,16 @@ public class WeeklyDataConversor {
         for (MonthlyPlanningDto monthlyPlanningDto : monthData.getMonthlyPlanningDtos()) {
             int i=1;
             for (String assignation : monthlyPlanningDto.getAssignations()) {
-                clingoParams.append(String.format("day_assign_from_month(%s,%d,%s). ",
-                        monthlyPlanningDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT),
-                        i, assignation));
-                i++;
+                if (Objects.equals(assignation, "v")) {
+                    clingoParams.append(String.format("vacation(%s,%d). ",
+                            monthlyPlanningDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT),
+                            i));
+                } else {
+                    clingoParams.append(String.format("day_assign_from_month(%s,%d,%s). ",
+                            monthlyPlanningDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT),
+                            i, assignation));
+                    i++;
+                }
             }
         }
         return clingoParams.toString();
