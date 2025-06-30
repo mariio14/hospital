@@ -30,14 +30,14 @@ guard(g;gp).
 %day_assign(2,11,gp).
 %day_assign(2,22,gp).
 
-%cost(MensualP_G03, 2).
-%cost(MensualP_G07, 10).
-%cost(MensualP_G09, 50).
-%cost(MensualP_G10, 70).
-%cost(MensualP_G11, 40).
-%cost(MensualP_G12, 35).
-%cost(MensualP_L03, 1).
-%cost(MensualP_L04, 20).
+%cost(mensualP_G03, 2).
+%cost(mensualP_G07, 10).
+%cost(mensualP_G09, 50).
+%cost(mensualP_G10, 70).
+%cost(mensualP_G11, 40).
+%cost(mensualP_G12, 35).
+%cost(mensualP_L03, 1).
+%cost(mensualP_L04, 20).
 
 
 % MensualR_C01, MensualR_G01
