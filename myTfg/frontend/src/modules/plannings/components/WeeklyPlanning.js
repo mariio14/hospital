@@ -29,9 +29,9 @@ const WeeklyPlanning = () => {
 
   const getWeekStartDate = (y, m, weekIndex) => {
     const firstDay = new Date(y, m, 1);
-    const startOffset = (7 - firstDay.getDay() + 1) % 7;
+    const startOffset = (8 - firstDay.getDay()) % 7;
     const startDate = new Date(y, m, 1 + startOffset + weekIndex * 7);
-    return [...Array(7)].map((_, i) => {
+    return [...Array(5)].map((_, i) => {
       const d = new Date(startDate);
       d.setDate(d.getDate() + i);
       return d;
@@ -50,8 +50,8 @@ const WeeklyPlanning = () => {
     weeklyPlanningDtos: staffList.map((person) => ({
       name: person.name,
       level: `R${person.level}`,
-      assignations: Array(7).fill(null),
-      notValidAssignations: Array(7).fill([])
+      assignations: Array(5).fill(null),
+      notValidAssignations: Array(5).fill([])
     }))
   };
 

@@ -36,7 +36,7 @@ guard(g;gp).
 %cost(mensualP_G10, 70).
 %cost(mensualP_G11, 40).
 %cost(mensualP_G12, 35).
-%cost(mensualP_L03, 1).
+%cost(mensualP_L03, 3).
 %cost(mensualP_L04, 20).
 
 
@@ -134,15 +134,6 @@ numLocation_per_person(P,N) :- person(P), N = #count{D : day_assign_location(P,D
     N<N'/15,
     cost(MensualP_L03,V)
 }.
-
-#minimize { V*(N-N'/15),P :
-    numLocation_per_person(P,N),
-    numLocations(N'),
-    N>N'/15,
-    cost(MensualP_L03, V)
-}.
-
-
 
 % MensualP_G13
 
