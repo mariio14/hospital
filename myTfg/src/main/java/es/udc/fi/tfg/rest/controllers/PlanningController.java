@@ -50,6 +50,21 @@ public class PlanningController {
             Map.entry("DICIEMBRE", Month.DECEMBER)
     );
 
+    private static final Map<String, String> NEXT_MONTH = Map.ofEntries(
+            Map.entry("ENERO", "FEBRERO"),
+            Map.entry("FEBRERO", "MARZO"),
+            Map.entry("MARZO", "ABRIL"),
+            Map.entry("ABRIL", "MAYO"),
+            Map.entry("MAYO", "JUNIO"),
+            Map.entry("JUNIO", "JULIO"),
+            Map.entry("JULIO", "AGOSTO"),
+            Map.entry("AGOSTO", "SEPTIEMBRE"),
+            Map.entry("SEPTIEMBRE", "OCTUBRE"),
+            Map.entry("OCTUBRE", "NOVIEMBRE"),
+            Map.entry("NOVIEMBRE", "DICIEMBRE"),
+            Map.entry("DICIEMBRE", "ENERO")
+    );
+
     @ExceptionHandler(NoSolutionException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
@@ -123,12 +138,40 @@ public class PlanningController {
         int daysInMonth = YearMonth.of(params.getYear(), monthEnum).lengthOfMonth();
         MonthlyResultDto monthData = getMonthlyPlanning(params.getMonth(), params.getYear(), daysInMonth);
 
+        boolean twoMonths = false;
+        int previous = 0;
+        for (Integer n : params.getDays()) {
+            if (n < previous) {
+                twoMonths = true;
+                break;
+            }
+            previous = n;
+        }
+        if (twoMonths) {
+            Month monthEnum2 = MONTH_TRANSLATION.get(NEXT_MONTH.get(params.getMonth().toUpperCase()));
+            int daysInMonth2 = monthEnum2.equals(Month.JANUARY) ? YearMonth.of(params.getYear()+1, monthEnum2).lengthOfMonth() :
+                    YearMonth.of(params.getYear(), monthEnum2).lengthOfMonth();
+            String nextMonth = NEXT_MONTH.get(params.getMonth().toUpperCase());
+            String capitalized = nextMonth.substring(0, 1).toUpperCase() + nextMonth.substring(1).toLowerCase();
+            MonthlyResultDto monthDataNext = getMonthlyPlanning(capitalized, params.getYear(), daysInMonth2);
+            for (MonthlyPlanningDto monthlyPlanningDto : monthData.getMonthlyPlanningDtos()) {
+                String worker = monthlyPlanningDto.getName();
+                for (MonthlyPlanningDto dtoNextMonth : monthDataNext.getMonthlyPlanningDtos()) {
+                    if (dtoNextMonth.getName().equals(worker)) {
+                        for (int i=0; i<8; i++) {
+                            monthlyPlanningDto.getAssignations().set(i, dtoNextMonth.getAssignations().get(i));
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println(monthData);
+
         Map<String, Map<Integer, String>> annualData = planningService.getYearFromJson(params.getYear());
 
         Map<String, Map<Integer, String>> planning =
                 planningService.getWeeklyPlanning(WeeklyDataConversor.toClingoParams(params, costs, annualData, monthData),
                         params.getYear(), params.getMonth(), params.getWeek());
-        System.out.println("11");
 
         return WeeklyPlanningConversor.toWeeklyPlanningDtosFromData(planning, params);
     }

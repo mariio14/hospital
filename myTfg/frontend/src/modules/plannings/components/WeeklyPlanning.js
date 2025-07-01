@@ -136,7 +136,8 @@ const WeeklyPlanning = () => {
       })),
       week: weekInMonth + 1,
       month: months[month],
-      year
+      year,
+      days: days.map(d => d.getDate())
     };
     dispatch(actions.getWeeklyPlanning(dataToSend, () => {
       setBackendErrors("Sin solución");

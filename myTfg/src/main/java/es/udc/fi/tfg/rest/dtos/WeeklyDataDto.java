@@ -10,6 +10,8 @@ public class WeeklyDataDto {
 
     private String week;
 
+    private List<Integer> days;
+
     private List<WeeklyAssignationsDto> weeklyAssignationsDtos;
 
     public WeeklyDataDto() {
@@ -37,6 +39,14 @@ public class WeeklyDataDto {
 
     public void setMonth(String month) {
         this.month = month;
+    }
+
+    public List<Integer> getDays() {
+        return days;
+    }
+
+    public void setDays(List<Integer> days) {
+        this.days = days;
     }
 
     public List<WeeklyAssignationsDto> getWeeklyAssignationsDtos() {

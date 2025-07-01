@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import es.udc.fi.tfg.model.entities.Staff;
@@ -160,6 +162,7 @@ public class PlanningServiceImpl implements PlanningService {
 
         String month = currentMonth;
         if (previous) {
+            if (Objects.equals(currentMonth, "Enero")) year++;
             month = getPreviousMonth(currentMonth);
         }
         ObjectMapper mapper = new ObjectMapper();

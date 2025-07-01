@@ -378,6 +378,15 @@
         			<sonar.host.url>https://sonar.fic.udc.es/</sonar.host.url>
       			</configuration>
     		</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<jvmArguments>
+						-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005
+					</jvmArguments>
+				</configuration>
+			</plugin>
 		</plugins>
 
 		<!-- ============================================== -->

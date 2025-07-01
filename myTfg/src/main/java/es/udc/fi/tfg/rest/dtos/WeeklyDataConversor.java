@@ -28,8 +28,8 @@ public class WeeklyDataConversor {
                      Map<String, Map<Integer, String>> yearData, MonthlyResultDto monthData) {
 
         StringBuilder clingoParams = new StringBuilder();
-        for (int i=1; i <= weeklyDataDto.getWeeklyAssignationsDtos().get(0).getAssignations().size(); i++) {
-            clingoParams.append(String.format("day(%d). ", i));
+        for (Integer day : weeklyDataDto.getDays()) {
+            clingoParams.append(String.format("day(%d). ", day));
         }
 
         for (WeeklyAssignationsDto weeklyAssignationsDto : weeklyDataDto.getWeeklyAssignationsDtos()) {
@@ -63,16 +63,18 @@ public class WeeklyDataConversor {
         for (MonthlyPlanningDto monthlyPlanningDto : monthData.getMonthlyPlanningDtos()) {
             int i=1;
             for (String assignation : monthlyPlanningDto.getAssignations()) {
-                if (Objects.equals(assignation, "v")) {
-                    clingoParams.append(String.format("vacation(%s,%d). ",
-                            monthlyPlanningDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT),
-                            i));
-                } else {
-                    clingoParams.append(String.format("day_assign_from_month(%s,%d,%s). ",
-                            monthlyPlanningDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT),
-                            i, assignation));
-                    i++;
+                if (weeklyDataDto.getDays().contains(i)) {
+                    if (Objects.equals(assignation, "v") || Objects.equals(assignation, "V")) {
+                        clingoParams.append(String.format("vacation(%s,%d). ",
+                                monthlyPlanningDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT),
+                                i));
+                    } else if (assignation != null) {
+                        clingoParams.append(String.format("day_assign_from_month(%s,%d,%s). ",
+                                monthlyPlanningDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT),
+                                i, assignation));
+                    }
                 }
+                i++;
             }
         }
         return clingoParams.toString();
