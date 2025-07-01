@@ -44,4 +44,10 @@
     "title": "Coste de implante y guardia consecutivos en un residente.",
     "cost": 20
   }
-]}
+], "Semanal": [
+  {
+    "id": "id",
+    "title": "Titulo.",
+    "cost": 10
+  }]
+}

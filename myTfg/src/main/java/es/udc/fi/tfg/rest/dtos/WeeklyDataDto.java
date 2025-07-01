@@ -10,7 +10,7 @@ public class WeeklyDataDto {
 
     private String week;
 
-    private List<WeeklyAssignationsDto> assignationsDtos;
+    private List<WeeklyAssignationsDto> weeklyAssignationsDtos;
 
     public WeeklyDataDto() {
     }
@@ -39,11 +39,11 @@ public class WeeklyDataDto {
         this.month = month;
     }
 
-    public List<WeeklyAssignationsDto> getAssignationsDtos() {
-        return assignationsDtos;
+    public List<WeeklyAssignationsDto> getWeeklyAssignationsDtos() {
+        return weeklyAssignationsDtos;
     }
 
-    public void setAssignationsDtos(List<WeeklyAssignationsDto> assignationsDtos) {
-        this.assignationsDtos = assignationsDtos;
+    public void setWeeklyAssignationsDtos(List<WeeklyAssignationsDto> weeklyAssignationsDtos) {
+        this.weeklyAssignationsDtos = weeklyAssignationsDtos;
     }
 }

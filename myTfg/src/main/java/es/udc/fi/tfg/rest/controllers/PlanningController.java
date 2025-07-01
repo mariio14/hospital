@@ -8,6 +8,7 @@ import es.udc.fi.tfg.rest.common.ErrorsDto;
 import es.udc.fi.tfg.rest.dtos.*;
 
 import java.io.IOException;
+import java.time.Month;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -33,6 +34,21 @@ public class PlanningController {
 
     @Autowired
     private PrioritiesService prioritiesService;
+
+    private static final Map<String, Month> MONTH_TRANSLATION = Map.ofEntries(
+            Map.entry("ENERO", Month.JANUARY),
+            Map.entry("FEBRERO", Month.FEBRUARY),
+            Map.entry("MARZO", Month.MARCH),
+            Map.entry("ABRIL", Month.APRIL),
+            Map.entry("MAYO", Month.MAY),
+            Map.entry("JUNIO", Month.JUNE),
+            Map.entry("JULIO", Month.JULY),
+            Map.entry("AGOSTO", Month.AUGUST),
+            Map.entry("SEPTIEMBRE", Month.SEPTEMBER),
+            Map.entry("OCTUBRE", Month.OCTOBER),
+            Map.entry("NOVIEMBRE", Month.NOVEMBER),
+            Map.entry("DICIEMBRE", Month.DECEMBER)
+    );
 
     @ExceptionHandler(NoSolutionException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -103,9 +119,8 @@ public class PlanningController {
 
         List<Priority> costs = prioritiesService.getPriorities().get("Semanal");
 
-        int daysInMonth = YearMonth.of(params.getYear(), java.time.Month.valueOf(
-                params.getMonth().toUpperCase()).getValue()).lengthOfMonth();
-
+        Month monthEnum = MONTH_TRANSLATION.get(params.getMonth().toUpperCase());
+        int daysInMonth = YearMonth.of(params.getYear(), monthEnum).lengthOfMonth();
         MonthlyResultDto monthData = getMonthlyPlanning(params.getMonth(), params.getYear(), daysInMonth);
 
         Map<String, Map<Integer, String>> annualData = planningService.getYearFromJson(params.getYear());
@@ -113,6 +128,7 @@ public class PlanningController {
         Map<String, Map<Integer, String>> planning =
                 planningService.getWeeklyPlanning(WeeklyDataConversor.toClingoParams(params, costs, annualData, monthData),
                         params.getYear(), params.getMonth(), params.getWeek());
+        System.out.println("11");
 
         return WeeklyPlanningConversor.toWeeklyPlanningDtosFromData(planning, params);
     }

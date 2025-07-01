@@ -159,8 +159,9 @@ public class PlanningServiceImpl implements PlanningService {
     public Map<String, Map<Integer, String>> getMonthFromJson(String currentMonth, int year, boolean previous) throws IOException, ClassNotFoundException {
 
         String month = currentMonth;
-        if (previous)
+        if (previous) {
             month = getPreviousMonth(currentMonth);
+        }
         ObjectMapper mapper = new ObjectMapper();
         File outputFile = new File(pathname + "/solutionMonthly.json");
 

@@ -8,30 +8,47 @@ import java.util.Map;
 import java.util.Objects;
 
 public class WeeklyDataConversor {
+
+    private static final Map<String, Integer> MONTH_TO_NUM = Map.ofEntries(
+            Map.entry("ENERO", 1),
+            Map.entry("FEBRERO", 2),
+            Map.entry("MARZO", 3),
+            Map.entry("ABRIL", 4),
+            Map.entry("MAYO", 5),
+            Map.entry("JUNIO", 6),
+            Map.entry("JULIO", 7),
+            Map.entry("AGOSTO", 8),
+            Map.entry("SEPTIEMBRE", 9),
+            Map.entry("OCTUBRE", 10),
+            Map.entry("NOVIEMBRE", 11),
+            Map.entry("DICIEMBRE", 12)
+    );
+
     public static String toClingoParams(WeeklyDataDto weeklyDataDto, List<Priority> costs,
                      Map<String, Map<Integer, String>> yearData, MonthlyResultDto monthData) {
 
         StringBuilder clingoParams = new StringBuilder();
-
-        for (Map.Entry<Integer,String> entry : weeklyDataDto.getAssignationsDtos().get(0).getAssignations().entrySet()) {
-            clingoParams.append(String.format("day(%d). ", entry.getKey()));
+        for (int i=1; i <= weeklyDataDto.getWeeklyAssignationsDtos().get(0).getAssignations().size(); i++) {
+            clingoParams.append(String.format("day(%d). ", i));
         }
 
-        for (WeeklyAssignationsDto weeklyAssignationsDto : weeklyDataDto.getAssignationsDtos()) {
+        for (WeeklyAssignationsDto weeklyAssignationsDto : weeklyDataDto.getWeeklyAssignationsDtos()) {
             String personName = weeklyAssignationsDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT);
             clingoParams.append(String.format("person(%s). ", personName));
 
             int level = Integer.parseInt(weeklyAssignationsDto.getLevel().replace("R", ""));
             clingoParams.append(String.format("level(%s,%d). ", personName, level));
 
-            Map<Integer, String> assignations = weeklyAssignationsDto.getAssignations();
+            List<String> assignations = weeklyAssignationsDto.getAssignations();
 
             if (assignations != null) {
-                for (Map.Entry<Integer, String> assignation : assignations.entrySet()) {
+                int i = 1;
+                for (String assignation : assignations) {
                     if (assignation != null) {
                         clingoParams.append(String.format("day_assign(%s,%d,%s). ", personName,
-                                assignation.getKey(), assignation.getValue()));
+                                i, assignation));
                     }
+                    i++;
                 }
             }
         }
@@ -40,9 +57,8 @@ public class WeeklyDataConversor {
         }
         for (Map.Entry<String, Map<Integer, String>> entry : yearData.entrySet()) {
             String personName = entry.getKey().replace(" ", "_").toLowerCase(Locale.ROOT);
-            for (Map.Entry<Integer, String> entry2: entry.getValue().entrySet()) {
-                clingoParams.append(String.format("month_assign(%s,%s). ", personName, entry2.getValue()));
-            }
+            String service = entry.getValue().get(MONTH_TO_NUM.get(weeklyDataDto.getMonth().toUpperCase()));
+            clingoParams.append(String.format("month_assign(%s,%s). ", personName, service));
         }
         for (MonthlyPlanningDto monthlyPlanningDto : monthData.getMonthlyPlanningDtos()) {
             int i=1;

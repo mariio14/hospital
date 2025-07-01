@@ -1,6 +1,6 @@
 package es.udc.fi.tfg.rest.dtos;
 
-import java.util.Map;
+import java.util.List;
 
 public class WeeklyAssignationsDto {
 
@@ -8,12 +8,12 @@ public class WeeklyAssignationsDto {
 
     private String level;
 
-    private Map<Integer, String> assignations;
+    private List<String> assignations;
 
     public WeeklyAssignationsDto() {
     }
 
-    public WeeklyAssignationsDto(String name, String level, Map<Integer, String> assignations) {
+    public WeeklyAssignationsDto(String name, String level, List<String> assignations) {
         this.name = name;
         this.level = level;
         this.assignations = assignations;
@@ -35,11 +35,11 @@ public class WeeklyAssignationsDto {
         this.level = level;
     }
 
-    public Map<Integer, String> getAssignations() {
+    public List<String> getAssignations() {
         return assignations;
     }
 
-    public void setAssignations(Map<Integer, String> assignations) {
+    public void setAssignations(List<String> assignations) {
         this.assignations = assignations;
     }
 }

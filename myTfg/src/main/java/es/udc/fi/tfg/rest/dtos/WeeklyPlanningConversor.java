@@ -21,7 +21,7 @@ public class WeeklyPlanningConversor {
     public static WeeklyResultDto toWeeklyPlanningDtosFromData(Map<String, Map<Integer, String>> planningMap,
                                                                WeeklyDataDto data) {
         List<WeeklyPlanningDto> list = new ArrayList<>();
-        for (WeeklyAssignationsDto dto : data.getAssignationsDtos()) {
+        for (WeeklyAssignationsDto dto : data.getWeeklyAssignationsDtos()) {
             Map<Integer, String> value = planningMap.get(dto.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
             list.add(toWeeklyPlanningDto(dto.getName(), value));
         }
