@@ -108,6 +108,9 @@ working_weekends(P,N) :- person(P), N = #count{D: person_working_in_weekend(P,D)
 :- day_assign(P,D,g), day_assign(P',D,g),
     P!=P', level(P,5), level(P',5).
 
+% MensualR_G15
+:- day_assign_guard(P,D,_), vacation(P,D+1).
+
 % MensualP_L04
 #minimize { V,P,D : day_assign(P,D,i),
     day_assign_guard(P,D+1,_),
@@ -139,9 +142,5 @@ numLocation_per_person(P,N) :- person(P), N = #count{D : day_assign_location(P,D
 
 #show day_assign/3.
 #show vacation/2.
-
-% en el pdf de restricciones original pone que no se puede estar en localizado y presencial
-%       a la vez pero en la imagen pasa
-% pdf: guardia no se puede antes de vacaciones, pero pasa en la imagen tmb
 
 % G13
