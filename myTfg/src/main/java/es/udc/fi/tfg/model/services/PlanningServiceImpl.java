@@ -1,15 +1,13 @@
 package es.udc.fi.tfg.model.services;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import es.udc.fi.tfg.model.entities.Staff;
 import es.udc.fi.tfg.model.services.exceptions.NoSolutionException;
+import es.udc.fi.tfg.model.services.exceptions.PlanningNotGeneratedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -158,7 +156,8 @@ public class PlanningServiceImpl implements PlanningService {
     }
 
     @Override
-    public Map<String, Map<Integer, String>> getMonthFromJson(String currentMonth, int year, boolean previous) throws IOException, ClassNotFoundException {
+    public Map<String, Map<Integer, String>> getMonthFromJson(String currentMonth, int year, boolean previous,
+                                                              boolean throwException) throws IOException, ClassNotFoundException, PlanningNotGeneratedException {
 
         String month = currentMonth;
         if (previous) {
@@ -184,6 +183,9 @@ public class PlanningServiceImpl implements PlanningService {
         if (yearData != null) {
             return yearData;
         } else {
+            if (throwException) {
+                throw new PlanningNotGeneratedException("El planning del mes " + month + " del año " + year + " no ha sido generado.");
+            }
             Map<String, Map<Integer, String>> emptyData = new HashMap<>();
             for (Staff staff : staffList) {
                 emptyData.put(staff.getName(), new HashMap<>());
@@ -193,7 +195,7 @@ public class PlanningServiceImpl implements PlanningService {
     }
 
     @Override
-    public Map<String, Map<Integer, String>> getYearFromJson(int year) throws IOException, ClassNotFoundException {
+    public Map<String, Map<Integer, String>> getYearFromJson(int year, boolean throwException) throws IOException, ClassNotFoundException, PlanningNotGeneratedException {
 
         ObjectMapper mapper = new ObjectMapper();
         File outputFile = new File(pathname + "/solution_yearly.json");
@@ -212,9 +214,16 @@ public class PlanningServiceImpl implements PlanningService {
         if (yearData != null) {
             return yearData;
         } else {
+            if (throwException) {
+                throw new PlanningNotGeneratedException("El planning del año " + year + " no ha sido generado.");
+            }
             Map<String, Map<Integer, String>> emptyData = new HashMap<>();
             for (Staff staff : staffList) {
-                emptyData.put(staff.getName(), new HashMap<>());
+                Map<Integer, String> monthsMap = new HashMap<>();
+                for (int month = 1; month <= 12; month++) {
+                    monthsMap.put(month, null);
+                }
+                emptyData.put(staff.getName().toLowerCase(Locale.ROOT), monthsMap);
             }
             return emptyData;
         }

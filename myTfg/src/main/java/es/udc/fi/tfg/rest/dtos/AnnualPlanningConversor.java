@@ -1,7 +1,6 @@
 package es.udc.fi.tfg.rest.dtos;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class AnnualPlanningConversor {
 
@@ -38,9 +37,24 @@ public class AnnualPlanningConversor {
     private static Map<Integer, String> transformTasksMap(Map<Integer, String> value) {
         Map<Integer, String> result = new HashMap<>();
         for (Map.Entry<Integer, String> e : value.entrySet()) {
-            String transformed = CONSTANTS_MAP.getOrDefault(e.getValue(), e.getValue());
+            String val = e.getValue();
+            String transformed = val == null ? null : CONSTANTS_MAP.getOrDefault(val, val);
             result.put(e.getKey()-1, transformed);
         }
         return result;
+    }
+
+    private static boolean isNull(List<AnnualPlanningDto> list) {
+        if (list == null || list.isEmpty()) {
+            return true;
+        }
+        for (AnnualPlanningDto dto : list) {
+            for (Map.Entry<Integer,String> map : dto.getAssignations().entrySet()) {
+                if (map.getValue() != null) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

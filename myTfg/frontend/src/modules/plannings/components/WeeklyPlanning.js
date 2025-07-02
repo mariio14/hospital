@@ -139,8 +139,9 @@ const WeeklyPlanning = () => {
       year,
       days: days.map(d => d.getDate())
     };
-    dispatch(actions.getWeeklyPlanning(dataToSend, () => {
-      setBackendErrors("Sin solución");
+    dispatch(actions.getWeeklyPlanning(dataToSend, (errorPayload) => {
+      const message = errorPayload?.globalError || "Ha ocurrido un error";
+      setBackendErrors(message);
       setIsLoading(false);
     }));
   };
@@ -205,7 +206,7 @@ const WeeklyPlanning = () => {
                 </button>
             </div>
           </div>
-          {backendErrors && <div className="text-red-500 text-center">{backendErrors}</div>}
+          {backendErrors ? <p style={{ color: 'red', textAlign: 'center', marginTop: '30px', marginBottom: '20px' }}>{backendErrors}</p> : null}
           <div className="overflow-auto">
             <table className="w-full text-sm text-center border">
               <thead>
