@@ -10,9 +10,19 @@ export const getAnnualPlanning = (planningData, year, onErrors) => dispatch =>
     backend.planningService.annualPlanning(planningData, year,
     annualPlanning => dispatch(getAnnualPlanningCompleted(annualPlanning)), onErrors);
 
-export const getSavedAnnualPlanning = (planningData, year, onErrors) => dispatch =>
-    backend.planningService.getAnnualPlanning(planningData, year,
-    annualPlanning => dispatch(getAnnualPlanningCompleted(annualPlanning)), onErrors);
+export const getSavedAnnualPlanning = (planningData, year, onErrors, emptyPlanning) => dispatch =>
+    backend.planningService.getAnnualPlanning(
+        planningData,
+        year,
+        annualPlanning => {
+            if (annualPlanning != null && !(annualPlanning instanceof Blob)) {
+                dispatch(getAnnualPlanningCompleted(annualPlanning));
+            } else {
+                dispatch(getAnnualPlanningCompleted(emptyPlanning));
+            }
+        },
+        onErrors
+    );
 
 export const clearAnnualPlanning = () => ({
     type: actionTypes.ANNUAL_PLANNING_CLEAR,

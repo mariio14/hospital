@@ -64,7 +64,8 @@ const AnnualPlanning = () => {
         dispatch(actions.getSavedAnnualPlanning(
             convertedPlanningData,
             year,
-            () => setBackendErrors("No se ha podido cargar la planificación guardada.")
+            () => setBackendErrors("No se ha podido cargar la planificación guardada."),
+            emptyPlanning
         ));
     }, [year]);
 

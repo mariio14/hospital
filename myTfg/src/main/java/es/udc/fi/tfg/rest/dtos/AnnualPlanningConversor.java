@@ -31,6 +31,9 @@ public class AnnualPlanningConversor {
             Map<Integer, String> value =  planningMap.get(annualPlanningDataDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
             list.add(new AnnualPlanningDto(annualPlanningDataDto.getName(), annualPlanningDataDto.getLevel(), transformTasksMap(value)));
         }
+        if (isNull(list)) {
+            return null;
+        }
         return list;
     }
 
