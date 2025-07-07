@@ -144,23 +144,23 @@ numLocation_per_person(P,N) :- person(P), N = #count{D : day_assign_location(P,D
   %  sumDays(P,S) -> sum of day numbers for person P
   %  mean(P,M) -> average of day numbers for person P
   %  difference_from_optimal_mean(P,M) -> | average of day numbers for person P - optimal mean |
-total_day_assign(P,N) :- person(P), N = #count {D : day_assign(P,D,_)}.
-sumDays(P,S) :- person(P), S = #sum {D : day_assign(P,D,_)}.
-mean(P,M) :- person(P), sumDays(P,S), total_day_assign(P,N), N>0, M = S/N.
-difference_from_optimal_mean(P,D) :- person(P), mean(P,M), numDays(N), M>N/2, D = M-N/2.
-difference_from_optimal_mean(P,D) :- person(P), mean(P,M), numDays(N), N/2>M, D = N/2-M.
+%total_day_assign(P,N) :- person(P), N = #count {D : day_assign(P,D,_)}.
+%sumDays(P,S) :- person(P), S = #sum {D : day_assign(P,D,_)}.
+%mean(P,M) :- person(P), sumDays(P,S), total_day_assign(P,N), N>0, M = S/N.
+%difference_from_optimal_mean(P,D) :- person(P), mean(P,M), numDays(N), M>N/2, D = M-N/2.
+%difference_from_optimal_mean(P,D) :- person(P), mean(P,M), numDays(N), N/2>M, D = N/2-M.
 
   %  diff_abs(P,D) -> difference from mean for a single day numbers for person P
   %  total_deviation(P,D) -> average of difference from mean for day numbers for person P
-diff_abs(P,N) :- day_assign(P,D,_), mean(P,M), D >= M, N = D - M.
-diff_abs(P,N) :- day_assign(P,D,_), mean(P,M), D < M, N = M - D.
-total_deviation(P,N) :- person(P), N = #sum {D : diff_abs(P,D)}.
+%diff_abs(P,N) :- day_assign(P,D,_), mean(P,M), D >= M, N = D - M.
+%diff_abs(P,N) :- day_assign(P,D,_), mean(P,M), D < M, N = M - D.
+%total_deviation(P,N) :- person(P), N = #sum {D : diff_abs(P,D)}.
 
 %#minimize {V,P : mean(P,M), cost(mensualP_G13,V), numDays(N)}.
 %#minimize {V*D,P : total_deviation(P,D), cost(mensualP_G13,V)}.
 
 
-#show day_assign/2.
-%#show vacation/2.
+#show day_assign/3.
+#show vacation/2.
 
 % G13

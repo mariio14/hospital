@@ -29,8 +29,9 @@ public class WeeklyPlanningConversor {
     }
 
     public static WeeklyPlanningDto toWeeklyPlanningDto(String name, Map<Integer, String> asignations) {
-        Map<Integer, String> map = new HashMap<>(asignations);
-
-        return new WeeklyPlanningDto(name, map);
+        if (asignations == null) {
+            return new WeeklyPlanningDto(name, new HashMap<>());
+        }
+        return new WeeklyPlanningDto(name, new HashMap<>(asignations));
     }
 }
