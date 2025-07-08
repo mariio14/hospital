@@ -197,8 +197,8 @@ public class PlanningController {
                                              @RequestParam String week)
             throws NoSolutionException, IOException, ClassNotFoundException {
 
-        Map<String, Map<Integer, String>> monthPlanning = planningService.getWeekFromJson(year, month, week);
+        Map<String, Map<Integer, String>> weekPlanning = planningService.getWeekFromJson(year, month, week);
 
-        return WeeklyPlanningConversor.toWeeklyPlanningDtos(monthPlanning, year, month, week);
+        return WeeklyPlanningConversor.toWeeklyPlanningDtos(weekPlanning, year, month, week);
     }
 }

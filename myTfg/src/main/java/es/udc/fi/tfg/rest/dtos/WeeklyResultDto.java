@@ -10,16 +10,16 @@ public class WeeklyResultDto {
 
     private String week;
 
-    private List<WeeklyPlanningDto> assignations;
+    private List<WeeklyPlanningDto> weeklyPlanningDtos;
 
     public WeeklyResultDto() {
     }
 
-    public WeeklyResultDto(int year, String month, String week, List<WeeklyPlanningDto> assignations) {
+    public WeeklyResultDto(int year, String month, String week, List<WeeklyPlanningDto> weeklyPlanningDtos) {
         this.year = year;
         this.month = month;
         this.week = week;
-        this.assignations = assignations;
+        this.weeklyPlanningDtos = weeklyPlanningDtos;
     }
 
     public int getYear() {
@@ -47,10 +47,10 @@ public class WeeklyResultDto {
     }
 
     public List<WeeklyPlanningDto> getAssignations() {
-        return assignations;
+        return weeklyPlanningDtos;
     }
 
     public void setAssignations(List<WeeklyPlanningDto> assignations) {
-        this.assignations = assignations;
+        this.weeklyPlanningDtos = assignations;
     }
 }

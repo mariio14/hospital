@@ -1,17 +1,17 @@
 package es.udc.fi.tfg.rest.dtos;
 
-import java.util.Map;
+import java.util.List;
 
 public class WeeklyPlanningDto {
 
     private String name;
 
-    private Map<Integer, String> assignations;
+    private List<String> assignations;
 
     public WeeklyPlanningDto() {
     }
 
-    public WeeklyPlanningDto(String name, Map<Integer, String> assignations) {
+    public WeeklyPlanningDto(String name, List<String> assignations) {
         this.name = name;
         this.assignations = assignations;
     }
@@ -24,11 +24,11 @@ public class WeeklyPlanningDto {
         this.name = name;
     }
 
-    public Map<Integer, String> getAssignations() {
+    public List<String> getAssignations() {
         return assignations;
     }
 
-    public void setAssignations(Map<Integer, String> assignations) {
+    public void setAssignations(List<String> assignations) {
         this.assignations = assignations;
     }
 }

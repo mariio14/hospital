@@ -12,7 +12,10 @@ public class WeeklyPlanningConversor {
                                                                int year, String month, String week) {
         List<WeeklyPlanningDto> assignations = planningMap.entrySet()
                 .stream()
-                .map(entry -> toWeeklyPlanningDto(entry.getKey(), entry.getValue()))
+                .map(entry -> {
+                    List<Integer> sortedKeys = entry.getValue().keySet().stream().sorted().toList();
+                    return toWeeklyPlanningDto(entry.getKey(), entry.getValue(), sortedKeys);
+                })
                 .collect(Collectors.toList());
 
         return new WeeklyResultDto(year, month, week, assignations);
@@ -23,15 +26,22 @@ public class WeeklyPlanningConversor {
         List<WeeklyPlanningDto> list = new ArrayList<>();
         for (WeeklyAssignationsDto dto : data.getWeeklyAssignationsDtos()) {
             Map<Integer, String> value = planningMap.get(dto.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
-            list.add(toWeeklyPlanningDto(dto.getName(), value));
+            list.add(toWeeklyPlanningDto(dto.getName(), value, data.getDays()));
         }
         return new WeeklyResultDto(data.getYear(), data.getMonth(), data.getWeek(), list);
     }
 
-    public static WeeklyPlanningDto toWeeklyPlanningDto(String name, Map<Integer, String> asignations) {
-        if (asignations == null) {
-            return new WeeklyPlanningDto(name, new HashMap<>());
+    public static WeeklyPlanningDto toWeeklyPlanningDto(String name, Map<Integer, String> asignations, List<Integer> days) {
+
+        List<String> list = new ArrayList<>(Collections.nCopies(5, null));
+        if (asignations != null) {
+            asignations.forEach((key, value) -> {
+                int index = days.indexOf(key);
+                if (index != -1) {
+                    list.set(index, value.toUpperCase());
+                }
+            });
         }
-        return new WeeklyPlanningDto(name, new HashMap<>(asignations));
+        return new WeeklyPlanningDto(name, list);
     }
 }

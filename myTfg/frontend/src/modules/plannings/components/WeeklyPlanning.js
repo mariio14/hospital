@@ -64,7 +64,7 @@ const WeeklyPlanning = () => {
   }, []);
 
   useEffect(() => {
-    setPlanningData(weeklyPlanning || emptyPlanning);
+    setPlanningData(emptyPlanning);
     setIsLoading(false);
   }, [weeklyPlanning]);
 
