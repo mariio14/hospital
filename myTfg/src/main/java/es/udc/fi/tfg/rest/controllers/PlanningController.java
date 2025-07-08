@@ -156,16 +156,7 @@ public class PlanningController {
         int daysInMonth = YearMonth.of(params.getYear(), monthEnum).lengthOfMonth();
         MonthlyResultDto monthData = getMonthlyPlanning(params.getMonth(), params.getYear(), daysInMonth, true);
 
-        boolean twoMonths = false;
-        int previous = 0;
-        for (Integer n : params.getDays()) {
-            if (n < previous) {
-                twoMonths = true;
-                break;
-            }
-            previous = n;
-        }
-        if (twoMonths) {
+        if (params.getDays().contains(1)) {
             Month monthEnum2 = MONTH_TRANSLATION.get(NEXT_MONTH.get(params.getMonth().toUpperCase()));
             int daysInMonth2 = monthEnum2.equals(Month.JANUARY) ? YearMonth.of(params.getYear()+1, monthEnum2).lengthOfMonth() :
                     YearMonth.of(params.getYear(), monthEnum2).lengthOfMonth();
@@ -186,7 +177,8 @@ public class PlanningController {
         System.out.println(monthData);
 
         Map<String, Map<Integer, String>> planning =
-                planningService.getWeeklyPlanning(WeeklyDataConversor.toClingoParams(params, costs, annualData, monthData),
+                planningService.getWeeklyPlanning(WeeklyDataConversor.toClingoParams(params, costs, annualData, monthData,
+                                params.getYear(), params.getMonth()),
                         params.getYear(), params.getMonth(), params.getWeek());
 
         return WeeklyPlanningConversor.toWeeklyPlanningDtosFromData(planning, params);

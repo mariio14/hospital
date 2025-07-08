@@ -54,7 +54,7 @@ color_floor_assigned(C,D) :- day_assign(P,D,floor), person(P), month_assign(P,C)
 
 % SemanalP_10
 #minimize { V,D :
-    day_assign(P,D,peonage), day_assign_guard_from_month(P,D-1),
+    day_assign(P,D,peonage), prev_day(D,D'), day_assign_guard_from_month(P,D'),
     cost(semanalP_10, V)
 }.
 
