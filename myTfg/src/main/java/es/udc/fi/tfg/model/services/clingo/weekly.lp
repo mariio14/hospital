@@ -12,6 +12,7 @@ task_color(qx, red, 9).
 task_color(qx, red, 11).
 task_color(floor, yellow, 7).
 task_color(floor, red, 8).
+task_color(floor, blue, 9).
 
 task(consultation, 10).
 task(consultation, 11).
@@ -23,10 +24,10 @@ task(qxrobot, 10).
 vacation(dummyname,1).
 day_not_assign(1,1,qx).
 
-cost(yellow, 10). % SemanalP_03
-cost(red, 20). % SemanalP_04
-cost(blue, 50). % SemanalP_05
-%cost(mensualP_G07, 10).
+cost(semanalP_03_4_5, yellow, 10).
+cost(semanalP_03_4_5, red, 20).
+cost(semanalP_03_4_5, blue, 50).
+cost(semanalP_10, 25).
 
 % SemanalR_01
 1 {day_assign(P,D,qx) : person(P), not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,qx)} :- task_color(qx, C, D).
@@ -48,10 +49,14 @@ cost(blue, 50). % SemanalP_05
 color_floor_assigned(C,D) :- day_assign(P,D,floor), person(P), month_assign(P,C).
 #minimize { V,C,D :
     task_color(floor,C,D), not color_floor_assigned(C,D),
-    cost(C,V)
+    cost(semanalP_03_4_5, C,V)
 }.
 
-
+% SemanalP_10
+#minimize { V,D :
+    day_assign(P,D,peonage), day_assign_guard_from_month(P,D-1),
+    cost(semanalP_10, V)
+}.
 
 
 #show month_assign/2.
@@ -61,4 +66,4 @@ color_floor_assigned(C,D) :- day_assign(P,D,floor), person(P), month_assign(P,C)
 % residente de procto siempre en procto. que significa?
 % penalizar mas gente que 1 en qx y planta?
 
-% P10, P11, P12, P15
+% P10(falta ver lo del -1), P11, P12, P15

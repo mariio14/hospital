@@ -72,6 +72,10 @@ public class WeeklyDataConversor {
                         clingoParams.append(String.format("day_assign_from_month(%s,%d,%s). ",
                                 monthlyPlanningDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT),
                                 i, assignation.toLowerCase(Locale.ROOT)));
+                        if (assignation.toLowerCase(Locale.ROOT).equals("g") || assignation.toLowerCase(Locale.ROOT).equals("gp")) {
+                            clingoParams.append(String.format("day_assign_guard_from_month(%s,%d). ",
+                                    monthlyPlanningDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT), i));
+                        }
                     }
                 }
                 i++;
