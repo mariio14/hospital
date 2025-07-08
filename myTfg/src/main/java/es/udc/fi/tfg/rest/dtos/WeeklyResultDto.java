@@ -46,11 +46,11 @@ public class WeeklyResultDto {
         this.month = month;
     }
 
-    public List<WeeklyPlanningDto> getAssignations() {
+    public List<WeeklyPlanningDto> getWeeklyPlanningDtos() {
         return weeklyPlanningDtos;
     }
 
-    public void setAssignations(List<WeeklyPlanningDto> assignations) {
-        this.weeklyPlanningDtos = assignations;
+    public void setWeeklyPlanningDtos(List<WeeklyPlanningDto> weeklyPlanningDtos) {
+        this.weeklyPlanningDtos = weeklyPlanningDtos;
     }
 }

@@ -66,4 +66,4 @@ color_floor_assigned(C,D) :- day_assign(P,D,floor), person(P), month_assign(P,C)
 % residente de procto siempre en procto. que significa?
 % penalizar mas gente que 1 en qx y planta?
 
-% P10(falta ver lo del -1), P11, P12, P15
+% P11, P12, P15

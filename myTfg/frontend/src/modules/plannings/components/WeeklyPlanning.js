@@ -64,7 +64,7 @@ const WeeklyPlanning = () => {
   }, []);
 
   useEffect(() => {
-    setPlanningData(emptyPlanning);
+    setPlanningData(weeklyPlanning || emptyPlanning);
     setIsLoading(false);
   }, [weeklyPlanning]);
 
@@ -131,8 +131,7 @@ const WeeklyPlanning = () => {
     const dataToSend = {
       weeklyAssignationsDtos: planningData.weeklyPlanningDtos.map((p) => ({
         ...p,
-        assignations: [...p.assignations],
-        notValidAssignations: [...p.notValidAssignations]
+        assignations: [...p.assignations]
       })),
       week: weekInMonth + 1,
       month: months[month],
