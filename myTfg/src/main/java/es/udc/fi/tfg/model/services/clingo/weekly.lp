@@ -28,6 +28,9 @@ cost(semanalP_03_4_5, yellow, 10).
 cost(semanalP_03_4_5, red, 20).
 cost(semanalP_03_4_5, blue, 50).
 cost(semanalP_10, 25).
+cost(semanalP_11, 15).
+cost(semanalP_12, 30).
+cost(semanalP_15, 25).
 
 % SemanalR_01
 1 {day_assign(P,D,qx) : person(P), not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,qx)} :- task_color(qx, C, D).
@@ -58,6 +61,24 @@ color_floor_assigned(C,D) :- day_assign(P,D,floor), person(P), month_assign(P,C)
     cost(semanalP_10, V)
 }.
 
+% SemanalP_11
+#minimize { V,P,D :
+    day_assign(P,D,peonage), level(P,3),
+    cost(semanalP_11, V)
+}.
+
+% SemanalP_12
+#minimize { V,P,D :
+    day_assign(P,D,peonage), level(P,L), L<3,
+    cost(semanalP_12, V)
+}.
+
+% SemanalP_15
+#minimize { V,P,D :
+    day_assign(P,D,qxrobot), level(P,5),
+    cost(semanalP_15, V)
+}.
+
 
 #show month_assign/2.
 %#show day_assign_from_month/3.
@@ -65,5 +86,3 @@ color_floor_assigned(C,D) :- day_assign(P,D,floor), person(P), month_assign(P,C)
 
 % residente de procto siempre en procto. que significa?
 % penalizar mas gente que 1 en qx y planta?
-
-% P11, P12, P15
