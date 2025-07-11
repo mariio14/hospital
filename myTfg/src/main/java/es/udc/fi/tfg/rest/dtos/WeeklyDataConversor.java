@@ -92,7 +92,7 @@ public class WeeklyDataConversor {
                 for (String assignation : assignations) {
                     if (assignation != null) {
                         clingoParams.append(String.format("day_assign(%s,%d,%s). ", personName,
-                                i, assignation));
+                                i, assignation.toLowerCase(Locale.ROOT)));
                     }
                     i++;
                 }

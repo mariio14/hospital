@@ -17,6 +17,11 @@ const WeeklyPlanning = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [rightClickData, setRightClickData] = useState(null);
   const prohibitedMenuRef = useRef(null);
+  const [editingCell, setEditingCell] = useState({ personName: null, dayIndex: null });
+  const selectRef = useRef(null);
+
+  const isEditing = (personName, dayIndex) =>
+    editingCell.personName === personName && editingCell.dayIndex === dayIndex;
 
   const months = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -41,7 +46,7 @@ const WeeklyPlanning = () => {
   const days = getWeekStartDate(year, month, weekInMonth);
 
   const colorMap = {
-    E: "#81C784", G: "#E57373", I: "#FF9800", GP: "#E57373", V: "#2196F3", C: "#FFFFFF"
+    QX: "#81C784", PEONAGE: "#E57373", CONSULTATION: "#FF9800", FLOOR: "#E57373", QXROBOT: "#2196F3"
   };
   const activities = Object.keys(colorMap);
   const activities_real = activities.filter((a) => a !== "GP");
@@ -56,6 +61,19 @@ const WeeklyPlanning = () => {
   };
 
   const [planningData, setPlanningData] = useState(emptyPlanning);
+
+     useEffect(() => {
+       if (editingCell.personName !== null && editingCell.dayIndex !== null) {
+         // Delay para evitar loop infinito
+         setTimeout(() => {
+           if (selectRef.current) {
+             selectRef.current.focus();
+             selectRef.current.click();
+           }
+         }, 0);
+       }
+     }, [editingCell]);
+
 
   useEffect(() => {
     dispatch(staffActions.getStaff(() =>
@@ -129,10 +147,14 @@ const WeeklyPlanning = () => {
   const handleGeneratePlanning = () => {
     setIsLoading(true);
     const dataToSend = {
-      weeklyAssignationsDtos: planningData.weeklyPlanningDtos.map((p) => ({
-        ...p,
-        assignations: [...p.assignations]
-      })),
+      weeklyAssignationsDtos: planningData.weeklyPlanningDtos.map((p) => {
+        const staffMember = staffList.find(staff => staff.name.toLowerCase() === p.name.toLowerCase());
+        return {
+          ...p,
+          level: staffMember ? staffMember.level : null,
+          assignations: [...p.assignations]
+        };
+      }),
       week: weekInMonth + 1,
       month: months[month],
       year,
@@ -222,20 +244,49 @@ const WeeklyPlanning = () => {
                 {planningData.weeklyPlanningDtos.map((person) => (
                   <tr key={person.name}>
                     <td className="bg-gray-50 font-medium">{person.name}</td>
-                    {person.assignations.map((activity, idx) => (
-                      <td key={idx}>
-                        <select
-                          value={activity || ""}
-                          onChange={(e) => handleSelectChange(person.name, idx, e.target.value)}
-                          className="w-full text-center bg-transparent"
-                        >
-                          <option value="-">-</option>
-                          {activities_real.map((a) => (
-                            <option key={a} value={a}>{a}</option>
-                          ))}
-                        </select>
-                      </td>
-                    ))}
+                    {person.assignations.map((activity, idx) => {
+                      const bgColor = activity ? colorMap[activity] || "#f0f0f0" : "#f9f9f9";
+                      const isCellEditing = isEditing(person.name, idx);
+
+                      return (
+                        <td key={idx}>
+                          <select
+                            value={activity || ""}
+                            onChange={(e) =>
+                              handleSelectChange(person.name, idx, e.target.value)
+                            }
+                            style={{
+                              backgroundColor: colorMap[activity] || "#f0f0f0",
+                              border: "1px solid #ccc",
+                              color: "#000",
+                              cursor: "pointer",
+                              width: "100%",
+                              textAlign: "center",
+                              fontWeight: "bold",
+                              padding: "8px",
+                              appearance: "none", // Oculta la flecha nativa
+                              WebkitAppearance: "none",
+                              MozAppearance: "none",
+                              textAlignLast: "center",
+                            }}
+                          >
+                            <option value="">-</option>
+                            {activities_real.map((act) => (
+                              <option
+                                key={act}
+                                value={act}
+                                style={{
+                                  backgroundColor: colorMap[act],
+                                  color: "#000",
+                                }}
+                              >
+                                {act}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>

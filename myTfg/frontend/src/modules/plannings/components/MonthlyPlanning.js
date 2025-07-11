@@ -100,7 +100,7 @@ const MonthlyPlanning = () => {
 
   const activities = Object.keys(colorMap);
 
-  const activities_real = activities.filter(activity => activity !== "GP");
+  const activities_real = activities;
 
   const handleSelectChange = (personName, dayIndex, value) => {
     setPlanningData((prevPlanning) => ({
