@@ -46,8 +46,39 @@
   }
 ], "Semanal": [
   {
-    "id": "id",
-    "title": "Titulo.",
+    "id": "semanalP_03",
+    "title": "Coste de que no esté cubierta la planta amarilla.",
     "cost": 10
-  }]
+  },
+  {
+    "id": "semanalP_04",
+    "title": "Coste de que no esté cubierta la planta roja.",
+    "cost": 20
+  },
+  {
+    "id": "semanalP_05",
+    "title": "Coste de que no esté cubierta la planta azul.",
+    "cost": 50
+  },
+  {
+    "id": "semanalP_10",
+    "title": "Coste de que el residente que cubra una peonada haya tenido una guardia presencial el día anterior.",
+    "cost": 25
+  },
+  {
+    "id": "semanalP_11",
+    "title": "Coste de que el residente que cubra una peonada sea de nivel 3.",
+    "cost": 15
+  },
+  {
+    "id": "semanalP_12",
+    "title": "Coste de que el residente que cubra una peonada sea de nivel 1 o 2.",
+    "cost": 30
+  },
+  {
+    "id": "semanalP_15",
+    "title": "Coste de que el residente que cubre un quirófano robot sea de nivel 5.",
+    "cost": 25
+  }
+]
 }
