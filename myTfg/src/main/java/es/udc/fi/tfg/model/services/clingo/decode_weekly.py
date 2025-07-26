@@ -34,7 +34,11 @@ with ctl.solve(yield_=True) as handle:
 
                 if person not in assignments:
                     assignments[person] = {}
-                assignments[person][day] = activity
+
+                if day not in assignments[person]:
+                    assignments[person][day] = []
+
+                assignments[person][day].append(activity)
 
             if atom.name == "vacation" and len(atom.arguments) == 2:
                 person = str(atom.arguments[0])

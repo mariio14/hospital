@@ -5,8 +5,6 @@
 %person(1..15).
 %level(P,(P-1)/3 + 1) :- person(P).
 
-color(yellow;red;blue).
-
 task_color(qx, yellow, 7, 1).
 task_color(qx, blue, 8, 2).
 task_color(qx, blue, 9, 2).
@@ -26,7 +24,6 @@ task(qxrobot, 8).
 task(qxrobot, 10).
 
 % meter dummys de actividades
-vacation(dummyname,1).
 day_not_assign(1,1,qx).
 
 cost(semanalP_03_4_5, yellow, 10).
@@ -36,6 +33,8 @@ cost(semanalP_10, 25).
 cost(semanalP_11, 15).
 cost(semanalP_12, 30).
 cost(semanalP_15, 25).
+
+color(yellow;red;blue).
 
 % SemanalR_01
 N {day_assign(P,D,qx,C,morning) : person(P), not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,qx)} :- task_color(qx, C, D, N).

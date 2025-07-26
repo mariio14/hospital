@@ -106,6 +106,7 @@ public class WeeklyDataConversor {
             String service = entry.getValue().get(MONTH_TO_NUM.get(weeklyDataDto.getMonth().toUpperCase()));
             clingoParams.append(String.format("month_assign(%s,%s). ", personName, service));
         }
+        boolean vacation = false;
         for (MonthlyPlanningDto monthlyPlanningDto : monthData.getMonthlyPlanningDtos()) {
             int i=1;
             for (String assignation : monthlyPlanningDto.getAssignations()) {
@@ -114,6 +115,7 @@ public class WeeklyDataConversor {
                         clingoParams.append(String.format("vacation(%s,%d). ",
                                 monthlyPlanningDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT),
                                 i));
+                        vacation = true;
                     } else if (assignation != null) {
                         clingoParams.append(String.format("day_assign_from_month(%s,%d,%s). ",
                                 monthlyPlanningDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT),
@@ -126,6 +128,9 @@ public class WeeklyDataConversor {
                 }
                 i++;
             }
+        }
+        if (!vacation) {
+            clingoParams.append("vacation(dummyname,1). ");
         }
         return clingoParams.toString();
     }

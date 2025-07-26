@@ -8,7 +8,7 @@ public class WeeklyPlanningConversor {
     private WeeklyPlanningConversor() {
     }
 
-    public static WeeklyResultDto toWeeklyPlanningDtos(Map<String, Map<Integer, String>> planningMap,
+    public static WeeklyResultDto toWeeklyPlanningDtos(Map<String, Map<Integer, List<String>>> planningMap,
                                                                int year, String month, String week) {
         List<WeeklyPlanningDto> assignations = planningMap.entrySet()
                 .stream()
@@ -21,17 +21,17 @@ public class WeeklyPlanningConversor {
         return new WeeklyResultDto(year, month, week, assignations);
     }
 
-    public static WeeklyResultDto toWeeklyPlanningDtosFromData(Map<String, Map<Integer, String>> planningMap,
+    public static WeeklyResultDto toWeeklyPlanningDtosFromData(Map<String, Map<Integer, List<String>>> planningMap,
                                                                WeeklyDataDto data) {
         List<WeeklyPlanningDto> list = new ArrayList<>();
         for (WeeklyAssignationsDto dto : data.getWeeklyAssignationsDtos()) {
-            Map<Integer, String> value = planningMap.get(dto.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+            Map<Integer, List<String>> value = planningMap.get(dto.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
             list.add(toWeeklyPlanningDto(dto.getName(), value, data.getDays()));
         }
         return new WeeklyResultDto(data.getYear(), data.getMonth(), data.getWeek(), list);
     }
 
-    public static WeeklyPlanningDto toWeeklyPlanningDto(String name, Map<Integer, String> asignations, List<Integer> days) {
+    public static WeeklyPlanningDto toWeeklyPlanningDto(String name, Map<Integer, List<String>> asignations, List<Integer> days) {
 
         List<String> list = new ArrayList<>(Collections.nCopies(5, null));
         List<String> eveningList = new ArrayList<>(Collections.nCopies(5, null));
@@ -39,12 +39,14 @@ public class WeeklyPlanningConversor {
             asignations.forEach((key, value) -> {
                 int index = days.indexOf(key);
                 if (index != -1) {
-                    if (value.startsWith("morning")) {
-                        String modifiedValue = value.replaceFirst("morning", "").toUpperCase();
-                        list.set(index, modifiedValue);
-                    } else if (value.startsWith("evening")) {
-                        String modifiedValue = value.replaceFirst("evening", "").toUpperCase();
-                        eveningList.set(index, modifiedValue);
+                    for (String val : value) {
+                        if (val.startsWith("evening")) {
+                            eveningList.set(index, val.replaceFirst("evening", "").toUpperCase());
+                        } else if (val.startsWith("morning")) {
+                            list.set(index, val.replaceFirst("morning", "").toUpperCase());
+                        } else {
+                            list.set(index, val.toUpperCase());
+                        }
                     }
                 }
             });

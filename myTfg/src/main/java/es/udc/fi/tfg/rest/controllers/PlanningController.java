@@ -175,7 +175,7 @@ public class PlanningController {
             }
         }
 
-        Map<String, Map<Integer, String>> planning =
+        Map<String, Map<Integer, List<String>>> planning =
                 planningService.getWeeklyPlanning(WeeklyDataConversor.toClingoParams(params, costs, annualData, monthData,
                                 params.getYear(), params.getMonth()),
                         params.getYear(), params.getMonth(), params.getWeek());
@@ -188,7 +188,7 @@ public class PlanningController {
                                              @RequestParam String week)
             throws NoSolutionException, IOException, ClassNotFoundException {
 
-        Map<String, Map<Integer, String>> weekPlanning = planningService.getWeekFromJson(year, month, week);
+        Map<String, Map<Integer, List<String>>> weekPlanning = planningService.getWeekFromJson(year, month, week);
 
         return WeeklyPlanningConversor.toWeeklyPlanningDtos(weekPlanning, year, month, week);
     }
