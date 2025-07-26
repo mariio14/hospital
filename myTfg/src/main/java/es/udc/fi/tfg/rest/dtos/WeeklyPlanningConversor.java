@@ -34,14 +34,21 @@ public class WeeklyPlanningConversor {
     public static WeeklyPlanningDto toWeeklyPlanningDto(String name, Map<Integer, String> asignations, List<Integer> days) {
 
         List<String> list = new ArrayList<>(Collections.nCopies(5, null));
+        List<String> eveningList = new ArrayList<>(Collections.nCopies(5, null));
         if (asignations != null) {
             asignations.forEach((key, value) -> {
                 int index = days.indexOf(key);
                 if (index != -1) {
-                    list.set(index, value.toUpperCase());
+                    if (value.startsWith("morning")) {
+                        String modifiedValue = value.replaceFirst("morning", "").toUpperCase();
+                        list.set(index, modifiedValue);
+                    } else if (value.startsWith("evening")) {
+                        String modifiedValue = value.replaceFirst("evening", "").toUpperCase();
+                        eveningList.set(index, modifiedValue);
+                    }
                 }
             });
         }
-        return new WeeklyPlanningDto(name, list);
+        return new WeeklyPlanningDto(name, list, eveningList);
     }
 }

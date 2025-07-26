@@ -8,12 +8,15 @@ public class WeeklyPlanningDto {
 
     private List<String> assignations;
 
+    private List<String> eveningAssignations;
+
     public WeeklyPlanningDto() {
     }
 
-    public WeeklyPlanningDto(String name, List<String> assignations) {
+    public WeeklyPlanningDto(String name, List<String> assignations, List<String> eveningAssignations) {
         this.name = name;
         this.assignations = assignations;
+        this.eveningAssignations = eveningAssignations;
     }
 
     public String getName() {
@@ -30,5 +33,13 @@ public class WeeklyPlanningDto {
 
     public void setAssignations(List<String> assignations) {
         this.assignations = assignations;
+    }
+
+    public List<String> getEveningAssignations() {
+        return eveningAssignations;
+    }
+
+    public void setEveningAssignations(List<String> eveningAssignations) {
+        this.eveningAssignations = eveningAssignations;
     }
 }

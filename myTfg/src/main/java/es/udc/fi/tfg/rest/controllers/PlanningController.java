@@ -174,7 +174,6 @@ public class PlanningController {
                 }
             }
         }
-        System.out.println(monthData);
 
         Map<String, Map<Integer, String>> planning =
                 planningService.getWeeklyPlanning(WeeklyDataConversor.toClingoParams(params, costs, annualData, monthData,
