@@ -24,6 +24,13 @@ const MonthlyPlanning = () => {
   const getDaysInMonth = (month, year) => new Date(year, month, 0).getDate();
   const [daysInMonth, setDaysInMonth] = useState(getDaysInMonth(month, year));
 
+  const getPreviousMonthDays = (month, year) => {
+    const prevMonth = month === 0 ? 11 : month - 1;
+    const prevYear = month === 0 ? year - 1 : year;
+    return new Date(prevYear, prevMonth, 0).getDate();
+  };
+  const [daysInPrevMonth, setDaysInPrevMonth] = useState(getPreviousMonthDays(month, year));
+
   const [rightClickData, setRightClickData] = useState(null);
   const prohibitedMenuRef = useRef(null);
 
@@ -274,6 +281,7 @@ const MonthlyPlanning = () => {
             };
         }),
         numberOfDays: daysInMonth,
+        numberOfDaysPrevMonth: daysInPrevMonth,
         month: getMonthName(month),
         year: year,
         firstDay: getDayOfWeek(1,month,year),

@@ -19,6 +19,20 @@ const WeeklyPlanning = () => {
   const prohibitedMenuRef = useRef(null);
   const [editingCell, setEditingCell] = useState({ personName: null, dayIndex: null });
   const selectRef = useRef(null);
+  const [customActivitiesByDay, setCustomActivitiesByDay] = useState(Array(5).fill([]));
+    const [newActivity, setNewActivity] = useState({
+      dayIndex: 0,
+      type: "",
+      color: null,
+      slots: 1,
+      time: "morning",
+    });
+  const qxColors = {
+    amarillo: "#FFD700",
+    azul: "#2196F3",
+    rojo: "#E57373",
+  };
+
 
   const isEditing = (personName, dayIndex) =>
     editingCell.personName === personName && editingCell.dayIndex === dayIndex;
@@ -46,10 +60,18 @@ const WeeklyPlanning = () => {
   const days = getWeekStartDate(year, month, weekInMonth);
 
   const colorMap = {
-    QX: "#81C784", PEONAGE: "#E57373", CONSULTATION: "#FF9800", FLOOR: "#E57373", QXROBOT: "#2196F3"
+    QX: "#81C784", PEONAGE: "#E57373", CONSULTATION: "#FF9800", FLOOR: "#E57373", QXROBOT: "#2196F3", CERDO: "#2196F3", CARCA: "#2196F3"
   };
   const activities = Object.keys(colorMap);
   const activities_real = activities.filter((a) => a !== "GP");
+
+    const getMonthName = (month) => {
+      const months = [
+        "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+      ];
+      return months[month - 1];
+    };
 
   const emptyPlanning = {
     weeklyPlanningDtos: staffList.map((person) => ({
@@ -80,6 +102,15 @@ const WeeklyPlanning = () => {
       setBackendErrors("No se ha podido obtener la lista de usuarios")
     ));
   }, []);
+
+  useEffect(() => {
+      dispatch(actions.getSavedWeeklyPlanning(
+          getMonthName(month + 1),
+          year,
+          weekInMonth + 1,
+          () => setBackendErrors("No se ha podido cargar la planificación guardada.")
+      ));
+    }, [weekInMonth, month, year]);
 
   useEffect(() => {
     setPlanningData(weeklyPlanning || emptyPlanning);
@@ -158,13 +189,26 @@ const WeeklyPlanning = () => {
       week: weekInMonth + 1,
       month: months[month],
       year,
-      days: days.map(d => d.getDate())
+      days: days.map(d => d.getDate()),
+      activities: customActivitiesByDay
     };
     dispatch(actions.getWeeklyPlanning(dataToSend, (errorPayload) => {
       const message = errorPayload?.globalError || "Ha ocurrido un error";
       setBackendErrors(message);
       setIsLoading(false);
     }));
+  };
+
+  const handleAddCustomActivity = () => {
+    setCustomActivitiesByDay(prev => {
+      const updated = [...prev];
+      updated[newActivity.dayIndex] = [
+        ...updated[newActivity.dayIndex],
+        { type: newActivity.type, color: newActivity.color, slots: newActivity.slots }
+      ];
+      return updated;
+    });
+    setNewActivity({ dayIndex: 0, type: "", color: "#81C784", slots: 1 }); // reset form
   };
 
   return (
@@ -244,53 +288,207 @@ const WeeklyPlanning = () => {
                 {planningData.weeklyPlanningDtos.map((person) => (
                   <tr key={person.name}>
                     <td className="bg-gray-50 font-medium">{person.name}</td>
-                    {person.assignations.map((activity, idx) => {
-                      const bgColor = activity ? colorMap[activity] || "#f0f0f0" : "#f9f9f9";
-                      const isCellEditing = isEditing(person.name, idx);
+                    {person.assignations.map((morningActivity, idx) => {
+                      const eveningActivity = person.eveningAssignations?.[idx] || null;
 
                       return (
-                        <td key={idx}>
-                          <select
-                            value={activity || ""}
-                            onChange={(e) =>
-                              handleSelectChange(person.name, idx, e.target.value)
-                            }
-                            style={{
-                              backgroundColor: colorMap[activity] || "#f0f0f0",
-                              border: "1px solid #ccc",
-                              color: "#000",
-                              cursor: "pointer",
-                              width: "100%",
-                              textAlign: "center",
-                              fontWeight: "bold",
-                              padding: "8px",
-                              appearance: "none", // Oculta la flecha nativa
-                              WebkitAppearance: "none",
-                              MozAppearance: "none",
-                              textAlignLast: "center",
-                            }}
-                          >
-                            <option value="">-</option>
-                            {activities_real.map((act) => (
-                              <option
-                                key={act}
-                                value={act}
-                                style={{
-                                  backgroundColor: colorMap[act],
-                                  color: "#000",
-                                }}
-                              >
-                                {act}
-                              </option>
-                            ))}
-                          </select>
+                        <td key={idx} className="p-0 border">
+                          <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                            <div
+                              style={{
+                                flex: 1,
+                                backgroundColor: morningActivity ? colorMap[morningActivity] || "#f0f0f0" : "#f9f9f9",
+                                borderBottom: "1px solid #ccc",
+                                fontSize: "0.75rem",
+                                textAlign: "center",
+                                fontWeight: "bold",
+                                padding: "4px"
+                              }}
+                            >
+                              {morningActivity || "-"}
+                            </div>
+                            <div
+                              style={{
+                                flex: 1,
+                                backgroundColor: eveningActivity ? colorMap[eveningActivity] || "#f0f0f0" : "#f9f9f9",
+                                fontSize: "0.75rem",
+                                textAlign: "center",
+                                fontWeight: "bold",
+                                padding: "4px"
+                              }}
+                            >
+                              {eveningActivity || "-"}
+                            </div>
+                          </div>
                         </td>
                       );
                     })}
                   </tr>
                 ))}
+                <tr>
+                  <td className="bg-gray-100 font-semibold text-xs text-left pl-2">
+                    Actividades creadas
+                  </td>
+                  {customActivitiesByDay.map((activities, idx) => (
+                    <td key={idx}>
+                      <div
+                        className="flex flex-wrap justify-center gap-1 p-1"
+                        style={{ minHeight: "30px" }}
+                      >
+                        {activities.map((act, i) => (
+                          <div
+                            key={i}
+                            title={`${act.type} (${act.slots} slot${act.slots > 1 ? "s" : ""})`}
+                            style={{
+                              backgroundColor: qxColors[act.color] || "#e0e0e0",
+                              padding: "4px 6px",
+                              fontSize: "10px",
+                              color: "#000",
+                              borderRadius: "4px",
+                              fontWeight: "bold",
+                              minWidth: "40px",
+                              textAlign: "center",
+                            }}
+                          >
+                            {act.type}
+                          </div>
+                        ))}
+                      </div>
+                    </td>
+                  ))}
+                </tr>
               </tbody>
             </table>
+            <div className="mt-4 border p-3 rounded bg-white shadow w-full max-w-xl mx-auto">
+              <h4 className="font-semibold mb-2">Crear nueva actividad</h4>
+              <div className="flex flex-wrap items-center gap-3">
+                {/* Día */}
+                <label className="text-sm">
+                  Día:
+                  <select
+                    value={newActivity.dayIndex}
+                    onChange={(e) =>
+                      setNewActivity((prev) => ({
+                        ...prev,
+                        dayIndex: Number(e.target.value),
+                      }))
+                    }
+                    className="ml-2 border p-1 rounded"
+                  >
+                    {days.map((d, idx) => (
+                      <option key={idx} value={idx}>
+                        {d.toLocaleDateString("es-ES", { weekday: "long" })}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                {/* Turno (mañana/tarde) */}
+                <label className="text-sm">
+                  Turno:
+                  <select
+                    value={newActivity.time}
+                    onChange={(e) =>
+                      setNewActivity((prev) => ({ ...prev, time: e.target.value }))
+                    }
+                    className="ml-2 border p-1 rounded"
+                  >
+                    <option value="morning">Mañana</option>
+                    <option value="evening">Tarde</option>
+                  </select>
+                </label>
+
+                {/* Tipo de actividad */}
+                <label className="text-sm">
+                  Actividad:
+                  <select
+                    value={newActivity.type}
+                    onChange={(e) => {
+                      const selected = e.target.value;
+                      setNewActivity((prev) => ({
+                        ...prev,
+                        type: selected,
+                        color: selected === "QX" ? "amarillo" : null, // default color or null
+                      }));
+                    }}
+                    className="ml-2 border p-1 rounded"
+                  >
+                    <option value="">-- Seleccionar --</option>
+                    <option value="QX">QX</option>
+                    <option value="CONSULTATION">CONSULTATION</option>
+                    <option value="CARCA">CARCA</option>
+                    <option value="CERDO">CERDO</option>
+                    <option value="QXROBOT">QXROBOT</option>
+                  </select>
+                </label>
+
+                {/* Color solo si es QX */}
+                <label className="text-sm">
+                  Color:
+                  <select
+                    value={newActivity.color || ""}
+                    onChange={(e) =>
+                      setNewActivity((prev) => ({ ...prev, color: e.target.value }))
+                    }
+                    disabled={newActivity.type !== "QX"}
+                    className="ml-2 border p-1 rounded"
+                  >
+                    <option value="amarillo">Amarillo</option>
+                    <option value="azul">Azul</option>
+                    <option value="rojo">Rojo</option>
+                  </select>
+                </label>
+
+                {/* Slots */}
+                <label className="text-sm">
+                  Slots:
+                  <input
+                    type="number"
+                    value={newActivity.slots}
+                    min={1}
+                    max={10}
+                    onChange={(e) =>
+                      setNewActivity((prev) => ({
+                        ...prev,
+                        slots: Number(e.target.value),
+                      }))
+                    }
+                    className="ml-2 border p-1 rounded w-16"
+                  />
+                </label>
+
+                {/* Botón crear */}
+                <button
+                  onClick={() => {
+                    setCustomActivitiesByDay((prev) => {
+                      const updated = [...prev];
+                      updated[newActivity.dayIndex] = [
+                        ...updated[newActivity.dayIndex],
+                        {
+                          type: newActivity.type,
+                          color: newActivity.color, // string: amarillo, azul, rojo
+                          slots: newActivity.slots,
+                          time: newActivity.time,  // morning or evening
+                        },
+                      ];
+                      return updated;
+                    });
+
+                    setNewActivity({
+                      dayIndex: 0,
+                      type: "",
+                      color: null,
+                      slots: 1,
+                      time: "morning",
+                    });
+                  }}
+                  className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600 text-sm"
+                  disabled={!newActivity.type}
+                >
+                  Crear
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

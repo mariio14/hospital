@@ -56,6 +56,12 @@ public class WeeklyDataConversor {
             Map.entry("DICIEMBRE", Month.DECEMBER)
     );
 
+    private static final Map<String, String> COLORS = Map.ofEntries(
+            Map.entry("rojo", "red"),
+            Map.entry("amarillo", "yellow"),
+            Map.entry("azul", "blue")
+    );
+
     public static String toClingoParams(WeeklyDataDto weeklyDataDto, List<Priority> costs,
                      Map<String, Map<Integer, String>> yearData, MonthlyResultDto monthData, int year, String month) {
 
@@ -128,6 +134,31 @@ public class WeeklyDataConversor {
                 }
                 i++;
             }
+        }
+        int act = 0;
+        int firstDayOfWeek = weeklyDataDto.getDays().stream().sorted().toList().get(0);
+        for (List<ActivityDto> activityDtos : weeklyDataDto.getActivities()) {
+            int day = firstDayOfWeek + act;
+            for (ActivityDto activityDto : activityDtos) {
+                String type = activityDto.getType().toLowerCase(Locale.ROOT);
+                String color = activityDto.getColor() == null ? null : COLORS.get(activityDto.getColor());
+                int slots = activityDto.getSlots();
+                String time = activityDto.getTime();
+                if (Objects.equals(time, "morning")) {
+                    if (type.equals("qx")) {
+                        clingoParams.append(String.format("task_color(qx,%s,%d,%d). ", color, day, slots));
+                    } else {
+                        clingoParams.append(String.format("task(%s,%d). ", type, day));
+                    }
+                } else {
+                    if (type.equals("qx")) {
+                        clingoParams.append(String.format("task_evening_color(qx,%s,%d,%d). ", color, day, slots));
+                    } else {
+                        clingoParams.append(String.format("task_evening(%s,%d). ", type, day));
+                    }
+                }
+            }
+            act++;
         }
         if (!vacation) {
             clingoParams.append("vacation(dummyname,1). ");

@@ -1,0 +1,124 @@
+{
+  "2025" : {
+    "Julio" : {
+      "3" : {
+        "andrea" : {
+          "10" : [ "morningqxrobot" ]
+        },
+        "brais" : {
+          "8" : [ "eveningqx", "morningqx" ],
+          "9" : [ "morningqx" ],
+          "21" : [ "morningfloor" ],
+          "22" : [ "morningfloor" ],
+          "25" : [ "morningfloor" ]
+        },
+        "clara" : {
+          "8" : [ "morningcerdo" ]
+        },
+        "elena" : {
+          "9" : [ "morningqx" ],
+          "11" : [ "morningqx" ],
+          "22" : [ "morningfloor" ],
+          "23" : [ "morningfloor" ]
+        },
+        "esther" : {
+          "7" : [ "morningqx" ],
+          "21" : [ "morningfloor" ]
+        },
+        "javier" : {
+          "25" : [ "morningfloor" ]
+        },
+        "jose" : {
+          "22" : [ "morningfloor" ],
+          "23" : [ "morningfloor" ],
+          "24" : [ "morningfloor" ]
+        },
+        "julia" : {
+          "8" : [ "morningqx" ],
+          "9" : [ "morningqx" ],
+          "10" : [ "morningconsultation" ],
+          "24" : [ "morningfloor" ]
+        },
+        "laura" : {
+          "11" : [ "morningcarca" ]
+        },
+        "mario" : {
+          "7" : [ "morningcerdo" ],
+          "9" : [ "morningqx" ],
+          "11" : [ "morningconsultation" ],
+          "23" : [ "morningfloor" ]
+        },
+        "marta" : {
+          "7" : [ "morningcerdo" ],
+          "8" : [ "morningcerdo" ],
+          "9" : [ "eveningconsultation", "morningqx" ],
+          "11" : [ "morningqx" ],
+          "21" : [ "morningfloor" ],
+          "24" : [ "morningfloor" ],
+          "25" : [ "morningfloor" ]
+        },
+        "pedro" : {
+          "8" : [ "morningqxrobot" ],
+          "10" : [ "morningcarca" ]
+        }
+      },
+      "1" : {
+        "andrea" : {
+          "7" : [ "morningcerdo" ],
+          "11" : [ "morningconsultation" ]
+        },
+        "brais" : {
+          "8" : [ "eveningqx", "morningqx" ],
+          "9" : [ "morningqx" ],
+          "10" : [ "morningqxrobot" ],
+          "11" : [ "morningfloor" ]
+        },
+        "elena" : {
+          "8" : [ "morningfloor" ],
+          "9" : [ "morningqx" ],
+          "10" : [ "morningfloor" ],
+          "11" : [ "morningqx" ]
+        },
+        "esther" : {
+          "8" : [ "morningfloor", "morningcerdo" ],
+          "10" : [ "morningconsultation" ]
+        },
+        "javier" : {
+          "7" : [ "morningqx" ],
+          "10" : [ "morningfloor" ]
+        },
+        "jose" : {
+          "7" : [ "morningfloor", "morningqx" ],
+          "8" : [ "morningcerdo" ],
+          "9" : [ "morningfloor" ],
+          "11" : [ "morningfloor" ]
+        },
+        "julia" : {
+          "7" : [ "morningfloor" ],
+          "8" : [ "morningqx" ],
+          "9" : [ "morningfloor" ],
+          "10" : [ "morningfloor" ]
+        },
+        "mario" : {
+          "8" : [ "morningfloor" ],
+          "9" : [ "morningqx" ]
+        },
+        "marta" : {
+          "7" : [ "eveningconsultation", "morningfloor" ],
+          "9" : [ "eveningconsultation", "morningqx" ],
+          "10" : [ "morningcarca" ],
+          "11" : [ "morningqx" ]
+        },
+        "pablo" : {
+          "11" : [ "morningcarca" ]
+        },
+        "pedro" : {
+          "8" : [ "morningqxrobot" ]
+        },
+        "sandra" : {
+          "7" : [ "morningcerdo" ]
+        }
+      }
+    }
+  }
+}

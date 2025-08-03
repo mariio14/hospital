@@ -19,4 +19,4 @@ export const weeklyPlanning = (planningData, onSuccess, onErrors) =>
   appFetch(`/plannings/weekly`, fetchConfig("POST", planningData), onSuccess, onErrors);
 
 export const getWeeklyPlanning = (month, year, week, onSuccess, onErrors) =>
-  appFetch(`/plannings/monthly?month=${month}&year=${year}&week=${week}`, fetchConfig("GET"), onSuccess, onErrors);
+  appFetch(`/plannings/weekly?month=${month}&year=${year}&week=${week}`, fetchConfig("GET"), onSuccess, onErrors);

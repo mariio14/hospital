@@ -90,7 +90,7 @@ public class MonthlyDataConversor {
             for (Map.Entry<String, Map<Integer, String>> entry : previousMonthPlanning.entrySet()) {
                 String person = entry.getKey();
                 Map<Integer, String> schedule = entry.getValue();
-                Integer size = schedule.size();
+                Integer size = monthlyDataDto.getNumberOfDaysPrevMonth();
 
                 if (schedule.containsKey(size) && schedule.get(size) != null &&
                         (Objects.equals(schedule.get(size), "g") || Objects.equals(schedule.get(size), "gp")
@@ -103,7 +103,7 @@ public class MonthlyDataConversor {
             for (Map.Entry<String, Map<Integer, String>> entry : previousMonthPlanning.entrySet()) {
                 String person = entry.getKey();
                 Map<Integer, String> schedule = entry.getValue();
-                int size = schedule.size();
+                int size = monthlyDataDto.getNumberOfDaysPrevMonth();
 
                 if (schedule.containsKey(size) && schedule.get(size) != null &&
                         (Objects.equals(schedule.get(size), "g") || Objects.equals(schedule.get(size), "gp")
@@ -120,7 +120,7 @@ public class MonthlyDataConversor {
             for (Map.Entry<String, Map<Integer, String>> entry : previousMonthPlanning.entrySet()) {
                 String person = entry.getKey();
                 Map<Integer, String> schedule = entry.getValue();
-                Integer size = schedule.size();
+                Integer size = monthlyDataDto.getNumberOfDaysPrevMonth();
 
                 if (schedule.containsKey(size) && schedule.get(size) != null &&
                         (Objects.equals(schedule.get(size), "g") || Objects.equals(schedule.get(size), "gp"))) {

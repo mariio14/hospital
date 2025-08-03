@@ -1,5 +1,7 @@
 package es.udc.fi.tfg.rest.dtos;
 
+import es.udc.fi.tfg.model.entities.ActivityAndPlanning;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -8,9 +10,9 @@ public class WeeklyPlanningConversor {
     private WeeklyPlanningConversor() {
     }
 
-    public static WeeklyResultDto toWeeklyPlanningDtos(Map<String, Map<Integer, List<String>>> planningMap,
-                                                               int year, String month, String week) {
-        List<WeeklyPlanningDto> assignations = planningMap.entrySet()
+    public static WeeklyResultDto toWeeklyPlanningDtos(ActivityAndPlanning planningMap,
+                                                       int year, String month, String week) {
+        List<WeeklyPlanningDto> assignations = planningMap.getPlanning().entrySet()
                 .stream()
                 .map(entry -> {
                     List<Integer> sortedKeys = entry.getValue().keySet().stream().sorted().toList();
@@ -18,7 +20,7 @@ public class WeeklyPlanningConversor {
                 })
                 .collect(Collectors.toList());
 
-        return new WeeklyResultDto(year, month, week, assignations);
+        return new WeeklyResultDto(year, month, week, assignations, planningMap.getActivities());
     }
 
     public static WeeklyResultDto toWeeklyPlanningDtosFromData(Map<String, Map<Integer, List<String>>> planningMap,
@@ -28,7 +30,7 @@ public class WeeklyPlanningConversor {
             Map<Integer, List<String>> value = planningMap.get(dto.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
             list.add(toWeeklyPlanningDto(dto.getName(), value, data.getDays()));
         }
-        return new WeeklyResultDto(data.getYear(), data.getMonth(), data.getWeek(), list);
+        return new WeeklyResultDto(data.getYear(), data.getMonth(), data.getWeek(), list, data.getActivities());
     }
 
     public static WeeklyPlanningDto toWeeklyPlanningDto(String name, Map<Integer, List<String>> asignations, List<Integer> days) {

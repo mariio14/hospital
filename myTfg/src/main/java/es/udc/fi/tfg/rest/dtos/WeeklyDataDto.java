@@ -14,6 +14,8 @@ public class WeeklyDataDto {
 
     private List<WeeklyAssignationsDto> weeklyAssignationsDtos;
 
+    private List<List<ActivityDto>> activities;
+
     public WeeklyDataDto() {
     }
 
@@ -55,5 +57,13 @@ public class WeeklyDataDto {
 
     public void setWeeklyAssignationsDtos(List<WeeklyAssignationsDto> weeklyAssignationsDtos) {
         this.weeklyAssignationsDtos = weeklyAssignationsDtos;
+    }
+
+    public List<List<ActivityDto>> getActivities() {
+        return activities;
+    }
+
+    public void setActivities(List<List<ActivityDto>> activities) {
+        this.activities = activities;
     }
 }

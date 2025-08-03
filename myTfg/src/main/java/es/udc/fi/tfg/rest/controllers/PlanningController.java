@@ -1,5 +1,6 @@
 package es.udc.fi.tfg.rest.controllers;
 
+import es.udc.fi.tfg.model.entities.ActivityAndPlanning;
 import es.udc.fi.tfg.model.entities.Priority;
 import es.udc.fi.tfg.model.services.PlanningService;
 import es.udc.fi.tfg.model.services.PrioritiesService;
@@ -178,7 +179,7 @@ public class PlanningController {
         Map<String, Map<Integer, List<String>>> planning =
                 planningService.getWeeklyPlanning(WeeklyDataConversor.toClingoParams(params, costs, annualData, monthData,
                                 params.getYear(), params.getMonth()),
-                        params.getYear(), params.getMonth(), params.getWeek());
+                        params.getYear(), params.getMonth(), params.getWeek(), params.getActivities());
 
         return WeeklyPlanningConversor.toWeeklyPlanningDtosFromData(planning, params);
     }
@@ -188,7 +189,7 @@ public class PlanningController {
                                              @RequestParam String week)
             throws NoSolutionException, IOException, ClassNotFoundException {
 
-        Map<String, Map<Integer, List<String>>> weekPlanning = planningService.getWeekFromJson(year, month, week);
+        ActivityAndPlanning weekPlanning = planningService.getWeekFromJson(year, month, week);
 
         return WeeklyPlanningConversor.toWeeklyPlanningDtos(weekPlanning, year, month, week);
     }
