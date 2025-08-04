@@ -29,41 +29,43 @@ day_not_assign(1,1,qx).
 cost(semanalP_03_4_5, yellow, 10).
 cost(semanalP_03_4_5, red, 20).
 cost(semanalP_03_4_5, blue, 50).
-cost(semanalP_10, 25).
-cost(semanalP_11, 15).
-cost(semanalP_12, 30).
-cost(semanalP_15, 25).
+cost(semanalP_14, 15).
+cost(semanalP_21, 25).
 
 color(yellow;red;blue).
 
 % SemanalR_01
-N {day_assign(P,D,qx,C,morning) : person(P), not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,qx)} :- task_color(qx, C, D, N).
-N {day_assign(P,D,qx,C,evening) : person(P), not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,qx)} :- task_evening_color(qx, C, D, N).
+1 {day_assign(P,D,qx,C,morning) : person(P), not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,qx)} N :- task_color(qx, C, D, N).
+% SemanalR_13,
+1 {day_assign(P,D,qx,C,evening) : person(P), level(P,L), L>1, not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,qx)} 1 :- task_evening_color(qx, C, D, N).
 
-% SemanalR_06, SemanalR_07, SemanalR_08
+% SemanalR_06, SemanalR_07
 1 {day_assign(P,D,consultation,null,morning) : person(P), level(P,L), L>2, not vacation(P,D), not day_not_assign(P,D,consultation)} 1 :- task(consultation, D).
+% SemanalR_08
 1 {day_assign(P,D,consultation,null,evening) : person(P), level(P,L), L>3, not vacation(P,D), not day_not_assign(P,D,consultation)} 1 :- task_evening(consultation, D).
+% SemanalR_09, SemanalR_10
 1 {day_assign(P,D,carca,null,morning) : person(P), level(P,L), L>2, not vacation(P,D), not day_not_assign(P,D,carca)} 1 :- task(carca, D).
 
+% SemanalR_11
 2 {day_assign(P,D,cerdo,null,morning) : person(P), not vacation(P,D), not day_not_assign(P,D,cerdo)} 2 :- task(cerdo, D).
 
-% Restriccion nivel cerdo
+% SemanalR_12
 :- task(cerdo, D), not 1{day_assign(P,D,cerdo,null,morning) : person(P), level(P,L), L>2}.
 
-% SemanalR_13, SemanalR_14
+% SemanalR_19, SemanalR_20
 1 {day_assign(P,D,qxrobot,null,morning) : person(P), level(P,L), L>2, not vacation(P,D), not day_not_assign(P,D,qxrobot)} 1 :- task(qxrobot, D).
 
 % SemanalR_02
 {day_assign(P,D,floor,C,morning) : person(P), not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,floor)} :- day(D), color(C).
-%%%%%%%%%%5falta lo de la planta amarilla
+%%%%%%%%%%%falta lo de la planta amarilla
 % SemanalR_09
 :- day_assign(P,D,A,C,evening), day_assign_from_month(P,D,_).
 
-% SemanalR_XX
+% SemanalR_15
 :- day_assign(P,D,T,C,morning), day_assign(P,D,T',C',morning),
     (T,C) < (T',C'), (T,C)!=(floor,yellow), (T',C')!=(floor,yellow).
 
-% SemanalR_XX
+% SemanalR_16
 :- day_assign(P,D,T,C,evening), day_assign(P,D,T',C',evening), (T,C) < (T',C').
 
 % SemanalP_03, SemanalP_04, SemanalP_05
@@ -73,30 +75,25 @@ color_floor_assigned(C,D) :- day_assign(P,D,floor,C,M), person(P), month_assign(
     cost(semanalP_03_4_5, C,V)
 }.
 
-% SemanalP_10  -> se cambia a restriccion
+% SemanalP_14
+#minimize { V,P,D :
+    day_assign(P,D,qx,C,evening), level(P,L), L>4,
+    cost(semanalP_14, V)
+}.
+
+% SemanalR_17
+%:- day_assign(P,D,A,C,evening), day_assign_guard_from_month(P,D).
+%:- day_assign(P,D,A,C,evening), day_assign_from_month(P,D,e).
+%:- day_assign(P,D,A,C,evening), day_assign_from_month(P,D,i).
+% SemanalR_18
 %:- day_assign(P,D,A,C,evening), prev_day(D,D'), day_assign_guard_from_month(P,D').
 
-% SemanalP_11
-#minimize { V,P,D :
-    day_assign(P,D,A,C,evening), level(P,3),
-    cost(semanalP_11, V)
-}.
-
-% SemanalP_12
-#minimize { V,P,D :
-    day_assign(P,D,A,C,evening), level(P,L), L<3,
-    cost(semanalP_12, V)
-}.
-
-% SemanalP_15
+% SemanalP_21
 #minimize { V,P,D :
     day_assign(P,D,qxrobot,C,M), level(P,5),
-    cost(semanalP_15, V)
+    cost(semanalP_21, V)
 }.
-
 
 %#show month_assign/2.
 %#show day_assign_from_month/3.
 #show day_assign/5.
-
-% residente de procto siempre en procto. que significa?
