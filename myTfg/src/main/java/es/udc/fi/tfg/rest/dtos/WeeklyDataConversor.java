@@ -91,14 +91,24 @@ public class WeeklyDataConversor {
             int level = Integer.parseInt(weeklyAssignationsDto.getLevel().replace("R", ""));
             clingoParams.append(String.format("level(%s,%d). ", personName, level));
 
-            List<String> assignations = weeklyAssignationsDto.getAssignations();
-
-            if (assignations != null) {
+            if (weeklyAssignationsDto.getAssignations() != null) {
                 int i = 1;
-                for (String assignation : assignations) {
+                for (String assignation : weeklyAssignationsDto.getAssignations()) {
                     if (assignation != null) {
-                        clingoParams.append(String.format("day_assign(%s,%d,%s). ", personName,
-                                i, assignation.toLowerCase(Locale.ROOT)));
+                        String[] partes = assignation.split("_");
+                        clingoParams.append(String.format("day_assign(%s,%d,%s,%s,morning). ", personName,
+                                i, partes[0].toLowerCase(Locale.ROOT), COLORS.get(partes[1].toLowerCase(Locale.ROOT))));
+                    }
+                    i++;
+                }
+            }
+            if (weeklyAssignationsDto.getEveningAssignations() != null) {
+                int i = 1;
+                for (String assignation : weeklyAssignationsDto.getEveningAssignations()) {
+                    if (assignation != null) {
+                        String[] partes = assignation.split("_");
+                        clingoParams.append(String.format("day_assign(%s,%d,%s,%s,evening). ", personName,
+                                i, partes[0].toLowerCase(Locale.ROOT), COLORS.get(partes[1].toLowerCase(Locale.ROOT))));
                     }
                     i++;
                 }

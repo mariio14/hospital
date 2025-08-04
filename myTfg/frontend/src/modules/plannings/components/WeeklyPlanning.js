@@ -241,7 +241,8 @@ const WeeklyPlanning = () => {
     });
   };
 
-  const assignCreatedActivity = (personName, dayIndex, time, activityType) => {
+  const assignCreatedActivity = (personName, dayIndex, time, activityType, color) => {
+    const activityWithColor = `${activityType}_${color || "null"}`;
     setPlanningData((prev) => ({
       ...prev,
       weeklyPlanningDtos: prev.weeklyPlanningDtos.map((p) =>
@@ -249,10 +250,10 @@ const WeeklyPlanning = () => {
           ? {
               ...p,
               assignations: time === "morning"
-                ? p.assignations.map((a, i) => i === dayIndex ? activityType : a)
+                ? p.assignations.map((a, i) => i === dayIndex ? activityWithColor : a)
                 : p.assignations,
               eveningAssignations: time === "evening"
-                ? (p.eveningAssignations || []).map((a, i) => i === dayIndex ? activityType : a)
+                ? (p.eveningAssignations || []).map((a, i) => i === dayIndex ? activityWithColor : a)
                 : p.eveningAssignations || [],
             }
           : p
@@ -352,10 +353,12 @@ const WeeklyPlanning = () => {
                             {/* Mañana */}
                             <div style={{ flex: 1, borderBottom: "1px solid #ccc", padding: "2px" }}>
                               <select
-                                value={morningActivity || ""}
-                                onChange={(e) =>
-                                  assignCreatedActivity(person.name, idx, "morning", e.target.value)
-                                }
+                                value={(morningActivity || "").split("_")[0]}
+                                onChange={(e) => {
+                                  const selectedActivity = e.target.value;
+                                  const selected = filteredMorning.find((a) => a.type === selectedActivity);
+                                  assignCreatedActivity(person.name, idx, "morning", selectedActivity, selected?.color);
+                                }}
                                 style={{
                                   backgroundColor: colorMap[morningActivity] || "#f9f9f9",
                                   border: "none",
@@ -385,10 +388,12 @@ const WeeklyPlanning = () => {
                             {/* Tarde */}
                             <div style={{ flex: 1, padding: "2px" }}>
                               <select
-                                value={eveningActivity || ""}
-                                onChange={(e) =>
-                                  assignCreatedActivity(person.name, idx, "evening", e.target.value)
-                                }
+                                value={(eveningActivity || "").split("_")[0]}
+                                onChange={(e) => {
+                                  const selectedActivity = e.target.value;
+                                  const selected = filteredEvening.find((a) => a.type === selectedActivity);
+                                  assignCreatedActivity(person.name, idx, "evening", selectedActivity, selected?.color);
+                                }}
                                 style={{
                                   backgroundColor: colorMap[eveningActivity] || "#f9f9f9",
                                   border: "none",

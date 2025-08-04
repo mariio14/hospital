@@ -35,9 +35,9 @@ cost(semanalP_21, 25).
 color(yellow;red;blue).
 
 % SemanalR_01
-1 {day_assign(P,D,qx,C,morning) : person(P), not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,qx)} N :- task_color(qx, C, D, N).
+N {day_assign(P,D,qx,C,morning) : person(P), not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,qx)} N :- task_color(qx, C, D, N).
 % SemanalR_13,
-1 {day_assign(P,D,qx,C,evening) : person(P), level(P,L), L>1, not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,qx)} 1 :- task_evening_color(qx, C, D, N).
+N {day_assign(P,D,qx,C,evening) : person(P), level(P,L), L>1, not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,qx)} N :- task_evening_color(qx, C, D, N).
 
 % SemanalR_06, SemanalR_07
 1 {day_assign(P,D,consultation,null,morning) : person(P), level(P,L), L>2, not vacation(P,D), not day_not_assign(P,D,consultation)} 1 :- task(consultation, D).

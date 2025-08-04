@@ -10,13 +10,16 @@ public class WeeklyAssignationsDto {
 
     private List<String> assignations;
 
+    private List<String> eveningAssignations;
+
     public WeeklyAssignationsDto() {
     }
 
-    public WeeklyAssignationsDto(String name, String level, List<String> assignations) {
+    public WeeklyAssignationsDto(String name, String level, List<String> assignations, List<String> eveningAssignations) {
         this.name = name;
         this.level = level;
         this.assignations = assignations;
+        this.eveningAssignations = eveningAssignations;
     }
 
     public String getName() {
@@ -41,5 +44,13 @@ public class WeeklyAssignationsDto {
 
     public void setAssignations(List<String> assignations) {
         this.assignations = assignations;
+    }
+
+    public List<String> getEveningAssignations() {
+        return eveningAssignations;
+    }
+
+    public void setEveningAssignations(List<String> eveningAssignations) {
+        this.eveningAssignations = eveningAssignations;
     }
 }
