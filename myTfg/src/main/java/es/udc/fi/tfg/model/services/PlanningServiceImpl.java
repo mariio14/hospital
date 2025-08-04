@@ -266,9 +266,10 @@ public class PlanningServiceImpl implements PlanningService {
             weekData = emptyData;
         }
 
+        List<List<ActivityDto>> emptyList = List.of(new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         List<List<ActivityDto>> activitiesDataForWeek = activitiesData.getOrDefault(year, new HashMap<>())
                 .getOrDefault(month, new HashMap<>())
-                .getOrDefault(week, new ArrayList<>());
+                .getOrDefault(week, emptyList);
 
         return new ActivityAndPlanning(activitiesDataForWeek, weekData);
     }

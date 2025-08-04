@@ -19,7 +19,6 @@ const WeeklyPlanning = () => {
   const prohibitedMenuRef = useRef(null);
   const [editingCell, setEditingCell] = useState({ personName: null, dayIndex: null });
   const selectRef = useRef(null);
-  const [customActivitiesByDay, setCustomActivitiesByDay] = useState(Array(5).fill([]));
     const [newActivity, setNewActivity] = useState({
       dayIndex: 0,
       type: "",
@@ -33,6 +32,11 @@ const WeeklyPlanning = () => {
     rojo: "#E57373",
   };
 
+  const [editingSlot, setEditingSlot] = useState({
+    personName: null,
+    dayIndex: null,
+    time: null,
+  });
 
   const isEditing = (personName, dayIndex) =>
     editingCell.personName === personName && editingCell.dayIndex === dayIndex;
@@ -78,8 +82,10 @@ const WeeklyPlanning = () => {
       name: person.name,
       level: `R${person.level}`,
       assignations: Array(5).fill(null),
+      eveningAssignations: Array(5).fill(null),
       notValidAssignations: Array(5).fill([])
-    }))
+    })),
+    activities: Array(5).fill([])
   };
 
   const [planningData, setPlanningData] = useState(emptyPlanning);
@@ -190,7 +196,7 @@ const WeeklyPlanning = () => {
       month: months[month],
       year,
       days: days.map(d => d.getDate()),
-      activities: customActivitiesByDay
+      activities: planningData.activities
     };
     dispatch(actions.getWeeklyPlanning(dataToSend, (errorPayload) => {
       const message = errorPayload?.globalError || "Ha ocurrido un error";
@@ -200,15 +206,59 @@ const WeeklyPlanning = () => {
   };
 
   const handleAddCustomActivity = () => {
-    setCustomActivitiesByDay(prev => {
-      const updated = [...prev];
-      updated[newActivity.dayIndex] = [
-        ...updated[newActivity.dayIndex],
-        { type: newActivity.type, color: newActivity.color, slots: newActivity.slots }
+    setPlanningData((prev) => {
+      const updatedActivities = [...prev.activities];
+      updatedActivities[newActivity.dayIndex] = [
+        ...(updatedActivities[newActivity.dayIndex] || []),
+        {
+          type: newActivity.type,
+          color: newActivity.color,
+          slots: newActivity.slots,
+          time: newActivity.time
+        }
       ];
-      return updated;
+
+      return {
+        ...prev,
+        activities: updatedActivities
+      };
     });
-    setNewActivity({ dayIndex: 0, type: "", color: "#81C784", slots: 1 }); // reset form
+
+    setNewActivity({
+      dayIndex: 0,
+      type: "",
+      color: null,
+      slots: 1,
+      time: "morning",
+    });
+  };
+
+  const handleRemoveActivity = (dayIndex, activityIndex) => {
+    setPlanningData((prev) => {
+      const updated = [...prev.activities];
+      updated[dayIndex] = updated[dayIndex].filter((_, i) => i !== activityIndex);
+      return { ...prev, activities: updated };
+    });
+  };
+
+  const assignCreatedActivity = (personName, dayIndex, time, activityType) => {
+    setPlanningData((prev) => ({
+      ...prev,
+      weeklyPlanningDtos: prev.weeklyPlanningDtos.map((p) =>
+        p.name === personName
+          ? {
+              ...p,
+              assignations: time === "morning"
+                ? p.assignations.map((a, i) => i === dayIndex ? activityType : a)
+                : p.assignations,
+              eveningAssignations: time === "evening"
+                ? (p.eveningAssignations || []).map((a, i) => i === dayIndex ? activityType : a)
+                : p.eveningAssignations || [],
+            }
+          : p
+      ),
+    }));
+    setEditingSlot({ personName: null, dayIndex: null, time: null });
   };
 
   return (
@@ -288,36 +338,81 @@ const WeeklyPlanning = () => {
                 {planningData.weeklyPlanningDtos.map((person) => (
                   <tr key={person.name}>
                     <td className="bg-gray-50 font-medium">{person.name}</td>
-                    {person.assignations.map((morningActivity, idx) => {
+                    {person.assignations.map((_, idx) => {
+                      const morningActivity = person.assignations[idx];
                       const eveningActivity = person.eveningAssignations?.[idx] || null;
+                      const dayActivities = planningData.activities[idx] || [];
+
+                      const filteredMorning = dayActivities.filter((a) => a.time === "morning");
+                      const filteredEvening = dayActivities.filter((a) => a.time === "evening");
 
                       return (
                         <td key={idx} className="p-0 border">
                           <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                            <div
-                              style={{
-                                flex: 1,
-                                backgroundColor: morningActivity ? colorMap[morningActivity] || "#f0f0f0" : "#f9f9f9",
-                                borderBottom: "1px solid #ccc",
-                                fontSize: "0.75rem",
-                                textAlign: "center",
-                                fontWeight: "bold",
-                                padding: "4px"
-                              }}
-                            >
-                              {morningActivity || "-"}
+                            {/* Mañana */}
+                            <div style={{ flex: 1, borderBottom: "1px solid #ccc", padding: "2px" }}>
+                              <select
+                                value={morningActivity || ""}
+                                onChange={(e) =>
+                                  assignCreatedActivity(person.name, idx, "morning", e.target.value)
+                                }
+                                style={{
+                                  backgroundColor: colorMap[morningActivity] || "#f9f9f9",
+                                  border: "none",
+                                  width: "100%",
+                                  textAlign: "center",
+                                  fontWeight: "bold",
+                                  fontSize: "0.75rem",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <option value="">-</option>
+                                {filteredMorning.map((act, i) => (
+                                  <option
+                                    key={i}
+                                    value={act.type}
+                                    style={{
+                                      backgroundColor: qxColors[act.color] || "#e0e0e0",
+                                      color: "#000",
+                                    }}
+                                  >
+                                    {act.type}
+                                  </option>
+                                ))}
+                              </select>
                             </div>
-                            <div
-                              style={{
-                                flex: 1,
-                                backgroundColor: eveningActivity ? colorMap[eveningActivity] || "#f0f0f0" : "#f9f9f9",
-                                fontSize: "0.75rem",
-                                textAlign: "center",
-                                fontWeight: "bold",
-                                padding: "4px"
-                              }}
-                            >
-                              {eveningActivity || "-"}
+
+                            {/* Tarde */}
+                            <div style={{ flex: 1, padding: "2px" }}>
+                              <select
+                                value={eveningActivity || ""}
+                                onChange={(e) =>
+                                  assignCreatedActivity(person.name, idx, "evening", e.target.value)
+                                }
+                                style={{
+                                  backgroundColor: colorMap[eveningActivity] || "#f9f9f9",
+                                  border: "none",
+                                  width: "100%",
+                                  textAlign: "center",
+                                  fontWeight: "bold",
+                                  fontSize: "0.75rem",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <option value="">-</option>
+                                {filteredEvening.map((act, i) => (
+                                  <option
+                                    key={i}
+                                    value={act.type}
+                                    style={{
+                                      backgroundColor: qxColors[act.color] || "#e0e0e0",
+                                      color: "#000",
+                                    }}
+                                  >
+                                    {act.type}
+                                  </option>
+                                ))}
+                              </select>
                             </div>
                           </div>
                         </td>
@@ -329,13 +424,13 @@ const WeeklyPlanning = () => {
                   <td className="bg-gray-100 font-semibold text-xs text-left pl-2">
                     Actividades creadas
                   </td>
-                  {customActivitiesByDay.map((activities, idx) => (
+                  {planningData.activities && planningData.activities.map((activities, idx) => (
                     <td key={idx}>
                       <div
                         className="flex flex-wrap justify-center gap-1 p-1"
                         style={{ minHeight: "30px" }}
                       >
-                        {activities.map((act, i) => (
+                        {activities && activities.map((act, i) => (
                           <div
                             key={i}
                             title={`${act.type} (${act.slots} slot${act.slots > 1 ? "s" : ""})`}
@@ -348,9 +443,32 @@ const WeeklyPlanning = () => {
                               fontWeight: "bold",
                               minWidth: "40px",
                               textAlign: "center",
+                              position: "relative",
                             }}
                           >
                             {act.type}
+                            <button
+                              onClick={() => handleRemoveActivity(idx, i)}
+                              style={{
+                                position: "absolute",
+                                top: "-4px",
+                                right: "-4px",
+                                background: "#f44336",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "50%",
+                                width: "16px",
+                                height: "16px",
+                                fontSize: "10px",
+                                cursor: "pointer",
+                                lineHeight: "16px",
+                                textAlign: "center",
+                                padding: 0,
+                              }}
+                              title="Eliminar"
+                            >
+                              ×
+                            </button>
                           </div>
                         ))}
                       </div>
@@ -459,34 +577,13 @@ const WeeklyPlanning = () => {
 
                 {/* Botón crear */}
                 <button
-                  onClick={() => {
-                    setCustomActivitiesByDay((prev) => {
-                      const updated = [...prev];
-                      updated[newActivity.dayIndex] = [
-                        ...updated[newActivity.dayIndex],
-                        {
-                          type: newActivity.type,
-                          color: newActivity.color, // string: amarillo, azul, rojo
-                          slots: newActivity.slots,
-                          time: newActivity.time,  // morning or evening
-                        },
-                      ];
-                      return updated;
-                    });
-
-                    setNewActivity({
-                      dayIndex: 0,
-                      type: "",
-                      color: null,
-                      slots: 1,
-                      time: "morning",
-                    });
-                  }}
+                  onClick={handleAddCustomActivity}
                   className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600 text-sm"
                   disabled={!newActivity.type}
                 >
                   Crear
                 </button>
+
               </div>
             </div>
           </div>
