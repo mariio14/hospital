@@ -96,6 +96,9 @@ public class MonthlyDataConversor {
                         (Objects.equals(schedule.get(size), "g") || Objects.equals(schedule.get(size), "gp")
                                 || Objects.equals(schedule.get(size), "i") || Objects.equals(schedule.get(size), "e"))) {
                     clingoParams.append(String.format("day_assign(%s,0,%s). ", person, schedule.get(size)));
+                    if (Objects.equals(schedule.get(size), "g") || Objects.equals(schedule.get(size), "gp")) {
+                        clingoParams.append(String.format("day_assign_guard(%s,0,%s). ", person, schedule.get(size)));
+                    }
                 }
             }
         } else if (Objects.equals(monthlyDataDto.getFirstDay(), "D")) {
@@ -109,11 +112,17 @@ public class MonthlyDataConversor {
                         (Objects.equals(schedule.get(size), "g") || Objects.equals(schedule.get(size), "gp")
                                 || Objects.equals(schedule.get(size), "i") || Objects.equals(schedule.get(size), "e"))) {
                     clingoParams.append(String.format("day_assign(%s,0,%s). ", person, schedule.get(size)));
+                    if (Objects.equals(schedule.get(size), "g") || Objects.equals(schedule.get(size), "gp")) {
+                        clingoParams.append(String.format("day_assign_guard(%s,0,%s). ", person, schedule.get(size)));
+                    }
                 }
                 if (schedule.containsKey(size-1) && schedule.get(size-1) != null &&
                         (Objects.equals(schedule.get(size-1), "g") || Objects.equals(schedule.get(size-1), "gp")
                                 || Objects.equals(schedule.get(size-1), "i") || Objects.equals(schedule.get(size-1), "e"))) {
-                    clingoParams.append(String.format("day_assign(%s,0,%s). ", person, schedule.get(size-1)));
+                    clingoParams.append(String.format("day_assign(%s,-1,%s). ", person, schedule.get(size-1)));
+                    if (Objects.equals(schedule.get(size), "g") || Objects.equals(schedule.get(size), "gp")) {
+                        clingoParams.append(String.format("day_assign_guard(%s,-1,%s). ", person, schedule.get(size)));
+                    }
                 }
             }
         } else {
@@ -125,6 +134,7 @@ public class MonthlyDataConversor {
                 if (schedule.containsKey(size) && schedule.get(size) != null &&
                         (Objects.equals(schedule.get(size), "g") || Objects.equals(schedule.get(size), "gp"))) {
                     clingoParams.append(String.format("day_assign(%s,0,%s). ", person, schedule.get(size)));
+                    clingoParams.append(String.format("day_assign_guard(%s,0,%s). ", person, schedule.get(size)));
                 }
             }
         }

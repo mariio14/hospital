@@ -54,8 +54,8 @@ N {day_assign(P,D,T) : person(P), not vacation(P,D), not day_not_assign(P,D,T)} 
 % MensualR_G05
 %   day_assign_guard(P,D,G) -> person P is assigned to guard G on day D
 day_assign_guard(P,D,G) :- guard(G), day_assign(P,D,G).
-:- person(P), #count{D:day_assign_guard(P,D,_)}<4.
-:- person(P), #count{D:day_assign_guard(P,D,_)}>6.
+:- person(P), #count{D:day_assign_guard(P,D,_),D>0}<4.
+:- person(P), #count{D:day_assign_guard(P,D,_),D>0}>6.
 
 % MensualR_G06
 :- day_assign_guard(P,D,_), day_assign_guard(P,D+1,_).
@@ -73,7 +73,7 @@ day_assign_guard(P,D,G) :- guard(G), day_assign(P,D,G).
 veteran_in_guard(D) :- day_assign_guard(P,D,_), level(P,L), L>=3.
 % MensualP_G09
 #minimize { V,D :
-    day(D), not veteran_in_guard(D),
+    day(D), D>0, not veteran_in_guard(D),
     cost(MensualP_G09,V)
 }.
 
@@ -110,7 +110,7 @@ working_weekends(P,N) :- person(P), N = #count{D: person_working_in_weekend(P,D)
     P!=P', level(P,5), level(P',5).
 
 % MensualR_G15
-:- day_assign_guard(P,D,_), vacation(P,D+1).
+:- day_assign_guard(P,D,_), vacation(P,D+1), D>0.
 
 % MensualP_L04
 #minimize { V,P,D : day_assign(P,D,i),
@@ -119,7 +119,7 @@ working_weekends(P,N) :- person(P), N = #count{D: person_working_in_weekend(P,D)
 }.
 
 % MensualP_G03
-numGuards(P,N) :- person(P), N=#count{D: day_assign_guard(P,D,_)}.
+numGuards(P,N) :- person(P), N=#count{D: day_assign_guard(P,D,_),D>0}.
 
 #minimize { V*(N-5)@2,P :
     numGuards(P,N),
