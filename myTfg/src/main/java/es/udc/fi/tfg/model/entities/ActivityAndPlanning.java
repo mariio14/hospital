@@ -11,9 +11,13 @@ public class ActivityAndPlanning {
 
     private Map<String, Map<Integer, List<String>>> planning;
 
-    public ActivityAndPlanning(List<List<ActivityDto>> activities, Map<String, Map<Integer, List<String>>> planning) {
+    private Map<String, Map<Integer, String>> annualData;
+
+    public ActivityAndPlanning(List<List<ActivityDto>> activities, Map<String, Map<Integer, List<String>>> planning,
+                               Map<String, Map<Integer, String>> annualData) {
         this.activities = activities;
         this.planning = planning;
+        this.annualData = annualData;
     }
 
     public List<List<ActivityDto>> getActivities() {
@@ -30,5 +34,13 @@ public class ActivityAndPlanning {
 
     public void setPlanning(Map<String, Map<Integer, List<String>>> planning) {
         this.planning = planning;
+    }
+
+    public Map<String, Map<Integer, String>> getAnnualData() {
+        return annualData;
+    }
+
+    public void setAnnualData(Map<String, Map<Integer, String>> annualData) {
+        this.annualData = annualData;
     }
 }

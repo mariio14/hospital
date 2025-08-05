@@ -21,5 +21,5 @@ public interface PlanningService {
 
     Map<String, Map<Integer, String>> getYearFromJson(int year, boolean throwException) throws IOException, ClassNotFoundException, PlanningNotGeneratedException;
 
-    ActivityAndPlanning getWeekFromJson(int year, String month, String week) throws IOException, ClassNotFoundException;
+    ActivityAndPlanning getWeekFromJson(int year, String month, String week) throws IOException, ClassNotFoundException, PlanningNotGeneratedException;
 }

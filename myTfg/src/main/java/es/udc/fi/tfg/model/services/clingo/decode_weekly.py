@@ -29,8 +29,9 @@ with ctl.solve(yield_=True) as handle:
                 day = atom.arguments[1].number
                 activity_part1 = str(atom.arguments[4])
                 activity_part2 = str(atom.arguments[2])
+                activity_part3 = str(atom.arguments[3])
 
-                activity = activity_part1 + activity_part2
+                activity = activity_part1 + activity_part2 + "_" + activity_part3
 
                 if person not in assignments:
                     assignments[person] = {}

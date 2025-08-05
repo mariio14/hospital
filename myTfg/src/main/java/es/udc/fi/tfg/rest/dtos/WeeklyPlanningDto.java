@@ -6,6 +6,8 @@ public class WeeklyPlanningDto {
 
     private String name;
 
+    private String color;
+
     private List<String> assignations;
 
     private List<String> eveningAssignations;
@@ -13,8 +15,9 @@ public class WeeklyPlanningDto {
     public WeeklyPlanningDto() {
     }
 
-    public WeeklyPlanningDto(String name, List<String> assignations, List<String> eveningAssignations) {
+    public WeeklyPlanningDto(String name, String color, List<String> assignations, List<String> eveningAssignations) {
         this.name = name;
+        this.color = color;
         this.assignations = assignations;
         this.eveningAssignations = eveningAssignations;
     }
@@ -25,6 +28,14 @@ public class WeeklyPlanningDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 
     public List<String> getAssignations() {

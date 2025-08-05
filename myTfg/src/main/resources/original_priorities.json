@@ -61,22 +61,12 @@
     "cost": 50
   },
   {
-    "id": "semanalP_10",
-    "title": "Coste de que el residente que cubra una peonada haya tenido una guardia presencial el día anterior.",
-    "cost": 25
-  },
-  {
-    "id": "semanalP_11",
-    "title": "Coste de que el residente que cubra una peonada sea de nivel 3.",
+    "id": "SemanalP_14",
+    "title": "Coste de que un quirófano de tarde esté cubierto por un residente de nivel 3 o inferior.",
     "cost": 15
   },
   {
-    "id": "semanalP_12",
-    "title": "Coste de que el residente que cubra una peonada sea de nivel 1 o 2.",
-    "cost": 30
-  },
-  {
-    "id": "semanalP_15",
+    "id": "semanalP_21",
     "title": "Coste de que el residente que cubre un quirófano robot sea de nivel 5.",
     "cost": 25
   }

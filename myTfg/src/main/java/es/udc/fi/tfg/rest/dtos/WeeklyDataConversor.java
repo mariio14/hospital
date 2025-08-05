@@ -92,23 +92,23 @@ public class WeeklyDataConversor {
             clingoParams.append(String.format("level(%s,%d). ", personName, level));
 
             if (weeklyAssignationsDto.getAssignations() != null) {
-                int i = 1;
+                int i = 0;
                 for (String assignation : weeklyAssignationsDto.getAssignations()) {
                     if (assignation != null) {
                         String[] partes = assignation.split("_");
                         clingoParams.append(String.format("day_assign(%s,%d,%s,%s,morning). ", personName,
-                                i, partes[0].toLowerCase(Locale.ROOT), COLORS.get(partes[1].toLowerCase(Locale.ROOT))));
+                                weeklyDataDto.getDays().get(i), partes[0].toLowerCase(Locale.ROOT), COLORS.get(partes[1].toLowerCase(Locale.ROOT))));
                     }
                     i++;
                 }
             }
             if (weeklyAssignationsDto.getEveningAssignations() != null) {
-                int i = 1;
+                int i = 0;
                 for (String assignation : weeklyAssignationsDto.getEveningAssignations()) {
                     if (assignation != null) {
                         String[] partes = assignation.split("_");
                         clingoParams.append(String.format("day_assign(%s,%d,%s,%s,evening). ", personName,
-                                i, partes[0].toLowerCase(Locale.ROOT), COLORS.get(partes[1].toLowerCase(Locale.ROOT))));
+                                weeklyDataDto.getDays().get(i), partes[0].toLowerCase(Locale.ROOT), COLORS.get(partes[1].toLowerCase(Locale.ROOT))));
                     }
                     i++;
                 }
@@ -157,12 +157,14 @@ public class WeeklyDataConversor {
                 if (Objects.equals(time, "morning")) {
                     if (type.equals("qx")) {
                         clingoParams.append(String.format("task_color(qx,%s,%d,%d). ", color, day, slots));
+                    } else if (type.equals("floor")) {
+                        clingoParams.append(String.format("task_color(floor,%s,%d,%d). ", color, day, 1));
                     } else {
                         clingoParams.append(String.format("task(%s,%d). ", type, day));
                     }
                 } else {
                     if (type.equals("qx")) {
-                        clingoParams.append(String.format("task_evening_color(qx,%s,%d,%d). ", color, day, slots));
+                        clingoParams.append(String.format("task_evening_color(qx,%s,%d). ", color, day));
                     } else {
                         clingoParams.append(String.format("task_evening(%s,%d). ", type, day));
                     }

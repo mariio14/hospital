@@ -32,6 +32,23 @@ const WeeklyPlanning = () => {
     rojo: "#E57373",
   };
 
+  const colorPersonMap = {
+      PARED: "#4CAF50",
+      AMARILLO: "#FFEB3B",
+      COLON: "#2196F3",
+      ROJOS: "#F44336",
+      URGENCIAS: "#9C27B0",
+      PROCTO: "#795548",
+      MAMA: "#F48FB1",
+      NUTRI: "#D3D3D3",
+      RAYOS: "#607D8B",
+      REA: "#3F51B5",
+      TORACICA: "#8BC34A",
+      VASCULAR: "#00BCD4",
+      VALENCIA: "#FFC107",
+      OTRAS: "#F5F5F5"
+  };
+
   const [editingSlot, setEditingSlot] = useState({
     personName: null,
     dayIndex: null,
@@ -85,7 +102,11 @@ const WeeklyPlanning = () => {
       eveningAssignations: Array(5).fill(null),
       notValidAssignations: Array(5).fill([])
     })),
-    activities: Array(5).fill([])
+    activities: Array(5).fill(null).map(() => [
+      { type: "FLOOR", color: "azul", slots: 0, time: "morning" },
+      { type: "FLOOR", color: "amarillo", slots: 0, time: "morning" },
+      { type: "FLOOR", color: "rojo", slots: 0, time: "morning" }
+    ])
   };
 
   const [planningData, setPlanningData] = useState(emptyPlanning);
@@ -336,9 +357,11 @@ const WeeklyPlanning = () => {
                 </tr>
               </thead>
               <tbody>
-                {planningData.weeklyPlanningDtos.map((person) => (
-                  <tr key={person.name}>
-                    <td className="bg-gray-50 font-medium">{person.name}</td>
+                {planningData.weeklyPlanningDtos.map((person) => {
+                  const rowColor = colorPersonMap[person.color] || "#fff";
+                  return(
+                  <tr key={person.name} style={{ backgroundColor: rowColor }}>
+                    <td className="font-medium">{person.name}</td>
                     {person.assignations.map((_, idx) => {
                       const morningActivity = person.assignations[idx];
                       const eveningActivity = person.eveningAssignations?.[idx] || null;
@@ -424,7 +447,8 @@ const WeeklyPlanning = () => {
                       );
                     })}
                   </tr>
-                ))}
+                  )
+                })}
                 <tr>
                   <td className="bg-gray-100 font-semibold text-xs text-left pl-2">
                     Actividades creadas
@@ -583,7 +607,7 @@ const WeeklyPlanning = () => {
                 {/* Botón crear */}
                 <button
                   onClick={handleAddCustomActivity}
-                  className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600 text-sm"
+                  className="bg-blue-500 text-black px-4 py-1 rounded hover:bg-blue-600 text-sm"
                   disabled={!newActivity.type}
                 >
                   Crear

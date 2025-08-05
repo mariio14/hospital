@@ -2,16 +2,81 @@
   "2025" : {
     "Julio" : {
       "1" : [ [ {
-        "type" : "QX",
-        "color" : "amarillo",
-        "slots" : 2,
+        "type" : "FLOOR",
+        "color" : "azul",
+        "slots" : 0,
         "time" : "morning"
       }, {
-        "type" : "CONSULTATION",
-        "color" : null,
-        "slots" : 1,
-        "time" : "evening"
-      } ], [ ], [ ], [ ], [ ] ]
+        "type" : "FLOOR",
+        "color" : "amarillo",
+        "slots" : 0,
+        "time" : "morning"
+      }, {
+        "type" : "FLOOR",
+        "color" : "rojo",
+        "slots" : 0,
+        "time" : "morning"
+      } ], [ {
+        "type" : "FLOOR",
+        "color" : "azul",
+        "slots" : 0,
+        "time" : "morning"
+      }, {
+        "type" : "FLOOR",
+        "color" : "amarillo",
+        "slots" : 0,
+        "time" : "morning"
+      }, {
+        "type" : "FLOOR",
+        "color" : "rojo",
+        "slots" : 0,
+        "time" : "morning"
+      } ], [ {
+        "type" : "FLOOR",
+        "color" : "azul",
+        "slots" : 0,
+        "time" : "morning"
+      }, {
+        "type" : "FLOOR",
+        "color" : "amarillo",
+        "slots" : 0,
+        "time" : "morning"
+      }, {
+        "type" : "FLOOR",
+        "color" : "rojo",
+        "slots" : 0,
+        "time" : "morning"
+      } ], [ {
+        "type" : "FLOOR",
+        "color" : "azul",
+        "slots" : 0,
+        "time" : "morning"
+      }, {
+        "type" : "FLOOR",
+        "color" : "amarillo",
+        "slots" : 0,
+        "time" : "morning"
+      }, {
+        "type" : "FLOOR",
+        "color" : "rojo",
+        "slots" : 0,
+        "time" : "morning"
+      } ], [ {
+        "type" : "FLOOR",
+        "color" : "azul",
+        "slots" : 0,
+        "time" : "morning"
+      }, {
+        "type" : "FLOOR",
+        "color" : "amarillo",
+        "slots" : 0,
+        "time" : "morning"
+      }, {
+        "type" : "FLOOR",
+        "color" : "rojo",
+        "slots" : 0,
+        "time" : "morning"
+      } ] ]
     }
   }
 }

@@ -114,7 +114,8 @@ public class PlanningServiceImpl implements PlanningService {
     }
 
     @Override
-    public Map<String, Map<Integer, List<String>>> getWeeklyPlanning(String params, int year, String month, String week, List<List<ActivityDto>> activities) throws NoSolutionException {
+    public Map<String, Map<Integer, List<String>>> getWeeklyPlanning(String params, int year, String month, String week,
+                        List<List<ActivityDto>> activities) throws NoSolutionException {
         String command = "python decode_weekly.py weekly.lp input_weekly.lp";
         try {
             writeInputFile(params, pathname + "/input_weekly.lp");
@@ -232,7 +233,7 @@ public class PlanningServiceImpl implements PlanningService {
     }
 
     @Override
-    public ActivityAndPlanning getWeekFromJson(int year, String month, String week) throws IOException, ClassNotFoundException {
+    public ActivityAndPlanning getWeekFromJson(int year, String month, String week) throws IOException, ClassNotFoundException, PlanningNotGeneratedException {
         ObjectMapper mapper = new ObjectMapper();
         File outputFile = new File(pathname + "/solutionWeekly.json");
         File activitiesFile = new File(pathname + "/activities.json");
@@ -266,12 +267,20 @@ public class PlanningServiceImpl implements PlanningService {
             weekData = emptyData;
         }
 
-        List<List<ActivityDto>> emptyList = List.of(new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        List<List<ActivityDto>> emptyList = List.of(getFloors(), getFloors(), getFloors(), getFloors(), getFloors());
         List<List<ActivityDto>> activitiesDataForWeek = activitiesData.getOrDefault(year, new HashMap<>())
                 .getOrDefault(month, new HashMap<>())
                 .getOrDefault(week, emptyList);
 
-        return new ActivityAndPlanning(activitiesDataForWeek, weekData);
+        return new ActivityAndPlanning(activitiesDataForWeek, weekData, getYearFromJson(year, false));
+    }
+
+    private List<ActivityDto> getFloors(){
+        List<ActivityDto> floors = new ArrayList<>();
+        floors.add(new ActivityDto("FLOOR", "blue", 1, "morning"));
+        floors.add(new ActivityDto("FLOOR", "red", 1, "morning"));
+        floors.add(new ActivityDto("FLOOR", "yellow", 1, "morning"));
+        return floors;
     }
 
     private Map<String, Map<Integer, String>> parseJson(String jsonString) throws Exception {
@@ -282,17 +291,6 @@ public class PlanningServiceImpl implements PlanningService {
     private Map<String, Map<Integer, List<String>>> parseJsonToList(String jsonString) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(jsonString, new TypeReference<>() {});
-    }
-
-    private void saveToJsonFile(Map<String, Map<Integer, String>> planning, String file) {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            File outputFile = new File(pathname + file);
-            mapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, planning);
-        } catch (Exception e) {
-            System.err.println("Error al guardar el resultado en un archivo JSON.");
-            e.printStackTrace();
-        }
     }
 
     private void saveYearJsonFile(Map<String, Map<Integer, String>> planning, String file, int year) {

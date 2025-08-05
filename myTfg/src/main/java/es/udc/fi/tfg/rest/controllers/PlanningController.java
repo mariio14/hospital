@@ -2,8 +2,10 @@ package es.udc.fi.tfg.rest.controllers;
 
 import es.udc.fi.tfg.model.entities.ActivityAndPlanning;
 import es.udc.fi.tfg.model.entities.Priority;
+import es.udc.fi.tfg.model.entities.Staff;
 import es.udc.fi.tfg.model.services.PlanningService;
 import es.udc.fi.tfg.model.services.PrioritiesService;
+import es.udc.fi.tfg.model.services.StaffService;
 import es.udc.fi.tfg.model.services.exceptions.NoSolutionException;
 import es.udc.fi.tfg.model.services.exceptions.PlanningNotGeneratedException;
 import es.udc.fi.tfg.rest.common.ErrorsDto;
@@ -31,6 +33,9 @@ public class PlanningController {
 
     @Autowired
     private PlanningService planningService;
+
+    @Autowired
+    private StaffService staffService;
 
     @Autowired
     private PrioritiesService prioritiesService;
@@ -181,16 +186,18 @@ public class PlanningController {
                                 params.getYear(), params.getMonth()),
                         params.getYear(), params.getMonth(), params.getWeek(), params.getActivities());
 
-        return WeeklyPlanningConversor.toWeeklyPlanningDtosFromData(planning, params);
+        return WeeklyPlanningConversor.toWeeklyPlanningDtosFromData(planning, params, annualData);
     }
 
     @GetMapping("/weekly")
     public WeeklyResultDto getWeeklyPlanning(@RequestParam String month, @RequestParam int year,
                                              @RequestParam String week)
-            throws NoSolutionException, IOException, ClassNotFoundException {
+            throws NoSolutionException, IOException, ClassNotFoundException, PlanningNotGeneratedException {
 
         ActivityAndPlanning weekPlanning = planningService.getWeekFromJson(year, month, week);
 
-        return WeeklyPlanningConversor.toWeeklyPlanningDtos(weekPlanning, year, month, week);
+        List<Staff> staffList = staffService.getStaff();
+
+        return WeeklyPlanningConversor.toWeeklyPlanningDtos(weekPlanning, year, month, week, staffList);
     }
 }
