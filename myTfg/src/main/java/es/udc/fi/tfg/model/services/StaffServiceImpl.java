@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -23,7 +24,9 @@ public class StaffServiceImpl implements StaffService{
     public List<Staff> getStaff() throws IOException, ClassNotFoundException {
         byte[] jsonData = Files.readAllBytes(Paths.get(filePath));
 
-        return objectMapper.readValue(jsonData, new TypeReference<>() {});
+        List<Staff> staffList = objectMapper.readValue(jsonData, new TypeReference<>() {});
+        staffList.sort(Comparator.comparing(Staff::getLevel));
+        return staffList;
     }
 
     @Override

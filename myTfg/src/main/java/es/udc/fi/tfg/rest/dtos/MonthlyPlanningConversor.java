@@ -1,7 +1,8 @@
 package es.udc.fi.tfg.rest.dtos;
 
+import es.udc.fi.tfg.model.entities.Staff;
+
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class MonthlyPlanningConversor {
 
@@ -10,12 +11,12 @@ public class MonthlyPlanningConversor {
     }
 
     public static MonthlyResultDto toMonthlyPlanningDtos(Map<String, Map<Integer, String>> planningMap,
-                                                                 String month, int numDays) {
-        List<MonthlyPlanningDto> list = planningMap.entrySet()
-                .stream()
-                .map(entry -> toMonthlyPlanningDto(entry.getKey(), entry.getValue(), numDays))
-                .collect(Collectors.toList());
-
+                                                         String month, int numDays, List<Staff> staffList) {
+        List<MonthlyPlanningDto> list = new ArrayList<>();
+        for (Staff staff : staffList) {
+            Map<Integer, String> assignations = planningMap.get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+            list.add(toMonthlyPlanningDto(staff.getName(), assignations, numDays));
+        }
         return new MonthlyResultDto(month, list);
     }
 

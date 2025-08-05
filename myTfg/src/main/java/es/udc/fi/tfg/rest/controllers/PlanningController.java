@@ -147,7 +147,8 @@ public class PlanningController {
 
         Map<String, Map<Integer, String>> monthPlanning = planningService.getMonthFromJson(month, year, false, throwsException);
 
-        return MonthlyPlanningConversor.toMonthlyPlanningDtos(monthPlanning, month, numDays);
+        List<Staff> staffList = staffService.getStaff();
+        return MonthlyPlanningConversor.toMonthlyPlanningDtos(monthPlanning, month, numDays, staffList);
     }
 
     @PostMapping("/weekly")
