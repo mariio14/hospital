@@ -96,6 +96,40 @@
           "8" : [ "morningcerdo_null" ]
         }
       }
+    },
+    "Agosto" : {
+      "1" : {
+        "clara" : {
+          "6" : [ "morningfloor_blue" ]
+        },
+        "javier" : {
+          "4" : [ "morningfloor_yellow", "morningqx_yellow_id1" ],
+          "8" : [ "morningfloor_yellow" ]
+        },
+        "jose" : {
+          "4" : [ "morningqx_null_null" ],
+          "5" : [ "morningfloor_yellow" ],
+          "6" : [ "morningfloor_yellow" ],
+          "7" : [ "morningfloor_yellow" ]
+        },
+        "julia" : {
+          "4" : [ "morningfloor_red" ],
+          "5" : [ "morningfloor_red" ],
+          "7" : [ "morningfloor_red" ],
+          "8" : [ "morningfloor_red" ]
+        },
+        "mario" : {
+          "4" : [ "morningfloor_blue" ],
+          "5" : [ "morningfloor_blue" ],
+          "7" : [ "morningfloor_blue" ]
+        },
+        "marta" : {
+          "6" : [ "morningfloor_red" ]
+        },
+        "pablo" : {
+          "8" : [ "morningfloor_blue" ]
+        }
+      }
     }
   }
 }

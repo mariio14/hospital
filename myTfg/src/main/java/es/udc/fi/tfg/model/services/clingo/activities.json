@@ -1,81 +1,102 @@
 {
   "2025" : {
-    "Julio" : {
+    "Agosto" : {
       "1" : [ [ {
         "type" : "FLOOR",
         "color" : "azul",
         "slots" : 0,
-        "time" : "morning"
+        "time" : "morning",
+        "identifier" : null
       }, {
         "type" : "FLOOR",
         "color" : "amarillo",
         "slots" : 0,
-        "time" : "morning"
+        "time" : "morning",
+        "identifier" : null
       }, {
         "type" : "FLOOR",
         "color" : "rojo",
         "slots" : 0,
-        "time" : "morning"
+        "time" : "morning",
+        "identifier" : null
+      }, {
+        "type" : "QX",
+        "color" : "amarillo",
+        "slots" : 1,
+        "time" : "morning",
+        "identifier" : "ID1"
       } ], [ {
         "type" : "FLOOR",
         "color" : "azul",
         "slots" : 0,
-        "time" : "morning"
+        "time" : "morning",
+        "identifier" : null
       }, {
         "type" : "FLOOR",
         "color" : "amarillo",
         "slots" : 0,
-        "time" : "morning"
+        "time" : "morning",
+        "identifier" : null
       }, {
         "type" : "FLOOR",
         "color" : "rojo",
         "slots" : 0,
-        "time" : "morning"
+        "time" : "morning",
+        "identifier" : null
       } ], [ {
         "type" : "FLOOR",
         "color" : "azul",
         "slots" : 0,
-        "time" : "morning"
+        "time" : "morning",
+        "identifier" : null
       }, {
         "type" : "FLOOR",
         "color" : "amarillo",
         "slots" : 0,
-        "time" : "morning"
+        "time" : "morning",
+        "identifier" : null
       }, {
         "type" : "FLOOR",
         "color" : "rojo",
         "slots" : 0,
-        "time" : "morning"
+        "time" : "morning",
+        "identifier" : null
       } ], [ {
         "type" : "FLOOR",
         "color" : "azul",
         "slots" : 0,
-        "time" : "morning"
+        "time" : "morning",
+        "identifier" : null
       }, {
         "type" : "FLOOR",
         "color" : "amarillo",
         "slots" : 0,
-        "time" : "morning"
+        "time" : "morning",
+        "identifier" : null
       }, {
         "type" : "FLOOR",
         "color" : "rojo",
         "slots" : 0,
-        "time" : "morning"
+        "time" : "morning",
+        "identifier" : null
       } ], [ {
         "type" : "FLOOR",
         "color" : "azul",
         "slots" : 0,
-        "time" : "morning"
+        "time" : "morning",
+        "identifier" : null
       }, {
         "type" : "FLOOR",
         "color" : "amarillo",
         "slots" : 0,
-        "time" : "morning"
+        "time" : "morning",
+        "identifier" : null
       }, {
         "type" : "FLOOR",
         "color" : "rojo",
         "slots" : 0,
-        "time" : "morning"
+        "time" : "morning",
+        "identifier" : null
       } ] ]
     }
   }

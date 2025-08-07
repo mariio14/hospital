@@ -10,14 +10,17 @@ public class ActivityDto {
 
     private String time;
 
+    private String identifier;
+
     public ActivityDto() {
     }
 
-    public ActivityDto(String type, String color, int slots, String time) {
+    public ActivityDto(String type, String color, int slots, String time, String identifier) {
         this.type = type;
         this.color = color;
         this.slots = slots;
         this.time = time;
+        this.identifier = identifier;
     }
 
     public String getType() {
@@ -50,5 +53,13 @@ public class ActivityDto {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 }

@@ -19,13 +19,15 @@ const WeeklyPlanning = () => {
   const prohibitedMenuRef = useRef(null);
   const [editingCell, setEditingCell] = useState({ personName: null, dayIndex: null });
   const selectRef = useRef(null);
-    const [newActivity, setNewActivity] = useState({
-      dayIndex: 0,
-      type: "",
-      color: null,
-      slots: 1,
-      time: "morning",
-    });
+  const [newActivity, setNewActivity] = useState({
+    dayIndex: 0,
+    type: "",
+    color: null,
+    slots: 1,
+    time: "morning",
+    identifier: "",
+  });
+
   const qxColors = {
     amarillo: "#FFD700",
     azul: "#2196F3",
@@ -98,6 +100,7 @@ const WeeklyPlanning = () => {
     weeklyPlanningDtos: staffList.map((person) => ({
       name: person.name,
       level: `R${person.level}`,
+      color: null,
       assignations: Array(5).fill(null),
       eveningAssignations: Array(5).fill(null),
       notValidAssignations: Array(5).fill([])
@@ -182,7 +185,18 @@ const WeeklyPlanning = () => {
   };
 
   const handleClearPlanning = () => {
-    setPlanningData(emptyPlanning);
+    const updatedDtos = emptyPlanning.weeklyPlanningDtos.map((emptyPerson) => {
+      const currentPerson = planningData.weeklyPlanningDtos.find(p => p.name === emptyPerson.name);
+      return {
+        ...emptyPerson,
+        color: currentPerson?.color || null
+      };
+    });
+
+    setPlanningData({
+      ...emptyPlanning,
+      weeklyPlanningDtos: updatedDtos
+    });
   };
 
   const exportToPDF = () => {
@@ -235,7 +249,8 @@ const WeeklyPlanning = () => {
           type: newActivity.type,
           color: newActivity.color,
           slots: newActivity.slots,
-          time: newActivity.time
+          time: newActivity.time,
+          identifier: newActivity.identifier
         }
       ];
 
@@ -251,6 +266,7 @@ const WeeklyPlanning = () => {
       color: null,
       slots: 1,
       time: "morning",
+      identifier: "",
     });
   };
 
@@ -263,7 +279,8 @@ const WeeklyPlanning = () => {
   };
 
   const assignCreatedActivity = (personName, dayIndex, time, activityType, color) => {
-    const activityWithColor = `${activityType}_${color || "null"}`;
+    const identifier = activityType === "QX" && newActivity.identifier ? `_${newActivity.identifier}` : "";
+    const activityWithColor = `${activityType}_${color || "null"}${identifier}`;
     setPlanningData((prev) => ({
       ...prev,
       weeklyPlanningDtos: prev.weeklyPlanningDtos.map((p) =>
@@ -376,7 +393,7 @@ const WeeklyPlanning = () => {
                             {/* Mañana */}
                             <div style={{ flex: 1, borderBottom: "1px solid #ccc", padding: "2px" }}>
                               <select
-                                value={(morningActivity || "").split("_")[0]}
+                                value={(morningActivity || "").startsWith("QX_") ? (morningActivity || "").split("_").slice(0, 2).join("_") : (morningActivity || "").split("_")[0]}
                                 onChange={(e) => {
                                   const selectedActivity = e.target.value;
                                   const selected = filteredMorning.find((a) => a.type === selectedActivity);
@@ -396,13 +413,13 @@ const WeeklyPlanning = () => {
                                 {filteredMorning.map((act, i) => (
                                   <option
                                     key={i}
-                                    value={act.type}
+                                    value={act.identifier ? `${act.type}_${act.identifier}` : act.type}
                                     style={{
                                       backgroundColor: qxColors[act.color] || "#e0e0e0",
                                       color: "#000",
                                     }}
                                   >
-                                    {act.type}
+                                    {act.identifier ? `${act.type}_${act.identifier}` : act.type}
                                   </option>
                                 ))}
                               </select>
@@ -431,13 +448,13 @@ const WeeklyPlanning = () => {
                                 {filteredEvening.map((act, i) => (
                                   <option
                                     key={i}
-                                    value={act.type}
+                                    value={act.identifier ? `${act.type}_${act.identifier}` : act.type}
                                     style={{
                                       backgroundColor: qxColors[act.color] || "#e0e0e0",
                                       color: "#000",
                                     }}
                                   >
-                                    {act.type}
+                                    {act.identifier ? `${act.type}_${act.identifier}` : act.type}
                                   </option>
                                 ))}
                               </select>
@@ -475,7 +492,7 @@ const WeeklyPlanning = () => {
                               position: "relative",
                             }}
                           >
-                            {act.type}
+                            {act.identifier ? `${act.type}_${act.identifier}` : act.type}
                             <button
                               onClick={() => handleRemoveActivity(idx, i)}
                               style={{
@@ -586,9 +603,26 @@ const WeeklyPlanning = () => {
                   </select>
                 </label>
 
+                {newActivity.type === "QX" && (
+                  <label className="text-sm">
+                    Identificador:
+                    <input
+                      type="text"
+                      value={newActivity.identifier}
+                      onChange={(e) =>
+                        setNewActivity((prev) => ({
+                          ...prev,
+                          identifier: e.target.value,
+                        }))
+                      }
+                      className="ml-2 border p-1 rounded w-24"
+                    />
+                  </label>
+                )}
+
                 {/* Slots */}
                 <label className="text-sm">
-                  Slots:
+                  Residentes:
                   <input
                     type="number"
                     value={newActivity.slots}

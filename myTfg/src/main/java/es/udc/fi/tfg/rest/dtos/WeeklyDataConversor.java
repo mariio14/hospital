@@ -96,8 +96,14 @@ public class WeeklyDataConversor {
                 for (String assignation : weeklyAssignationsDto.getAssignations()) {
                     if (assignation != null) {
                         String[] partes = assignation.split("_");
-                        clingoParams.append(String.format("day_assign(%s,%d,%s,%s,morning). ", personName,
-                                weeklyDataDto.getDays().get(i), partes[0].toLowerCase(Locale.ROOT), COLORS.get(partes[1].toLowerCase(Locale.ROOT))));
+                        String tipo = partes[0].toLowerCase(Locale.ROOT);
+                        String color = COLORS.get(partes[1].toLowerCase(Locale.ROOT));
+                        String identifier = (partes.length > 2 && tipo.equals("qx")) ? partes[2] : null;
+                        if (identifier != null) {
+                            clingoParams.append(String.format("day_assign(%s,%d,%s,%s,morning,%s). ", personName, weeklyDataDto.getDays().get(i), tipo, color, identifier));
+                        } else {
+                            clingoParams.append(String.format("day_assign(%s,%d,%s,%s,morning). ", personName, weeklyDataDto.getDays().get(i), tipo, color));
+                        }
                     }
                     i++;
                 }
@@ -107,8 +113,14 @@ public class WeeklyDataConversor {
                 for (String assignation : weeklyAssignationsDto.getEveningAssignations()) {
                     if (assignation != null) {
                         String[] partes = assignation.split("_");
-                        clingoParams.append(String.format("day_assign(%s,%d,%s,%s,evening). ", personName,
-                                weeklyDataDto.getDays().get(i), partes[0].toLowerCase(Locale.ROOT), COLORS.get(partes[1].toLowerCase(Locale.ROOT))));
+                        String tipo = partes[0].toLowerCase(Locale.ROOT);
+                        String color = COLORS.get(partes[1].toLowerCase(Locale.ROOT));
+                        String identifier = (partes.length > 2 && tipo.equals("qx")) ? partes[2] : null;
+                        if (identifier != null) {
+                            clingoParams.append(String.format("day_assign(%s,%d,%s,%s,evening,%s). ", personName, weeklyDataDto.getDays().get(i), tipo, color, identifier));
+                        } else {
+                            clingoParams.append(String.format("day_assign(%s,%d,%s,%s,evening). ", personName, weeklyDataDto.getDays().get(i), tipo, color));
+                        }
                     }
                     i++;
                 }
@@ -156,7 +168,7 @@ public class WeeklyDataConversor {
                 String time = activityDto.getTime();
                 if (Objects.equals(time, "morning")) {
                     if (type.equals("qx")) {
-                        clingoParams.append(String.format("task_color(qx,%s,%d,%d). ", color, day, slots));
+                        clingoParams.append(String.format("task_color(qx,%s,%d,%d,%s). ", color, day, slots, activityDto.getIdentifier().toLowerCase(Locale.ROOT)));
                     } else if (type.equals("floor")) {
                         clingoParams.append(String.format("task_color(floor,%s,%d,%d). ", color, day, 1));
                     } else {

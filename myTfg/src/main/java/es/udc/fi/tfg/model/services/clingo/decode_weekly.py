@@ -24,7 +24,7 @@ with ctl.solve(yield_=True) as handle:
 
     if optimal_model:
         for atom in optimal_model.symbols(shown=True):
-            if atom.name == "day_assign" and len(atom.arguments) == 5:
+            if atom.name == "day_assign" and len(atom.arguments) == 6:
                 person = str(atom.arguments[0])
                 day = atom.arguments[1].number
                 activity_part1 = str(atom.arguments[4])
@@ -32,6 +32,9 @@ with ctl.solve(yield_=True) as handle:
                 activity_part3 = str(atom.arguments[3])
 
                 activity = activity_part1 + activity_part2 + "_" + activity_part3
+
+                if activity_part2.lower() == 'qx':
+                    activity += "_" + str(atom.arguments[5])
 
                 if person not in assignments:
                     assignments[person] = {}

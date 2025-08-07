@@ -88,10 +88,16 @@ public class WeeklyPlanningConversor {
                         if (val.startsWith("evening")) {
                             String[] partes = val.replaceFirst("evening", "").split("_");
                             String st = partes[0].toUpperCase() + "_" + COLORS.get(partes[1].toLowerCase(Locale.ROOT));
+                            if (partes.length > 2) {
+                                st += "_" + partes[2];
+                            }
                             eveningList.set(index, st);
                         } else if (val.startsWith("morning")) {
                             String[] partes = val.replaceFirst("morning", "").split("_");
                             String st = partes[0].toUpperCase() + "_" + COLORS.get(partes[1].toLowerCase(Locale.ROOT));
+                            if (partes.length > 2) {
+                                st += "_" + partes[2];
+                            }
                             list.set(index, st);
                         } else {
                             list.set(index, val.toUpperCase());
