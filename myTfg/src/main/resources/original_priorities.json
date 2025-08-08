@@ -69,6 +69,11 @@
     "id": "semanalP_21",
     "title": "Coste de que el residente que cubre un quirófano robot sea de nivel 5.",
     "cost": 25
+  },
+  {
+    "id": "semanalP_22",
+    "title": "Coste de que el residente asignado a qx amarillo no cubra también la planta amarilla.",
+    "cost": 10
   }
 ]
 }

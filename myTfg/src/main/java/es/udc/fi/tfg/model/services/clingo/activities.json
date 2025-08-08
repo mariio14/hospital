@@ -19,12 +19,6 @@
         "slots" : 0,
         "time" : "morning",
         "identifier" : null
-      }, {
-        "type" : "QX",
-        "color" : "amarillo",
-        "slots" : 1,
-        "time" : "morning",
-        "identifier" : "ID1"
       } ], [ {
         "type" : "FLOOR",
         "color" : "azul",

@@ -29,18 +29,18 @@ task(dummy, dummy).
 task_color(dummy, dummy, dummy, dummy, dummy).
 task_color(dummy, dummy, dummy, dummy).
 task_evening(dummy, dummy).
-task_evening_color(dummy, dummy, dummy).
+task_evening_color(dummy, dummy, dummy, dummy).
 
-cost(semanalP_03_4_5, yellow, 10).
-cost(semanalP_03_4_5, red, 20).
-cost(semanalP_03_4_5, blue, 50).
-cost(semanalP_14, 15).
-cost(semanalP_21, 25).
+%cost(semanalP_03_4_5, yellow, 10).
+%cost(semanalP_03_4_5, red, 20).
+%cost(semanalP_03_4_5, blue, 50).
+%cost(semanalP_14, 15).
+%cost(semanalP_21, 25).
 
 % SemanalR_01
 N {day_assign(P,D,qx,C,morning,I) : person(P), not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,qx)} N :- task_color(qx, C, D, N, I).
 % SemanalR_13,
-1 {day_assign(P,D,qx,C,evening,null) : person(P), level(P,L), L>1, not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,qx)} 1 :- task_evening_color(qx, C, D).
+1 {day_assign(P,D,qx,C,evening,I) : person(P), level(P,L), L>1, not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,qx)} 1 :- task_evening_color(qx, C, D, I).
 
 % SemanalR_06, SemanalR_07
 1 {day_assign(P,D,consultation,null,morning,null) : person(P), level(P,L), L>2, not vacation(P,D), not day_not_assign(P,D,consultation)} 1 :- task(consultation, D), day(D).
@@ -61,7 +61,12 @@ N {day_assign(P,D,qx,C,morning,I) : person(P), not vacation(P,D), month_assign(P
 
 % SemanalR_02
 {day_assign(P,D,floor,C,morning,null) : person(P), not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,floor)} :- task_color(floor,C,D,_).
-%%%%%%%%%%%falta lo de la planta amarilla
+% SemanalP_22
+#minimize { V,D :
+    task_color(floor,yellow,D,_), day_assign(P,D,qx,yellow,_,_), month_assign(P,yellow),
+    not day_assign(P,D,floor,yellow,_,_),
+    cost(semanalP_22, V)
+}.
 
 % SemanalR_15, SemanalR_16
 :- day_assign(P,D,T,C,DM,I), day_assign(P,D,T',C',DM,I'),

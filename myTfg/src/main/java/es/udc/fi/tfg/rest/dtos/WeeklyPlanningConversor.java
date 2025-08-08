@@ -98,6 +98,12 @@ public class WeeklyPlanningConversor {
                             if (partes.length > 2) {
                                 st += "_" + partes[2];
                             }
+                            if (list.get(index) != null && st.startsWith("floor_amarillo")) {
+                                String[] partesQx = st.split("_");
+                                st = "PLANTA/QX_" + partesQx[2];
+                            } else if (list.get(index) != null && st.startsWith("qx_amarillo")) {
+                                st = "PLANTA/QX_" + partes[2];
+                            }
                             list.set(index, st);
                         } else {
                             list.set(index, val.toUpperCase());

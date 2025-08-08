@@ -185,6 +185,7 @@ const WeeklyPlanning = () => {
   };
 
   const handleClearPlanning = () => {
+    setBackendErrors(null);
     const updatedDtos = emptyPlanning.weeklyPlanningDtos.map((emptyPerson) => {
       const currentPerson = planningData.weeklyPlanningDtos.find(p => p.name === emptyPerson.name);
       return {
@@ -218,6 +219,7 @@ const WeeklyPlanning = () => {
 
   const handleGeneratePlanning = () => {
     setIsLoading(true);
+    setBackendErrors(null);
     const dataToSend = {
       weeklyAssignationsDtos: planningData.weeklyPlanningDtos.map((p) => {
         const staffMember = staffList.find(staff => staff.name.toLowerCase() === p.name.toLowerCase());

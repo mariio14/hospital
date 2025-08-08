@@ -103,11 +103,10 @@
           "6" : [ "morningfloor_blue" ]
         },
         "javier" : {
-          "4" : [ "morningfloor_yellow", "morningqx_yellow_id1" ],
+          "4" : [ "morningfloor_yellow" ],
           "8" : [ "morningfloor_yellow" ]
         },
         "jose" : {
-          "4" : [ "morningqx_null_null" ],
           "5" : [ "morningfloor_yellow" ],
           "6" : [ "morningfloor_yellow" ],
           "7" : [ "morningfloor_yellow" ]
