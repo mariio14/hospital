@@ -104,7 +104,7 @@ public class WeeklyDataConversor {
                         String[] partes = assignation.split("_");
                         String tipo = partes[0].toLowerCase(Locale.ROOT);
                         String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
-                        String identifier = (partes.length > 2 && tipo.equals("qx")) ? partes[2] : null;
+                        String identifier = (partes.length > 2 && tipo.equals("qx")) ? partes[2].toLowerCase(Locale.ROOT) : null;
                         if (identifier != null) {
                             clingoParams.append(String.format("day_assign(%s,%d,%s,%s,morning,%s). ", personName, weeklyDataDto.getDays().get(i), tipo, color, identifier));
                         } else {
@@ -121,7 +121,7 @@ public class WeeklyDataConversor {
                         String[] partes = assignation.split("_");
                         String tipo = partes[0].toLowerCase(Locale.ROOT);
                         String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
-                        String identifier = (partes.length > 2 && tipo.equals("qx")) ? partes[2] : null;
+                        String identifier = (partes.length > 2 && tipo.equals("qx")) ? partes[2].toLowerCase(Locale.ROOT) : null;
                         if (identifier != null) {
                             clingoParams.append(String.format("day_assign(%s,%d,%s,%s,evening,%s). ", personName, weeklyDataDto.getDays().get(i), tipo, color, identifier));
                         } else {
