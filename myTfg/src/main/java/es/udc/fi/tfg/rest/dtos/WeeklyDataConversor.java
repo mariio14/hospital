@@ -103,7 +103,7 @@ public class WeeklyDataConversor {
                         }
                         String[] partes = assignation.split("_");
                         String tipo = partes[0].toLowerCase(Locale.ROOT);
-                        String color = COLORS.get(partes[1].toLowerCase(Locale.ROOT));
+                        String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
                         String identifier = (partes.length > 2 && tipo.equals("qx")) ? partes[2] : null;
                         if (identifier != null) {
                             clingoParams.append(String.format("day_assign(%s,%d,%s,%s,morning,%s). ", personName, weeklyDataDto.getDays().get(i), tipo, color, identifier));
@@ -120,7 +120,7 @@ public class WeeklyDataConversor {
                     if (assignation != null) {
                         String[] partes = assignation.split("_");
                         String tipo = partes[0].toLowerCase(Locale.ROOT);
-                        String color = COLORS.get(partes[1].toLowerCase(Locale.ROOT));
+                        String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
                         String identifier = (partes.length > 2 && tipo.equals("qx")) ? partes[2] : null;
                         if (identifier != null) {
                             clingoParams.append(String.format("day_assign(%s,%d,%s,%s,evening,%s). ", personName, weeklyDataDto.getDays().get(i), tipo, color, identifier));
@@ -181,9 +181,11 @@ public class WeeklyDataConversor {
                 String color = activityDto.getColor() == null ? null : COLORS.get(activityDto.getColor());
                 int slots = activityDto.getSlots();
                 String time = activityDto.getTime();
+                String identifier = activityDto.getIdentifier() == null || Objects.equals(activityDto.getIdentifier(), "")
+                        ? "null" : activityDto.getIdentifier().toLowerCase(Locale.ROOT);
                 if (Objects.equals(time, "morning")) {
                     if (type.equals("qx")) {
-                        clingoParams.append(String.format("task_color(qx,%s,%d,%d,%s). ", color, day, slots, activityDto.getIdentifier().toLowerCase(Locale.ROOT)));
+                        clingoParams.append(String.format("task_color(qx,%s,%d,%d,%s). ", color, day, slots, identifier));
                     } else if (type.equals("floor")) {
                         clingoParams.append(String.format("task_color(floor,%s,%d,%d). ", color, day, 1));
                     } else {
@@ -191,7 +193,7 @@ public class WeeklyDataConversor {
                     }
                 } else {
                     if (type.equals("qx")) {
-                        clingoParams.append(String.format("task_evening_color(qx,%s,%d,%s). ", color, day, activityDto.getIdentifier().toLowerCase(Locale.ROOT)));
+                        clingoParams.append(String.format("task_evening_color(qx,%s,%d,%s). ", color, day, identifier));
                     } else {
                         clingoParams.append(String.format("task_evening(%s,%d). ", type, day));
                     }

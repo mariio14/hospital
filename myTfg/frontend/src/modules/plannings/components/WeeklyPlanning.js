@@ -280,9 +280,14 @@ const WeeklyPlanning = () => {
     });
   };
 
-  const assignCreatedActivity = (personName, dayIndex, time, activityType, color) => {
-    const identifier = activityType === "QX" && newActivity.identifier ? `_${newActivity.identifier}` : "";
-    const activityWithColor = `${activityType}_${color || "null"}${identifier}`;
+  const assignCreatedActivity = (personName, dayIndex, time, activityType, color, id) => {
+    let activityWithColor;
+    if (activityType === "PLANTA/QX") {
+      activityWithColor = `PLANTA/QX_${id}`;
+    } else {
+      console.log("activityType", activityType, "color", color, "identifier", id);
+      activityWithColor = `${activityType}${color ? `_${color}` : ""}${id ? `_${id}` : ""}`;
+    }
     setPlanningData((prev) => ({
       ...prev,
       weeklyPlanningDtos: prev.weeklyPlanningDtos.map((p) =>
@@ -300,6 +305,12 @@ const WeeklyPlanning = () => {
       ),
     }));
     setEditingSlot({ personName: null, dayIndex: null, time: null });
+  };
+
+  const hasCombinedPlantaQx = (dayActivities, time) => {
+    const qx = dayActivities.find(a => a.type === "QX" && a.color === "amarillo" && a.time === time);
+    const floor = dayActivities.find(a => a.type === "FLOOR" && a.color === "amarillo" && a.time === time);
+    return qx && floor ? qx.identifier : null;
   };
 
   return (
@@ -398,8 +409,21 @@ const WeeklyPlanning = () => {
                                 value={(morningActivity || "").startsWith("QX_") ? (morningActivity || "").split("_").slice(0, 2).join("_") : (morningActivity || "").split("_")[0]}
                                 onChange={(e) => {
                                   const selectedActivity = e.target.value;
-                                  const selected = filteredMorning.find((a) => a.type === selectedActivity);
-                                  assignCreatedActivity(person.name, idx, "morning", selectedActivity, selected?.color);
+                                  const [type, id] = selectedActivity.split("_");
+                                  let selected;
+                                  let typeSelected = type;
+                                  let idSelected = id;
+
+                                  if (type === "QX" && id) {
+                                    selected = filteredMorning.find(
+                                      (a) => a.type === "QX" && a.identifier === id
+                                    );
+                                  } else {
+                                    selected = filteredMorning.find((a) => a.type === type);
+                                    typeSelected = idx;
+                                    idSelected = selected?.identifier;
+                                  }
+                                  assignCreatedActivity(person.name, idx, "morning", typeSelected, selected?.color, idSelected);
                                 }}
                                 style={{
                                   backgroundColor: colorMap[morningActivity] || "#f9f9f9",
@@ -412,18 +436,40 @@ const WeeklyPlanning = () => {
                                 }}
                               >
                                 <option value="">-</option>
-                                {filteredMorning.map((act, i) => (
-                                  <option
-                                    key={i}
-                                    value={act.identifier ? `${act.type}_${act.identifier}` : act.type}
-                                    style={{
-                                      backgroundColor: qxColors[act.color] || "#e0e0e0",
-                                      color: "#000",
-                                    }}
-                                  >
-                                    {act.identifier ? `${act.type}_${act.identifier}` : act.type}
-                                  </option>
-                                ))}
+                                <>
+                                  {/* Opción combinada PLANTA/QX */}
+                                  {(() => {
+                                    const combinedIdentifier = hasCombinedPlantaQx(dayActivities, "morning");
+                                    if (combinedIdentifier) {
+                                      return (
+                                        <option
+                                          value={`PLANTA/QX_${combinedIdentifier}`}
+                                          style={{
+                                            backgroundColor: qxColors["amarillo"], // o directamente "#FFD700"
+                                            color: "#000",
+                                          }}
+                                        >
+                                          PLANTA/QX
+                                        </option>
+                                      );
+                                    }
+                                    return null;
+                                  })()}
+
+                                  {/* Opciones normales */}
+                                  {filteredMorning.map((act, i) => (
+                                    <option
+                                      key={i}
+                                      value={act.identifier ? `${act.type}_${act.identifier}` : act.type}
+                                      style={{
+                                        backgroundColor: qxColors[act.color] || "#e0e0e0",
+                                        color: "#000",
+                                      }}
+                                    >
+                                      {act.identifier ? `${act.type}_${act.identifier}` : act.type}
+                                    </option>
+                                  ))}
+                                </>
                               </select>
                             </div>
 
@@ -433,8 +479,21 @@ const WeeklyPlanning = () => {
                                 value={(eveningActivity || "").split("_")[0]}
                                 onChange={(e) => {
                                   const selectedActivity = e.target.value;
-                                  const selected = filteredEvening.find((a) => a.type === selectedActivity);
-                                  assignCreatedActivity(person.name, idx, "evening", selectedActivity, selected?.color);
+                                    const [type, id] = selectedActivity.split("_");
+                                    let selected;
+                                    let typeSelected = type;
+                                    let idSelected = id;
+
+                                    if (type === "QX" && id) {
+                                      selected = filteredMorning.find(
+                                        (a) => a.type === "QX" && a.identifier === id
+                                      );
+                                    } else {
+                                      selected = filteredMorning.find((a) => a.type === type);
+                                      typeSelected = idx;
+                                      idSelected = selected?.identifier
+                                    }
+                                    assignCreatedActivity(person.name, idx, "evening", typeSelected, selected?.color, idSelected);
                                 }}
                                 style={{
                                   backgroundColor: colorMap[eveningActivity] || "#f9f9f9",
@@ -447,18 +506,34 @@ const WeeklyPlanning = () => {
                                 }}
                               >
                                 <option value="">-</option>
-                                {filteredEvening.map((act, i) => (
-                                  <option
-                                    key={i}
-                                    value={act.identifier ? `${act.type}_${act.identifier}` : act.type}
-                                    style={{
-                                      backgroundColor: qxColors[act.color] || "#e0e0e0",
-                                      color: "#000",
-                                    }}
-                                  >
-                                    {act.identifier ? `${act.type}_${act.identifier}` : act.type}
-                                  </option>
-                                ))}
+                                <>
+                                  {/* Opción combinada PLANTA/QX */}
+                                  {(() => {
+                                    const combinedIdentifier = hasCombinedPlantaQx(dayActivities, "evening");
+                                    if (combinedIdentifier) {
+                                      return (
+                                        <option value={`PLANTA/QX_${combinedIdentifier}`}>
+                                          PLANTA/QX
+                                        </option>
+                                      );
+                                    }
+                                    return null;
+                                  })()}
+
+                                  {/* Opciones normales */}
+                                  {filteredEvening.map((act, i) => (
+                                    <option
+                                      key={i}
+                                      value={act.identifier ? `${act.type}_${act.identifier}` : act.type}
+                                      style={{
+                                        backgroundColor: qxColors[act.color] || "#e0e0e0",
+                                        color: "#000",
+                                      }}
+                                    >
+                                      {act.identifier ? `${act.type}_${act.identifier}` : act.type}
+                                    </option>
+                                  ))}
+                                </>
                               </select>
                             </div>
                           </div>

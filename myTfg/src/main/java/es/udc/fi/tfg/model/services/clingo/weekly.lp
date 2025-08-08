@@ -38,7 +38,8 @@ task_evening_color(dummy, dummy, dummy, dummy).
 %cost(semanalP_21, 25).
 
 % SemanalR_01
-N {day_assign(P,D,qx,C,morning,I) : person(P), not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,qx)} N :- task_color(qx, C, D, N, I).
+(N-M) {day_assign(P,D,qx,C,morning,I) : person(P), not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,qx)} (N-M) :- task_color(qx, C, D, N, I),   M = #count {P1 : day_assign(P1,D,qx,C,morning,I)}.
+
 % SemanalR_13,
 1 {day_assign(P,D,qx,C,evening,I) : person(P), level(P,L), L>1, not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,qx)} 1 :- task_evening_color(qx, C, D, I).
 

@@ -25,7 +25,7 @@ public class StaffServiceImpl implements StaffService{
         byte[] jsonData = Files.readAllBytes(Paths.get(filePath));
 
         List<Staff> staffList = objectMapper.readValue(jsonData, new TypeReference<>() {});
-        staffList.sort(Comparator.comparing(Staff::getLevel));
+        staffList.sort(Comparator.comparing(Staff::getLevel).reversed());
         return staffList;
     }
 

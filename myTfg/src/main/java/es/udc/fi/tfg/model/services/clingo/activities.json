@@ -19,6 +19,12 @@
         "slots" : 0,
         "time" : "morning",
         "identifier" : null
+      }, {
+        "type" : "QX",
+        "color" : "amarillo",
+        "slots" : 1,
+        "time" : "morning",
+        "identifier" : ""
       } ], [ {
         "type" : "FLOOR",
         "color" : "azul",
@@ -37,6 +43,12 @@
         "slots" : 0,
         "time" : "morning",
         "identifier" : null
+      }, {
+        "type" : "CONSULTATION",
+        "color" : null,
+        "slots" : 1,
+        "time" : "morning",
+        "identifier" : ""
       } ], [ {
         "type" : "FLOOR",
         "color" : "azul",
