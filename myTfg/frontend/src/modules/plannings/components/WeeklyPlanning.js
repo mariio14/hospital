@@ -163,7 +163,6 @@ const WeeklyPlanning = () => {
     }, [weekInMonth, month, year]);
 
   useEffect(() => {
-    console.log("Weekly Planning Data Updated:", weeklyPlanning);
     setPlanningData(weeklyPlanning || emptyPlanning);
     setIsLoading(false);
   }, [weeklyPlanning]);
@@ -323,8 +322,6 @@ const WeeklyPlanning = () => {
       const updatedActivities = [...prev.activities];
       const removedActivity = updatedActivities[dayIndex][activityIndex];
 
-      console.log("Removing activity:", removedActivity);
-
       // Eliminar la actividad de la lista de actividades
       updatedActivities[dayIndex] = updatedActivities[dayIndex].filter((_, i) => i !== activityIndex);
 
@@ -350,8 +347,6 @@ const WeeklyPlanning = () => {
         : removedActivity.type;
 
       valuesToRemove.push(generalValue);
-
-      console.log("valuesToRemove", valuesToRemove);
 
       // Actualizar las asignaciones y eveningAssignations
       const updatedDtos = prev.weeklyPlanningDtos.map(person => {
@@ -388,7 +383,6 @@ const WeeklyPlanning = () => {
     let activityWithColor;
     if (activityType === "PLANTA/QX") {
       activityWithColor = `PLANTA/QX${id ? `_${id}` : ""}`;
-      console.log("PLANTA/QX activity assigned:", activityWithColor);
     } else {
       activityWithColor = `${activityType}${color ? `_${color}` : "_null"}${id ? `_${id}` : ""}`;
     }

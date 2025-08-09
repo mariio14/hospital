@@ -17,6 +17,9 @@ public class MonthlyPlanningConversor {
             List<MonthlyPlanningDto> list = new ArrayList<>();
             for (Staff staff : staffList) {
                 Map<Integer, String> assignations = map.get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+                if (assignations == null) {
+                    assignations = map.get(staff.getName().toLowerCase(Locale.ROOT));
+                }
                 list.add(toMonthlyPlanningDto(staff.getName(), assignations, numDays));
             }
             monthlyResultDtos.add(new MonthlyResultDto(month, list));
@@ -31,6 +34,9 @@ public class MonthlyPlanningConversor {
             List<MonthlyPlanningDto> list = new ArrayList<>();
             for (MonthlyAssignationsDto monthlyAssignationsDto : monthlyData.getMonthlyAssignationsDtos()) {
                 Map<Integer, String> value = map.get(monthlyAssignationsDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+                if (value == null) {
+                    value = map.get(monthlyAssignationsDto.getName().toLowerCase(Locale.ROOT));
+                }
                 list.add(toMonthlyPlanningDto(monthlyAssignationsDto.getName(), value, monthlyData.getNumberOfDays()));
             }
             monthlyResultDtos.add(new MonthlyResultDto(monthlyData.getMonth(), list));

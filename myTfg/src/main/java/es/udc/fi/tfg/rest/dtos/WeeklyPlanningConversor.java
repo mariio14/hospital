@@ -56,6 +56,9 @@ public class WeeklyPlanningConversor {
             List<WeeklyPlanningDto> list = new ArrayList<>();
             for (Staff staff : staffList) {
                 Map<Integer, List<String>> assignations = map.get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+                if (assignations == null) {
+                    assignations = map.get(staff.getName());
+                }
                 String service = planningMap.getAnnualData().get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT))
                         .get(MONTH_TO_NUM.get(month.toUpperCase(Locale.ROOT)));
                 List<Integer> sortedDays = assignations != null ? assignations.keySet().stream().sorted().toList() : new ArrayList<>();
@@ -75,6 +78,9 @@ public class WeeklyPlanningConversor {
             List<WeeklyPlanningDto> list = new ArrayList<>();
             for (WeeklyAssignationsDto dto : data.getWeeklyPlanningDtos()) {
                 Map<Integer, List<String>> value = map.get(dto.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+                if (value == null) {
+                    value = map.get(dto.getName());
+                }
                 String service = yearData.get(dto.getName().toLowerCase(Locale.ROOT)).get(MONTH_TO_NUM.get(data.getMonth().toUpperCase()));
                 list.add(toWeeklyPlanningDto(dto.getName(), value, service, data.getDays()));
             }
