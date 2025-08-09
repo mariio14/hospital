@@ -10,6 +10,7 @@ import es.udc.fi.tfg.model.entities.Staff;
 import es.udc.fi.tfg.model.services.exceptions.NoSolutionException;
 import es.udc.fi.tfg.model.services.exceptions.PlanningNotGeneratedException;
 import es.udc.fi.tfg.rest.dtos.ActivityDto;
+import es.udc.fi.tfg.rest.dtos.WeeklyAssignationsDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,12 @@ public class PlanningServiceImpl implements PlanningService {
     private StaffService staffService;
 
     private final String pathname = System.getProperty("user.dir") + "/src/main/java/es/udc/fi/tfg/model/services/clingo";
+
+    private static final Map<String, String> COLORS = Map.ofEntries(
+            Map.entry("rojo", "red"),
+            Map.entry("amarillo", "yellow"),
+            Map.entry("azul", "blue")
+    );
 
     @Override
     public Map<String, Map<Integer, String>> getAnnualPlanning(String params, int year) throws NoSolutionException{
@@ -114,7 +121,7 @@ public class PlanningServiceImpl implements PlanningService {
     }
 
     @Override
-    public Map<String, Map<Integer, List<String>>> getWeeklyPlanning(String params, int year, String month, String week,
+    public List<Map<String, Map<Integer, List<String>>>> getWeeklyPlanning(String params, int year, String month, String week,
                         List<List<ActivityDto>> activities) throws NoSolutionException {
         String command = "python decode_weekly.py weekly.lp input_weekly.lp";
         try {
@@ -138,7 +145,7 @@ public class PlanningServiceImpl implements PlanningService {
                 System.out.println("Script ejecutado correctamente.");
                 System.out.println("Salida del script (JSON): " + output);
 
-                Map<String, Map<Integer, List<String>>> planning = parseJsonToList(output.toString());
+                List<Map<String, Map<Integer, List<String>>>> planning = parseJsonToList(output.toString());
 
                 if (planning.isEmpty()) {
                     throw new NoSolutionException("Sin solucion para los parametros proporcionados.");
@@ -238,7 +245,7 @@ public class PlanningServiceImpl implements PlanningService {
         File outputFile = new File(pathname + "/solutionWeekly.json");
         File activitiesFile = new File(pathname + "/activities.json");
 
-        Map<String, Map<String, Map<String, Map<String, Map<Integer, List<String>>>>>> existingData = new HashMap<>();
+        Map<String, Map<String, Map<String, List<Map<String, Map<Integer, List<String>>>>>>> existingData = new HashMap<>();
         Map<Integer, Map<String, Map<String, List<List<ActivityDto>>>>> activitiesData = new HashMap<>();
         try {
             existingData = mapper.readValue(outputFile, new TypeReference<>() {});
@@ -253,17 +260,19 @@ public class PlanningServiceImpl implements PlanningService {
 
         List<Staff> staffList =  staffService.getStaff();
 
-        Map<String, Map<Integer, List<String>>> weekData = existingData.get(String.valueOf(year)) != null
+        List<Map<String, Map<Integer, List<String>>>> weekData = existingData.get(String.valueOf(year)) != null
                 ? existingData.get(String.valueOf(year)).get(month) != null
                     ? existingData.get(String.valueOf(year)).get(month).get(week)
                     : null
                 : null;
 
         if (weekData == null) {
-            Map<String, Map<Integer, List<String>>> emptyData = new HashMap<>();
+            List<Map<String, Map<Integer, List<String>>>> emptyData = new ArrayList<>();
+            Map<String, Map<Integer, List<String>>> map = new HashMap<>();
             for (Staff staff : staffList) {
-                emptyData.put(staff.getName(), new HashMap<>());
+                map.put(staff.getName(), new HashMap<>());
             }
+            emptyData.add(map);
             weekData = emptyData;
         }
 
@@ -273,6 +282,79 @@ public class PlanningServiceImpl implements PlanningService {
                 .getOrDefault(week, emptyList);
 
         return new ActivityAndPlanning(activitiesDataForWeek, weekData, getYearFromJson(year, false));
+    }
+
+    @Override
+    public void saveWeekInJson(int year, String month, String week, List<WeeklyAssignationsDto> planning,
+                               List<List<ActivityDto>> activities,  List<Integer> days) throws IOException, ClassNotFoundException, PlanningNotGeneratedException {
+        List<Map<String, Map<Integer, List<String>>>> result = new ArrayList<>();
+        Map<String, Map<Integer, List<String>>> weekMap = new HashMap<>();
+        for (WeeklyAssignationsDto weeklyAssignationsDto : planning) {
+            String name = weeklyAssignationsDto.getName();
+            Map<Integer, List<String>> assignationsMap = new HashMap<>();
+            int i = 0;
+            for (String assignation : weeklyAssignationsDto.getAssignations()) {
+                if (assignation != null) {
+                    String[] partes = assignation.split("_");
+                    String st;
+                    if (partes.length == 1 && assignation.startsWith("PLANTA/")) {
+                        if (assignationsMap.containsKey(days.get(i))) {
+                            assignationsMap.get(days.get(i)).add("morningfloor_yellow");
+                            assignationsMap.get(days.get(i)).add("morningqx_yellow");
+                        } else {
+                            assignationsMap.put(days.get(i), new ArrayList<>(List.of("morningfloor_yellow", "morningqx_yellow")));
+                        }
+                    } else if (partes.length == 2 && assignation.startsWith("PLANTA/")) {
+                        st = partes[1].toLowerCase(Locale.ROOT);
+                        if (assignationsMap.containsKey(days.get(i))) {
+                            assignationsMap.get(days.get(i)).add("morningfloor_yellow");
+                            assignationsMap.get(days.get(i)).add("morningqx_yellow_" + st);
+                        } else {
+                            assignationsMap.put(days.get(i), new ArrayList<>(List.of("morningfloor_yellow", "morningqx_yellow_" + st)));
+                        }
+                    } else if (partes.length == 2) {
+                        String color = COLORS.get(partes[1]);
+                        if (assignationsMap.containsKey(days.get(i))) {
+                            assignationsMap.get(days.get(i)).add("morning" + partes[0].toLowerCase(Locale.ROOT) + "_" + color);
+                        } else {
+                            assignationsMap.put(days.get(i), new ArrayList<>(List.of("morning" + partes[0].toLowerCase(Locale.ROOT) + "_" + color)));
+                        }
+                    } else {
+                        String a = "morning" + partes[0].toLowerCase(Locale.ROOT) + "_" + COLORS.get(partes[1]) + "_" + partes[2].toLowerCase(Locale.ROOT);
+                        if (assignationsMap.containsKey(days.get(i))) {
+                            assignationsMap.get(days.get(i)).add(a);
+                        } else {
+                            assignationsMap.put(days.get(i), new ArrayList<>(List.of(a)));
+                        }
+                    }
+                }
+                i++;
+            }
+            for (String assignation : weeklyAssignationsDto.getEveningAssignations()) {
+                if (assignation != null) {
+                    String[] partes = assignation.split("_");
+                    if (partes.length == 2) {
+                        String color = COLORS.get(partes[1]);
+                        if (assignationsMap.containsKey(days.get(i))) {
+                            assignationsMap.get(days.get(i)).add("evening" + partes[0].toLowerCase(Locale.ROOT) + "_" + color);
+                        } else {
+                            assignationsMap.put(days.get(i), new ArrayList<>(List.of("evening" + partes[0].toLowerCase(Locale.ROOT) + "_" + color)));
+                        }
+                    } else {
+                        String a = "evening" + partes[0].toLowerCase(Locale.ROOT) + "_" + COLORS.get(partes[1]) + "_" + partes[2].toLowerCase(Locale.ROOT);
+                        if (assignationsMap.containsKey(days.get(i))) {
+                            assignationsMap.get(days.get(i)).add(a);
+                        } else {
+                            assignationsMap.put(days.get(i), new ArrayList<>(List.of(a)));
+                        }
+                    }
+                }
+                i++;
+            }
+            weekMap.put(name, assignationsMap);
+        }
+        result.add(weekMap);
+        saveWeekToJsonFile(result, "/solutionWeekly.json", year, month, week, activities);
     }
 
     private List<ActivityDto> getFloors(){
@@ -288,7 +370,7 @@ public class PlanningServiceImpl implements PlanningService {
         return mapper.readValue(jsonString, new TypeReference<>() {});
     }
 
-    private Map<String, Map<Integer, List<String>>> parseJsonToList(String jsonString) throws Exception {
+    private List<Map<String, Map<Integer, List<String>>>> parseJsonToList(String jsonString) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(jsonString, new TypeReference<>() {});
     }
@@ -327,20 +409,20 @@ public class PlanningServiceImpl implements PlanningService {
         }
     }
 
-    private void saveWeekToJsonFile(Map<String, Map<Integer, List<String>>> planning, String file,
+    private void saveWeekToJsonFile(List<Map<String, Map<Integer, List<String>>>> planning, String file,
                                     int year, String month, String week, List<List<ActivityDto>> activities) {
         ObjectMapper mapper = new ObjectMapper();
         File outputFile = new File(pathname + file);
         File activitiesFile = new File(pathname + "/activities.json");
-        Map<Integer, Map<String, Map<String, Map<String, Map<Integer, List<String>>>>>> existingData = new HashMap<>();
+        Map<Integer, Map<String, Map<String, List<Map<String, Map<Integer, List<String>>>>>>> existingData = new HashMap<>();
         Map<Integer, Map<String, Map<String, List<List<ActivityDto>>>>> activitiesData = new HashMap<>();
         try {
             existingData = mapper.readValue(outputFile, new TypeReference<>() {});
         } catch (Exception e) {
             System.err.println("Error al leer el archivo JSON existente. Se usará un mapa vacío.");
         }
-        Map<String, Map<String, Map<String, Map<Integer, List<String>>>>> yearMap = existingData.getOrDefault(year, new HashMap<>());
-        Map<String, Map<String, Map<Integer, List<String>>>> monthMap = yearMap.getOrDefault(month, new HashMap<>());
+        Map<String, Map<String, List<Map<String, Map<Integer, List<String>>>>>> yearMap = existingData.getOrDefault(year, new HashMap<>());
+        Map<String, List<Map<String, Map<Integer, List<String>>>>> monthMap = yearMap.getOrDefault(month, new HashMap<>());
         monthMap.put(week, planning);
         yearMap.put(month, monthMap);
         existingData.put(year, yearMap);

@@ -53,3 +53,17 @@ export const getWeeklyPlanning = (planningData, onErrors) => dispatch =>
 export const getSavedWeeklyPlanning = (month, year, week, onErrors) => dispatch =>
     backend.planningService.getWeeklyPlanning(month, year, week,
     weeklyPlanning => dispatch(getWeeklyPlanningCompleted(weeklyPlanning)), onErrors);
+
+const getWeeklyConfirmCompleted = weeklyPlanning => ({
+    type: actionTypes.WEEKLY_CONFIRM_COMPLETED,
+    weeklyPlanning
+});
+
+export const saveWeeklyPlanning = (planningData, onErrors) => dispatch =>
+    backend.planningService.saveWeeklyPlanning(planningData,
+    weeklyPlanning => dispatch(getWeeklyConfirmCompleted(weeklyPlanning)), onErrors);
+
+export const getWeeklyClear = weeklyPlanning => ({
+    type: actionTypes.CLEAR_WEEKLY_LIST,
+    weeklyPlanning
+});

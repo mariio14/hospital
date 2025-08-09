@@ -8,3 +8,6 @@ export const getMonthlyPlanning = state =>
 
 export const getWeeklyPlanning = state =>
     getModuleState(state).weeklyPlanning;
+
+export const getWeeklyPlanningList = state =>
+    getModuleState(state).weeklyPlanningList;

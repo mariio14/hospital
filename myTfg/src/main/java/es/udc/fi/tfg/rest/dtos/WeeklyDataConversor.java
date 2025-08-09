@@ -96,7 +96,8 @@ public class WeeklyDataConversor {
                 for (String assignation : weeklyAssignationsDto.getAssignations()) {
                     if (assignation != null) {
                         if (assignation.startsWith("PLANTA/QX")) {
-                            String identifier = assignation.split("_")[1];
+                            String[] parts = assignation.split("_");
+                            String identifier = (parts.length > 1 && parts[1] != null) ? parts[1].toLowerCase(Locale.ROOT) : null;
                             clingoParams.append(String.format("day_assign(%s,%d,qx,yellow,morning,%s). ", personName, weeklyDataDto.getDays().get(i), identifier));
                             clingoParams.append(String.format("day_assign(%s,%d,floor,yellow,morning,null). ", personName, weeklyDataDto.getDays().get(i)));
                             continue;

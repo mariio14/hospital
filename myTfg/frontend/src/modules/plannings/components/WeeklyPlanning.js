@@ -11,6 +11,7 @@ const WeeklyPlanning = () => {
   const dispatch = useDispatch();
   const staffList = useSelector(staffSelectors.getStaffList);
   const weeklyPlanning = useSelector(selectors.getWeeklyPlanning);
+  const weeklyPlanningList = useSelector(selectors.getWeeklyPlanningList);
 
   const [isExpanded, setIsExpanded] = useState(true);
   const [backendErrors, setBackendErrors] = useState(null);
@@ -68,6 +69,25 @@ const WeeklyPlanning = () => {
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth());
   const [weekInMonth, setWeekInMonth] = useState(0);
+  const [activePlanningIndex, setActivePlanningIndex] = useState(0);
+
+  useEffect(() => {
+    if (weeklyPlanningList && weeklyPlanningList.length > 0) {
+      setPlanningData(weeklyPlanningList[activePlanningIndex] || emptyPlanning);
+    }
+  }, [activePlanningIndex, weeklyPlanningList]);
+
+  const goToNextPlanning = () => {
+    setActivePlanningIndex((prev) =>
+      prev < weeklyPlanningList.length - 1 ? prev + 1 : 0
+    );
+  };
+
+  const goToPrevPlanning = () => {
+    setActivePlanningIndex((prev) =>
+      prev > 0 ? prev - 1 : weeklyPlanningList.length - 1
+    );
+  };
 
   const getWeekStartDate = (y, m, weekIndex) => {
     const firstDay = new Date(y, m, 1);
@@ -198,6 +218,7 @@ const WeeklyPlanning = () => {
       ...emptyPlanning,
       weeklyPlanningDtos: updatedDtos
     });
+    dispatch(actions.getWeeklyClear(planningData));
   };
 
   const exportToPDF = () => {
@@ -242,6 +263,31 @@ const WeeklyPlanning = () => {
     }));
   };
 
+  const handleConfirmPlanning = () => {
+      setIsLoading(true);
+      setBackendErrors(null);
+      const dataToSend = {
+        weeklyAssignationsDtos: planningData.weeklyPlanningDtos.map((p) => {
+          const staffMember = staffList.find(staff => staff.name.toLowerCase() === p.name.toLowerCase());
+          return {
+            ...p,
+            level: staffMember ? staffMember.level : null,
+            assignations: [...p.assignations]
+          };
+        }),
+        week: weekInMonth + 1,
+        month: months[month],
+        year,
+        days: days.map(d => d.getDate()),
+        activities: planningData.activities
+      };
+      dispatch(actions.saveWeeklyPlanning(dataToSend, (errorPayload) => {
+        const message = errorPayload?.globalError || "Ha ocurrido un error";
+        setBackendErrors(message);
+        setIsLoading(false);
+      }));
+    };
+
   const handleAddCustomActivity = () => {
     setPlanningData((prev) => {
       const updatedActivities = [...prev.activities];
@@ -283,10 +329,10 @@ const WeeklyPlanning = () => {
   const assignCreatedActivity = (personName, dayIndex, time, activityType, color, id) => {
     let activityWithColor;
     if (activityType === "PLANTA/QX") {
-      activityWithColor = `PLANTA/QX_${id}`;
+      activityWithColor = `PLANTA/QX${id ? `_${id}` : ""}`;
+      console.log("PLANTA/QX activity assigned:", activityWithColor);
     } else {
-      console.log("activityType", activityType, "color", color, "identifier", id);
-      activityWithColor = `${activityType}${color ? `_${color}` : ""}${id ? `_${id}` : ""}`;
+      activityWithColor = `${activityType}${color ? `_${color}` : "_null"}${id ? `_${id}` : ""}`;
     }
     setPlanningData((prev) => ({
       ...prev,
@@ -307,10 +353,16 @@ const WeeklyPlanning = () => {
     setEditingSlot({ personName: null, dayIndex: null, time: null });
   };
 
-  const hasCombinedPlantaQx = (dayActivities, time) => {
-    const qx = dayActivities.find(a => a.type === "QX" && a.color === "amarillo" && a.time === time);
-    const floor = dayActivities.find(a => a.type === "FLOOR" && a.color === "amarillo" && a.time === time);
-    return qx && floor ? qx.identifier : null;
+  const getCombinedPlantaQxOptions = (dayActivities, time) => {
+    const floorExists = dayActivities.some(
+      a => a.type === "FLOOR" && a.color === "amarillo" && a.time === time
+    );
+
+    if (!floorExists) return [];
+
+    return dayActivities
+      .filter(a => a.type === "QX" && a.color === "amarillo" && a.time === time)
+      .map(qx => qx.identifier || "");
   };
 
   return (
@@ -372,6 +424,54 @@ const WeeklyPlanning = () => {
                   Vaciar Planificación
                 </button>
             </div>
+            {weeklyPlanningList.length > 1 && (
+              <div className="flex gap-2 items-center">
+                <button
+                  onClick={goToPrevPlanning}
+                  style={{
+                    padding: "5px 10px",
+                    backgroundColor: "#6c757d",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                  }}
+                >
+                  ◀
+                </button>
+                <span style={{ fontWeight: "bold" }}>
+                  Planning {activePlanningIndex + 1} de {weeklyPlanningList.length}
+                </span>
+                <button
+                  onClick={goToNextPlanning}
+                  style={{
+                    padding: "5px 10px",
+                    backgroundColor: "#6c757d",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                  }}
+                >
+                  ▶
+                </button>
+                <button
+                  onClick={handleConfirmPlanning}
+                  style={{
+                    padding: "5px 15px",
+                    backgroundColor: "#17a2b8",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    marginLeft: "10px",
+                  }}
+                >
+                  Confirmar plan
+                </button>
+              </div>
+            )}
+
           </div>
           {backendErrors ? <p style={{ color: 'red', textAlign: 'center', marginTop: '30px', marginBottom: '20px' }}>{backendErrors}</p> : null}
           <div className="overflow-auto">
@@ -406,21 +506,32 @@ const WeeklyPlanning = () => {
                             {/* Mañana */}
                             <div style={{ flex: 1, borderBottom: "1px solid #ccc", padding: "2px" }}>
                               <select
-                                value={(morningActivity || "").startsWith("QX_") ? (morningActivity || "").split("_").slice(0, 2).join("_") : (morningActivity || "").split("_")[0]}
+                                value={
+                                  (morningActivity || "").startsWith("PLANTA/QX")
+                                    ? morningActivity || ""
+                                    : (morningActivity || "").startsWith("QX_")
+                                      ? (morningActivity || "").split("_").slice(0, 2).join("_")
+                                      : (morningActivity || "").split("_")[0]
+                                }
                                 onChange={(e) => {
                                   const selectedActivity = e.target.value;
                                   const [type, id] = selectedActivity.split("_");
                                   let selected;
                                   let typeSelected = type;
                                   let idSelected = id;
+                                  let color;
 
                                   if (type === "QX" && id) {
                                     selected = filteredMorning.find(
                                       (a) => a.type === "QX" && a.identifier === id
                                     );
+                                  } else if (type === "PLANTA/QX") {
+                                    selected = filteredMorning.find(
+                                      (a) => a.type === type
+                                    );
                                   } else {
                                     selected = filteredMorning.find((a) => a.type === type);
-                                    typeSelected = idx;
+                                    typeSelected = type;
                                     idSelected = selected?.identifier;
                                   }
                                   assignCreatedActivity(person.name, idx, "morning", typeSelected, selected?.color, idSelected);
@@ -438,23 +549,22 @@ const WeeklyPlanning = () => {
                                 <option value="">-</option>
                                 <>
                                   {/* Opción combinada PLANTA/QX */}
-                                  {(() => {
-                                    const combinedIdentifier = hasCombinedPlantaQx(dayActivities, "morning");
-                                    if (combinedIdentifier) {
-                                      return (
-                                        <option
-                                          value={`PLANTA/QX_${combinedIdentifier}`}
-                                          style={{
-                                            backgroundColor: qxColors["amarillo"], // o directamente "#FFD700"
-                                            color: "#000",
-                                          }}
-                                        >
-                                          PLANTA/QX
-                                        </option>
-                                      );
-                                    }
-                                    return null;
-                                  })()}
+                                  {getCombinedPlantaQxOptions(dayActivities, "morning").map((id, idx) => {
+                                    const value = `PLANTA/QX${id ? `_${id}` : ""}`;
+                                    const label = `PLANTA/QX${id ? `_${id}` : ""}`;
+                                    return (
+                                      <option
+                                        key={idx}
+                                        value={value}
+                                        style={{
+                                          backgroundColor: qxColors["amarillo"],
+                                          color: "#000",
+                                        }}
+                                      >
+                                        {label}
+                                      </option>
+                                    );
+                                  })}
 
                                   {/* Opciones normales */}
                                   {filteredMorning.map((act, i) => (
@@ -508,17 +618,18 @@ const WeeklyPlanning = () => {
                                 <option value="">-</option>
                                 <>
                                   {/* Opción combinada PLANTA/QX */}
-                                  {(() => {
-                                    const combinedIdentifier = hasCombinedPlantaQx(dayActivities, "evening");
-                                    if (combinedIdentifier) {
-                                      return (
-                                        <option value={`PLANTA/QX_${combinedIdentifier}`}>
-                                          PLANTA/QX
-                                        </option>
-                                      );
-                                    }
-                                    return null;
-                                  })()}
+                                  {getCombinedPlantaQxOptions(dayActivities, "morning").map((id, idx) => (
+                                    <option
+                                      key={idx}
+                                      value={`PLANTA/QX${id ? `_${id}` : ""}`}
+                                      style={{
+                                        backgroundColor: qxColors["amarillo"],
+                                        color: "#000",
+                                      }}
+                                    >
+                                      {`PLANTA/QX${id ? `_${id}` : ""}`}
+                                    </option>
+                                  ))}
 
                                   {/* Opciones normales */}
                                   {filteredEvening.map((act, i) => (

@@ -48,32 +48,40 @@ public class WeeklyPlanningConversor {
             Map.entry("nutrition", "NUTRI")
     );
 
-    public static WeeklyResultDto toWeeklyPlanningDtos(ActivityAndPlanning planningMap,
+    public static List<WeeklyResultDto> toWeeklyPlanningDtos(ActivityAndPlanning planningMap,
                                                        int year, String month, String week, List<Staff> staffList) {
-        Map<String, Map<Integer, List<String>>> planning = planningMap.getPlanning();
-        List<WeeklyPlanningDto> list = new ArrayList<>();
-        for (Staff staff : staffList) {
-            Map<Integer, List<String>> assignations = planning.get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
-            String service = planningMap.getAnnualData().get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT))
-                    .get(MONTH_TO_NUM.get(month.toUpperCase(Locale.ROOT)));
-            List<Integer> sortedDays = assignations != null ? assignations.keySet().stream().sorted().toList() : new ArrayList<>();
-            list.add(toWeeklyPlanningDto(staff.getName(), assignations, service, sortedDays));
+        List<Map<String, Map<Integer, List<String>>>> planning = planningMap.getPlanning();
+        List<WeeklyResultDto> result = new ArrayList<>();
+        for (Map<String, Map<Integer, List<String>>> map : planning) {
+            List<WeeklyPlanningDto> list = new ArrayList<>();
+            for (Staff staff : staffList) {
+                Map<Integer, List<String>> assignations = map.get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+                String service = planningMap.getAnnualData().get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT))
+                        .get(MONTH_TO_NUM.get(month.toUpperCase(Locale.ROOT)));
+                List<Integer> sortedDays = assignations != null ? assignations.keySet().stream().sorted().toList() : new ArrayList<>();
+                list.add(toWeeklyPlanningDto(staff.getName(), assignations, service, sortedDays));
 
+            }
+            changeColors(planningMap.getActivities());
+            result.add(new WeeklyResultDto(year, month, week, list, planningMap.getActivities()));
         }
-        changeColors(planningMap.getActivities());
-        return new WeeklyResultDto(year, month, week, list, planningMap.getActivities());
+        return result;
     }
 
-    public static WeeklyResultDto toWeeklyPlanningDtosFromData(Map<String, Map<Integer, List<String>>> planningMap,
+    public static List<WeeklyResultDto> toWeeklyPlanningDtosFromData(List<Map<String, Map<Integer, List<String>>>> planningMap,
                                                                WeeklyDataDto data, Map<String, Map<Integer, String>> yearData) {
-        List<WeeklyPlanningDto> list = new ArrayList<>();
-        for (WeeklyAssignationsDto dto : data.getWeeklyAssignationsDtos()) {
-            Map<Integer, List<String>> value = planningMap.get(dto.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
-            String service = yearData.get(dto.getName().toLowerCase(Locale.ROOT)).get(MONTH_TO_NUM.get(data.getMonth().toUpperCase()));
-            list.add(toWeeklyPlanningDto(dto.getName(), value, service, data.getDays()));
+        List<WeeklyResultDto> result = new ArrayList<>();
+        for (Map<String, Map<Integer, List<String>>> map : planningMap) {
+            List<WeeklyPlanningDto> list = new ArrayList<>();
+            for (WeeklyAssignationsDto dto : data.getWeeklyAssignationsDtos()) {
+                Map<Integer, List<String>> value = map.get(dto.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+                String service = yearData.get(dto.getName().toLowerCase(Locale.ROOT)).get(MONTH_TO_NUM.get(data.getMonth().toUpperCase()));
+                list.add(toWeeklyPlanningDto(dto.getName(), value, service, data.getDays()));
+            }
+            changeColors(data.getActivities());
+            result.add(new WeeklyResultDto(data.getYear(), data.getMonth(), data.getWeek(), list, data.getActivities()));
         }
-        changeColors(data.getActivities());
-        return new WeeklyResultDto(data.getYear(), data.getMonth(), data.getWeek(), list, data.getActivities());
+        return result;
     }
 
     public static WeeklyPlanningDto toWeeklyPlanningDto(String name, Map<Integer, List<String>> asignations, String service, List<Integer> days) {

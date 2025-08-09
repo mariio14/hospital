@@ -152,7 +152,7 @@ public class PlanningController {
     }
 
     @PostMapping("/weekly")
-    public WeeklyResultDto weeklyPlanning(@Validated @RequestBody WeeklyDataDto params)
+    public List<WeeklyResultDto> weeklyPlanning(@Validated @RequestBody WeeklyDataDto params)
             throws IOException, ClassNotFoundException, NoSolutionException, PlanningNotGeneratedException {
 
         List<Priority> costs = prioritiesService.getPriorities().get("Semanal");
@@ -181,7 +181,7 @@ public class PlanningController {
                 }
             }
         }
-        Map<String, Map<Integer, List<String>>> planning =
+        List<Map<String, Map<Integer, List<String>>>> planning =
                 planningService.getWeeklyPlanning(WeeklyDataConversor.toClingoParams(params, costs, annualData, monthData,
                                 params.getYear(), params.getMonth()),
                         params.getYear(), params.getMonth(), params.getWeek(), params.getActivities());
@@ -190,7 +190,7 @@ public class PlanningController {
     }
 
     @GetMapping("/weekly")
-    public WeeklyResultDto getWeeklyPlanning(@RequestParam String month, @RequestParam int year,
+    public List<WeeklyResultDto> getWeeklyPlanning(@RequestParam String month, @RequestParam int year,
                                              @RequestParam String week)
             throws NoSolutionException, IOException, ClassNotFoundException, PlanningNotGeneratedException {
 
@@ -199,5 +199,13 @@ public class PlanningController {
         List<Staff> staffList = staffService.getStaff();
 
         return WeeklyPlanningConversor.toWeeklyPlanningDtos(weekPlanning, year, month, week, staffList);
+    }
+
+    @PostMapping("/saveWeekly")
+    public void getWeeklyPlanning(@Validated @RequestBody WeeklyDataDto params)
+            throws NoSolutionException, IOException, ClassNotFoundException, PlanningNotGeneratedException {
+
+        planningService.saveWeekInJson(params.getYear(), params.getMonth(), params.getWeek(),
+                params.getWeeklyAssignationsDtos(), params.getActivities(), params.getDays());
     }
 }

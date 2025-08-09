@@ -2,3 +2,5 @@ export const ANNUAL_PLANNING_COMPLETED = "project/plannings/annualPlanningComple
 export const ANNUAL_PLANNING_CLEAR = "project/plannings/annualPlanningClear";
 export const MONTHLY_PLANNING_COMPLETED = "project/plannings/monthlyPlanningCompleted";
 export const WEEKLY_PLANNING_COMPLETED = "project/plannings/weeklyPlanningCompleted";
+export const WEEKLY_CONFIRM_COMPLETED = "project/plannings/weeklyConfirmCompleted";
+export const CLEAR_WEEKLY_LIST = "project/plannings/clearWeeklyList";

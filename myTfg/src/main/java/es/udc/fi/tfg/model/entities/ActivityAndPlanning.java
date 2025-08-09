@@ -9,11 +9,11 @@ public class ActivityAndPlanning {
 
     private List<List<ActivityDto>> activities;
 
-    private Map<String, Map<Integer, List<String>>> planning;
+    private List<Map<String, Map<Integer, List<String>>>> planning;
 
     private Map<String, Map<Integer, String>> annualData;
 
-    public ActivityAndPlanning(List<List<ActivityDto>> activities, Map<String, Map<Integer, List<String>>> planning,
+    public ActivityAndPlanning(List<List<ActivityDto>> activities, List<Map<String, Map<Integer, List<String>>>> planning,
                                Map<String, Map<Integer, String>> annualData) {
         this.activities = activities;
         this.planning = planning;
@@ -28,11 +28,11 @@ public class ActivityAndPlanning {
         this.activities = activities;
     }
 
-    public Map<String, Map<Integer, List<String>>> getPlanning() {
+    public List<Map<String, Map<Integer, List<String>>>> getPlanning() {
         return planning;
     }
 
-    public void setPlanning(Map<String, Map<Integer, List<String>>> planning) {
+    public void setPlanning(List<Map<String, Map<Integer, List<String>>>> planning) {
         this.planning = planning;
     }
 

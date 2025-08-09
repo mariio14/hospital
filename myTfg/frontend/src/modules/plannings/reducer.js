@@ -5,7 +5,8 @@ import * as actionTypes from './actionTypes';
 const initialState = {
     annualPlanning: null,
     monthlyPlanning: null,
-    weeklyPlanning: null
+    weeklyPlanning: null,
+    weeklyPlanningList: []
 };
 
 const annualPlanning = (state = initialState.annualPlanning, action) => {
@@ -31,7 +32,24 @@ const monthlyPlanning = (state = initialState.monthlyPlanning, action) => {
 const weeklyPlanning = (state = initialState.weeklyPlanning, action) => {
     switch (action.type) {
         case actionTypes.WEEKLY_PLANNING_COMPLETED:
+            return action.weeklyPlanning[0];
+        case actionTypes.WEEKLY_CONFIRM_COMPLETED:
             return action.weeklyPlanning;
+        case actionTypes.CLEAR_WEEKLY_LIST:
+            return action.weeklyPlanning;
+        default:
+            return state;
+    }
+}
+
+const weeklyPlanningList = (state = initialState.weeklyPlanningList, action) => {
+    switch (action.type) {
+        case actionTypes.WEEKLY_PLANNING_COMPLETED:
+            return action.weeklyPlanning;
+        case actionTypes.WEEKLY_CONFIRM_COMPLETED:
+            return [];
+        case actionTypes.CLEAR_WEEKLY_LIST:
+            return [];
         default:
             return state;
     }
@@ -40,7 +58,8 @@ const weeklyPlanning = (state = initialState.weeklyPlanning, action) => {
 const reducer = combineReducers({
     annualPlanning,
     monthlyPlanning,
-    weeklyPlanning
+    weeklyPlanning,
+    weeklyPlanningList
 });
 
 export default reducer;

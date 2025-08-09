@@ -9,53 +9,54 @@ if len(sys.argv) < 2:
 
 ctl = clingo.Control()
 
-ctl.configuration.solve.opt_mode = "opt"
+# Quitamos opt_mode para que devuelva también soluciones no óptimas
+# Si quieres solo óptimas, deja esto activo:
+# ctl.configuration.solve.opt_mode = "opt"
 
 for arg in sys.argv[1:]:
     ctl.load(arg)
 ctl.ground([("base", [])])
 
-with ctl.solve(yield_=True) as handle:
-    optimal_model = None
-    for model in handle:
-        optimal_model = model
-
+def extract_assignments(model):
     assignments = {}
+    for atom in model.symbols(shown=True):
+        if atom.name == "day_assign" and len(atom.arguments) == 6:
+            person = str(atom.arguments[0])
+            day = atom.arguments[1].number
+            activity_part1 = str(atom.arguments[4])
+            activity_part2 = str(atom.arguments[2])
+            activity_part3 = str(atom.arguments[3])
 
-    if optimal_model:
-        for atom in optimal_model.symbols(shown=True):
-            if atom.name == "day_assign" and len(atom.arguments) == 6:
-                person = str(atom.arguments[0])
-                day = atom.arguments[1].number
-                activity_part1 = str(atom.arguments[4])
-                activity_part2 = str(atom.arguments[2])
-                activity_part3 = str(atom.arguments[3])
+            activity = activity_part1 + activity_part2 + "_" + activity_part3
 
-                activity = activity_part1 + activity_part2 + "_" + activity_part3
+            if activity_part2.lower() == 'qx':
+                activity += "_" + str(atom.arguments[5])
 
-                if activity_part2.lower() == 'qx':
-                    activity += "_" + str(atom.arguments[5])
+            assignments.setdefault(person, {}).setdefault(day, []).append(activity)
 
-                if person not in assignments:
-                    assignments[person] = {}
+        elif atom.name == "vacation" and len(atom.arguments) == 2:
+            person = str(atom.arguments[0])
+            day = atom.arguments[1].number
+            assignments.setdefault(person, {})[day] = "v"
 
-                if day not in assignments[person]:
-                    assignments[person][day] = []
-
-                assignments[person][day].append(activity)
-
-            if atom.name == "vacation" and len(atom.arguments) == 2:
-                person = str(atom.arguments[0])
-                day = atom.arguments[1].number
-
-                if person not in assignments:
-                    assignments[person] = {}
-                assignments[person][day] = "v"
-
-ordered_assignments = OrderedDict(
-    sorted(
-        {person: OrderedDict(sorted(days.items())) for person, days in assignments.items()}.items()
+    return OrderedDict(
+        sorted(
+            {p: OrderedDict(sorted(d.items())) for p, d in assignments.items()}.items()
+        )
     )
-)
 
-print(json.dumps(ordered_assignments, indent=4))
+solutions = []
+
+with ctl.solve(yield_=True) as handle:
+    for model in handle:
+        assignments = extract_assignments(model)
+        cost = tuple(model.cost)  # coste como tupla para ordenarlo
+        solutions.append((cost, assignments))
+
+# Ordenar por coste ascendente
+solutions.sort(key=lambda x: x[0])
+
+# Quedarse con las 5 mejores
+best_5 = [assignments for cost, assignments in solutions[:5]]
+
+print(json.dumps(best_5, indent=4))
