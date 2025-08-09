@@ -4,7 +4,9 @@ import * as actionTypes from './actionTypes';
 
 const initialState = {
     annualPlanning: null,
+    annualPlanningList: [],
     monthlyPlanning: null,
+    monthlyPlanningList: [],
     weeklyPlanning: null,
     weeklyPlanningList: []
 };
@@ -12,9 +14,22 @@ const initialState = {
 const annualPlanning = (state = initialState.annualPlanning, action) => {
     switch (action.type) {
         case actionTypes.ANNUAL_PLANNING_COMPLETED:
-            return action.annualPlanning;
+            return action.annualPlanning[0];
         case actionTypes.ANNUAL_PLANNING_CLEAR:
             return null;
+        default:
+            return state;
+    }
+}
+
+const annualPlanningList = (state = initialState.annualPlanningList, action) => {
+    switch (action.type) {
+        case actionTypes.ANNUAL_PLANNING_COMPLETED:
+            return action.annualPlanning;
+        case actionTypes.YEARLY_CONFIRM_COMPLETED:
+            return [];
+        case actionTypes.ANNUAL_PLANNING_CLEAR:
+            return [];
         default:
             return state;
     }
@@ -23,7 +38,24 @@ const annualPlanning = (state = initialState.annualPlanning, action) => {
 const monthlyPlanning = (state = initialState.monthlyPlanning, action) => {
     switch (action.type) {
         case actionTypes.MONTHLY_PLANNING_COMPLETED:
+            return action.monthlyPlanning[0];
+        case actionTypes.MONTHLY_CONFIRM_COMPLETED:
             return action.monthlyPlanning;
+        case actionTypes.CLEAR_MONTHLY_LIST:
+            return action.monthlyPlanning;
+        default:
+            return state;
+    }
+}
+
+const monthlyPlanningList = (state = initialState.monthlyPlanningList, action) => {
+    switch (action.type) {
+        case actionTypes.MONTHLY_PLANNING_COMPLETED:
+            return action.weeklyPlanning;
+        case actionTypes.MONTHLY_CONFIRM_COMPLETED:
+            return [];
+        case actionTypes.CLEAR_MONTHLY_LIST:
+            return [];
         default:
             return state;
     }
@@ -57,7 +89,9 @@ const weeklyPlanningList = (state = initialState.weeklyPlanningList, action) => 
 
 const reducer = combineReducers({
     annualPlanning,
+    annualPlanningList,
     monthlyPlanning,
+    monthlyPlanningList,
     weeklyPlanning,
     weeklyPlanningList
 });

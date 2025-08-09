@@ -61,9 +61,32 @@ const getWeeklyConfirmCompleted = weeklyPlanning => ({
 
 export const saveWeeklyPlanning = (planningData, onErrors) => dispatch =>
     backend.planningService.saveWeeklyPlanning(planningData,
-    weeklyPlanning => dispatch(getWeeklyConfirmCompleted(weeklyPlanning)), onErrors);
+    () => dispatch(getWeeklyConfirmCompleted(planningData)), onErrors);
 
 export const getWeeklyClear = weeklyPlanning => ({
     type: actionTypes.CLEAR_WEEKLY_LIST,
     weeklyPlanning
 });
+
+const getMonthlyConfirmCompleted = monthlyPlanning => ({
+    type: actionTypes.MONTHLY_CONFIRM_COMPLETED,
+    monthlyPlanning
+});
+
+export const saveMonthlyPlanning = (planningData, onErrors) => dispatch =>
+    backend.planningService.saveMonthlyPlanning(planningData,
+    () => dispatch(getMonthlyConfirmCompleted(planningData)), onErrors);
+
+export const getMonthlyClear = monthlyPlanning => ({
+    type: actionTypes.CLEAR_MONTHLY_LIST,
+    monthlyPlanning
+});
+
+const getYearlyConfirmCompleted = annualPlanning => ({
+    type: actionTypes.YEARLY_CONFIRM_COMPLETED,
+    annualPlanning
+});
+
+export const saveYearlyPlanning = (planningData, year, onErrors) => dispatch =>
+    backend.planningService.saveYearlyPlanning(planningData, year,
+    () => dispatch(getYearlyConfirmCompleted(planningData)), onErrors);

@@ -12,7 +12,7 @@ public class WeeklyDataDto {
 
     private List<Integer> days;
 
-    private List<WeeklyAssignationsDto> weeklyAssignationsDtos;
+    private List<WeeklyAssignationsDto> weeklyPlanningDtos;
 
     private List<List<ActivityDto>> activities;
 
@@ -51,12 +51,12 @@ public class WeeklyDataDto {
         this.days = days;
     }
 
-    public List<WeeklyAssignationsDto> getWeeklyAssignationsDtos() {
-        return weeklyAssignationsDtos;
+    public List<WeeklyAssignationsDto> getWeeklyPlanningDtos() {
+        return weeklyPlanningDtos;
     }
 
-    public void setWeeklyAssignationsDtos(List<WeeklyAssignationsDto> weeklyAssignationsDtos) {
-        this.weeklyAssignationsDtos = weeklyAssignationsDtos;
+    public void setWeeklyPlanningDtos(List<WeeklyAssignationsDto> weeklyPlanningDtos) {
+        this.weeklyPlanningDtos = weeklyPlanningDtos;
     }
 
     public List<List<ActivityDto>> getActivities() {

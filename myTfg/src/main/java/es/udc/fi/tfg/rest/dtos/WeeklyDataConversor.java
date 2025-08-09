@@ -84,7 +84,7 @@ public class WeeklyDataConversor {
             }
         }
 
-        for (WeeklyAssignationsDto weeklyAssignationsDto : weeklyDataDto.getWeeklyAssignationsDtos()) {
+        for (WeeklyAssignationsDto weeklyAssignationsDto : weeklyDataDto.getWeeklyPlanningDtos()) {
             String personName = weeklyAssignationsDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT);
             clingoParams.append(String.format("person(%s). ", personName));
 

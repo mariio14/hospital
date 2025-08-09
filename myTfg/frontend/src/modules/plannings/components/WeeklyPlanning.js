@@ -163,6 +163,7 @@ const WeeklyPlanning = () => {
     }, [weekInMonth, month, year]);
 
   useEffect(() => {
+    console.log("Weekly Planning Data Updated:", weeklyPlanning);
     setPlanningData(weeklyPlanning || emptyPlanning);
     setIsLoading(false);
   }, [weeklyPlanning]);
@@ -242,7 +243,7 @@ const WeeklyPlanning = () => {
     setIsLoading(true);
     setBackendErrors(null);
     const dataToSend = {
-      weeklyAssignationsDtos: planningData.weeklyPlanningDtos.map((p) => {
+      weeklyPlanningDtos: planningData.weeklyPlanningDtos.map((p) => {
         const staffMember = staffList.find(staff => staff.name.toLowerCase() === p.name.toLowerCase());
         return {
           ...p,
@@ -264,10 +265,9 @@ const WeeklyPlanning = () => {
   };
 
   const handleConfirmPlanning = () => {
-      setIsLoading(true);
       setBackendErrors(null);
       const dataToSend = {
-        weeklyAssignationsDtos: planningData.weeklyPlanningDtos.map((p) => {
+        weeklyPlanningDtos: planningData.weeklyPlanningDtos.map((p) => {
           const staffMember = staffList.find(staff => staff.name.toLowerCase() === p.name.toLowerCase());
           return {
             ...p,
@@ -320,9 +320,67 @@ const WeeklyPlanning = () => {
 
   const handleRemoveActivity = (dayIndex, activityIndex) => {
     setPlanningData((prev) => {
-      const updated = [...prev.activities];
-      updated[dayIndex] = updated[dayIndex].filter((_, i) => i !== activityIndex);
-      return { ...prev, activities: updated };
+      const updatedActivities = [...prev.activities];
+      const removedActivity = updatedActivities[dayIndex][activityIndex];
+
+      console.log("Removing activity:", removedActivity);
+
+      // Eliminar la actividad de la lista de actividades
+      updatedActivities[dayIndex] = updatedActivities[dayIndex].filter((_, i) => i !== activityIndex);
+
+      let valuesToRemove = [];
+
+      // Caso especial: PLANTA/QX (FLOOR amarillo)
+      if (removedActivity.type === "FLOOR" && removedActivity.color === "amarillo") {
+        valuesToRemove.push("PLANTA/QX");
+        // Si hay variantes con identificador, también se añaden
+        planningData.activities[dayIndex]
+          .filter(a => a.type === "QX" && a.color === "amarillo")
+          .forEach(a => {
+            valuesToRemove.push(`PLANTA/QX_${a.identifier || ""}`);
+          });
+      }
+      if (removedActivity.type === "QX" && removedActivity.color === "amarillo") {
+          valuesToRemove.push(removedActivity.identifier ? `PLANTA/QX_${removedActivity.identifier}` : "PLANTA/QX");
+       }
+      const generalValue = removedActivity.color
+        ? removedActivity.identifier
+          ? `${removedActivity.type}_${removedActivity.color}_${removedActivity.identifier}`
+          : `${removedActivity.type}_${removedActivity.color}`
+        : removedActivity.type;
+
+      valuesToRemove.push(generalValue);
+
+      console.log("valuesToRemove", valuesToRemove);
+
+      // Actualizar las asignaciones y eveningAssignations
+      const updatedDtos = prev.weeklyPlanningDtos.map(person => {
+        let newAssignations = [...person.assignations];
+        let newEveningAssignations = [...(person.eveningAssignations || [])];
+
+        if (removedActivity.time === "morning") {
+          newAssignations = newAssignations.map((a, idx) =>
+            idx === dayIndex && valuesToRemove.includes(a) ? null : a
+          );
+        }
+
+        if (removedActivity.time === "evening") {
+          newEveningAssignations = newEveningAssignations.map((a, idx) =>
+            idx === dayIndex && valuesToRemove.includes(a) ? null : a
+          );
+        }
+
+        return {
+          ...person,
+          assignations: newAssignations,
+          eveningAssignations: newEveningAssignations
+        };
+      });
+      return {
+        ...prev,
+        activities: updatedActivities,
+        weeklyPlanningDtos: updatedDtos
+      };
     });
   };
 
@@ -487,7 +545,7 @@ const WeeklyPlanning = () => {
                 </tr>
               </thead>
               <tbody>
-                {planningData.weeklyPlanningDtos.map((person) => {
+                {planningData.weeklyPlanningDtos && planningData.weeklyPlanningDtos.map((person) => {
                   const rowColor = colorPersonMap[person.color] || "#fff";
                   return(
                   <tr key={person.name} style={{ backgroundColor: rowColor }}>

@@ -99,35 +99,36 @@ public class PlanningController {
     }
 
     @PostMapping("/annual")
-    public List<AnnualPlanningDto> annualPlanning(@Validated @RequestBody List<AnnualPlanningDataDto> params, @RequestParam int year)
+    public List<List<AnnualPlanningDto>> annualPlanning(@Validated @RequestBody List<AnnualPlanningDataDto> params, @RequestParam int year)
             throws NoSolutionException, IOException, ClassNotFoundException {
 
         List<Priority> costs = prioritiesService.getPriorities().get("Anual");
 
-        Map<String, Map<Integer, String>> planning =
+        List<Map<String, Map<Integer, String>>> planning =
                 planningService.getAnnualPlanning(AnnualPlanningDataConversor.toClingoParams(params, costs), year);
 
         return AnnualPlanningConversor.toAnnualPlanningDtos(planning, params);
     }
 
     @PostMapping("/savedYearly")
-    public List<AnnualPlanningDto> getAnnualPlanning(@RequestParam int year, @Validated @RequestBody List<AnnualPlanningDataDto> params)
+    public List<List<AnnualPlanningDto>> getAnnualPlanning(@RequestParam int year, @Validated @RequestBody List<AnnualPlanningDataDto> params)
             throws NoSolutionException, IOException, ClassNotFoundException, PlanningNotGeneratedException {
 
-        Map<String, Map<Integer, String>> annualPlanning = planningService.getYearFromJson(year, false);
+        List<Map<String, Map<Integer, String>>> annualPlanning = planningService.getYearFromJson(year, false);
 
         return AnnualPlanningConversor.toAnnualPlanningDtos(annualPlanning, params);
     }
 
     @PostMapping("/monthly")
-    public MonthlyResultDto monthlyPlanning(@Validated @RequestBody MonthlyDataDto params)
+    public List<MonthlyResultDto> monthlyPlanning(@Validated @RequestBody MonthlyDataDto params)
             throws NoSolutionException, IOException, ClassNotFoundException, PlanningNotGeneratedException {
 
         List<Priority> costs = prioritiesService.getPriorities().get("Mensual");
 
-        Map<String, Map<Integer, String>> previousMonthPlanning = planningService.getMonthFromJson(params.getMonth(), params.getYear(), true, false);
+        Map<String, Map<Integer, String>> previousMonthPlanning = planningService.getMonthFromJson(
+                params.getMonth(), params.getYear(), true, false).get(0);
 
-        Map<String, Map<Integer, String>> planning =
+        List<Map<String, Map<Integer, String>>> planning =
                 planningService.getMonthlyPlanning(MonthlyDataConversor.toClingoParams(
                         params, costs, previousMonthPlanning), params.getMonth(), params.getYear());
 
@@ -135,17 +136,17 @@ public class PlanningController {
     }
 
     @GetMapping("/monthly")
-    public MonthlyResultDto getMonthlyPlanning(@RequestParam String month, @RequestParam int year,
+    public List<MonthlyResultDto> getMonthlyPlanning(@RequestParam String month, @RequestParam int year,
                                                @RequestParam Integer numDays)
             throws NoSolutionException, IOException, ClassNotFoundException, PlanningNotGeneratedException {
 
         return getMonthlyPlanning(month, year, numDays, false);
     }
 
-    private MonthlyResultDto getMonthlyPlanning(String month, int year, Integer numDays, boolean throwsException)
-            throws NoSolutionException, IOException, ClassNotFoundException, PlanningNotGeneratedException {
+    private List<MonthlyResultDto> getMonthlyPlanning(String month, int year, Integer numDays, boolean throwsException)
+            throws IOException, ClassNotFoundException, PlanningNotGeneratedException {
 
-        Map<String, Map<Integer, String>> monthPlanning = planningService.getMonthFromJson(month, year, false, throwsException);
+        List<Map<String, Map<Integer, String>>> monthPlanning = planningService.getMonthFromJson(month, year, false, throwsException);
 
         List<Staff> staffList = staffService.getStaff();
         return MonthlyPlanningConversor.toMonthlyPlanningDtos(monthPlanning, month, numDays, staffList);
@@ -157,11 +158,11 @@ public class PlanningController {
 
         List<Priority> costs = prioritiesService.getPriorities().get("Semanal");
 
-        Map<String, Map<Integer, String>> annualData = planningService.getYearFromJson(params.getYear(), true);
+        Map<String, Map<Integer, String>> annualData = planningService.getYearFromJson(params.getYear(), true).get(0);
 
         Month monthEnum = MONTH_TRANSLATION.get(params.getMonth().toUpperCase());
         int daysInMonth = YearMonth.of(params.getYear(), monthEnum).lengthOfMonth();
-        MonthlyResultDto monthData = getMonthlyPlanning(params.getMonth(), params.getYear(), daysInMonth, true);
+        MonthlyResultDto monthData = getMonthlyPlanning(params.getMonth(), params.getYear(), daysInMonth, true).get(0);
 
         if (params.getDays().contains(1)) {
             Month monthEnum2 = MONTH_TRANSLATION.get(NEXT_MONTH.get(params.getMonth().toUpperCase()));
@@ -169,7 +170,7 @@ public class PlanningController {
                     YearMonth.of(params.getYear(), monthEnum2).lengthOfMonth();
             String nextMonth = NEXT_MONTH.get(params.getMonth().toUpperCase());
             String capitalized = nextMonth.substring(0, 1).toUpperCase() + nextMonth.substring(1).toLowerCase();
-            MonthlyResultDto monthDataNext = getMonthlyPlanning(capitalized, params.getYear(), daysInMonth2, true);
+            MonthlyResultDto monthDataNext = getMonthlyPlanning(capitalized, params.getYear(), daysInMonth2, true).get(0);
             for (MonthlyPlanningDto monthlyPlanningDto : monthData.getMonthlyPlanningDtos()) {
                 String worker = monthlyPlanningDto.getName();
                 for (MonthlyPlanningDto dtoNextMonth : monthDataNext.getMonthlyPlanningDtos()) {
@@ -202,10 +203,24 @@ public class PlanningController {
     }
 
     @PostMapping("/saveWeekly")
-    public void getWeeklyPlanning(@Validated @RequestBody WeeklyDataDto params)
+    public void saveWeeklyPlanning(@Validated @RequestBody WeeklyDataDto params)
             throws NoSolutionException, IOException, ClassNotFoundException, PlanningNotGeneratedException {
 
         planningService.saveWeekInJson(params.getYear(), params.getMonth(), params.getWeek(),
-                params.getWeeklyAssignationsDtos(), params.getActivities(), params.getDays());
+                params.getWeeklyPlanningDtos(), params.getActivities(), params.getDays());
+    }
+
+    @PostMapping("/saveMonthly")
+    public void saveMonthlyPlanning(@Validated @RequestBody MonthlyDataDto params)
+            throws NoSolutionException, IOException, ClassNotFoundException, PlanningNotGeneratedException {
+
+        planningService.saveMonthInJson(params.getYear(), params.getMonth(), params.getMonthlyAssignationsDtos());
+    }
+
+    @PostMapping("/saveYearly")
+    public void saveYearlyPlanning(@Validated @RequestBody List<AnnualPlanningDataDto> params, @RequestParam int year)
+            throws NoSolutionException, IOException, ClassNotFoundException, PlanningNotGeneratedException {
+
+        planningService.saveYearInJson(year, params);
     }
 }

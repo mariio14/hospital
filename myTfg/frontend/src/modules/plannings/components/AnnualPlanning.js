@@ -11,6 +11,7 @@ import "../../../styles/AnnualPlanning.css";
 const AnnualPlanning = () => {
     const dispatch = useDispatch();
     const annualPlanning = useSelector(selectors.getAnnualPlanning);
+    const annualPlanningList = useSelector(selectors.getAnnualPlanningList);
     const staffList = useSelector(staffSelectors.getStaffList);
 
     const emptyPlanning = staffList.map(person => ({
@@ -25,6 +26,25 @@ const AnnualPlanning = () => {
      const [isLoading, setIsLoading] = useState(false);
      const currentYear = new Date().getFullYear();
      const [year, setYear] = useState(currentYear);
+     const [activePlanningIndex, setActivePlanningIndex] = useState(0);
+
+    useEffect(() => {
+      if (annualPlanningList && annualPlanningList.length > 0) {
+        setPlanningData(annualPlanningList[activePlanningIndex] || emptyPlanning);
+      }
+    }, [activePlanningIndex, annualPlanningList]);
+
+    const goToNextPlanning = () => {
+      setActivePlanningIndex((prev) =>
+        prev < annualPlanningList.length - 1 ? prev + 1 : 0
+      );
+    };
+
+    const goToPrevPlanning = () => {
+      setActivePlanningIndex((prev) =>
+        prev > 0 ? prev - 1 : annualPlanningList.length - 1
+      );
+    };
 
     useEffect(() => {
         dispatch(staffActions.getStaff(
@@ -54,6 +74,20 @@ const AnnualPlanning = () => {
                 setIsLoading(false);
             }
         ));
+    };
+
+    const handleConfirmPlanning = () => {
+      setBackendErrors(null);
+      const convertedPlanningData = planningData.map(person => ({
+          ...person,
+          assignations: Object.values(person.assignations)
+      }));
+      dispatch(actions.saveYearlyPlanning(convertedPlanningData, year,
+        (errorPayload) => {
+        const message = errorPayload?.globalError || "Ha ocurrido un error";
+        setBackendErrors(message);
+        setIsLoading(false);
+      }));
     };
 
     useEffect(() => {
@@ -257,6 +291,53 @@ const AnnualPlanning = () => {
                                 Vaciar Planificación
                             </button>
                         </div>
+                        {annualPlanningList.length > 1 && (
+                          <div className="flex gap-2 items-center">
+                            <button
+                              onClick={goToPrevPlanning}
+                              style={{
+                                padding: "5px 10px",
+                                backgroundColor: "#6c757d",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "5px",
+                                cursor: "pointer",
+                              }}
+                            >
+                              ◀
+                            </button>
+                            <span style={{ fontWeight: "bold" }}>
+                              Planning {activePlanningIndex + 1} de {annualPlanningList.length}
+                            </span>
+                            <button
+                              onClick={goToNextPlanning}
+                              style={{
+                                padding: "5px 10px",
+                                backgroundColor: "#6c757d",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "5px",
+                                cursor: "pointer",
+                              }}
+                            >
+                              ▶
+                            </button>
+                            <button
+                              onClick={handleConfirmPlanning}
+                              style={{
+                                padding: "5px 15px",
+                                backgroundColor: "#17a2b8",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "5px",
+                                cursor: "pointer",
+                                marginLeft: "10px",
+                              }}
+                            >
+                              Confirmar plan
+                            </button>
+                          </div>
+                        )}
                         {isLoading && <div className="loader"></div>}
                         {backendErrors ? <p style={{ color: 'red', textAlign: 'center', marginTop: '30px', marginBottom: '20px' }}>{backendErrors}</p> : null}
 

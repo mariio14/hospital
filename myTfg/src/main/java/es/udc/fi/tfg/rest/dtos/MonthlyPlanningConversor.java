@@ -10,24 +10,32 @@ public class MonthlyPlanningConversor {
 
     }
 
-    public static MonthlyResultDto toMonthlyPlanningDtos(Map<String, Map<Integer, String>> planningMap,
+    public static List<MonthlyResultDto> toMonthlyPlanningDtos(List<Map<String, Map<Integer, String>>> planningMap,
                                                          String month, int numDays, List<Staff> staffList) {
-        List<MonthlyPlanningDto> list = new ArrayList<>();
-        for (Staff staff : staffList) {
-            Map<Integer, String> assignations = planningMap.get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
-            list.add(toMonthlyPlanningDto(staff.getName(), assignations, numDays));
+        List<MonthlyResultDto> monthlyResultDtos = new ArrayList<>();
+        for (Map<String, Map<Integer, String>> map : planningMap) {
+            List<MonthlyPlanningDto> list = new ArrayList<>();
+            for (Staff staff : staffList) {
+                Map<Integer, String> assignations = map.get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+                list.add(toMonthlyPlanningDto(staff.getName(), assignations, numDays));
+            }
+            monthlyResultDtos.add(new MonthlyResultDto(month, list));
         }
-        return new MonthlyResultDto(month, list);
+        return monthlyResultDtos;
     }
 
-    public static MonthlyResultDto toMonthlyPlanningDtosFromData(Map<String, Map<Integer, String>> planningMap,
+    public static List<MonthlyResultDto> toMonthlyPlanningDtosFromData(List<Map<String, Map<Integer, String>>> planningMap,
                                                          MonthlyDataDto monthlyData) {
-        List<MonthlyPlanningDto> list = new ArrayList<>();
-        for (MonthlyAssignationsDto monthlyAssignationsDto : monthlyData.getMonthlyAssignationsDtos()) {
-            Map<Integer, String> value = planningMap.get(monthlyAssignationsDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
-            list.add(toMonthlyPlanningDto(monthlyAssignationsDto.getName(), value, monthlyData.getNumberOfDays()));
+        List<MonthlyResultDto> monthlyResultDtos = new ArrayList<>();
+        for (Map<String, Map<Integer, String>> map : planningMap) {
+            List<MonthlyPlanningDto> list = new ArrayList<>();
+            for (MonthlyAssignationsDto monthlyAssignationsDto : monthlyData.getMonthlyAssignationsDtos()) {
+                Map<Integer, String> value = map.get(monthlyAssignationsDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+                list.add(toMonthlyPlanningDto(monthlyAssignationsDto.getName(), value, monthlyData.getNumberOfDays()));
+            }
+            monthlyResultDtos.add(new MonthlyResultDto(monthlyData.getMonth(), list));
         }
-        return new MonthlyResultDto(monthlyData.getMonth(), list);
+        return monthlyResultDtos;
     }
 
     public static MonthlyPlanningDto toMonthlyPlanningDto(String name, Map<Integer, String> asignations, int days) {

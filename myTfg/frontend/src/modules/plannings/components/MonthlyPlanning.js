@@ -12,6 +12,7 @@ const MonthlyPlanning = () => {
   const dispatch = useDispatch();
   const staffList = useSelector(staffSelectors.getStaffList);
   const monthlyPlanning = useSelector(selectors.getMonthlyPlanning);
+  const monthlyPlanningList = useSelector(selectors.getMonthlyPlanningList);
 
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -33,6 +34,8 @@ const MonthlyPlanning = () => {
 
   const [rightClickData, setRightClickData] = useState(null);
   const prohibitedMenuRef = useRef(null);
+  const [activePlanningIndex, setActivePlanningIndex] = useState(0);
+
 
   const getMonthName = (month) => {
     const months = [
@@ -51,6 +54,24 @@ const MonthlyPlanning = () => {
       notValidAssignations: Array(daysInMonth).fill([])
     }))
   };
+
+  useEffect(() => {
+    if (monthlyPlanningList && monthlyPlanningList.length > 0) {
+      setPlanningData(monthlyPlanningList[activePlanningIndex] || emptyPlanning);
+    }
+  }, [activePlanningIndex, monthlyPlanningList]);
+
+  const goToNextPlanning = () => {
+      setActivePlanningIndex((prev) =>
+        prev < monthlyPlanningList.length - 1 ? prev + 1 : 0
+      );
+    };
+
+    const goToPrevPlanning = () => {
+      setActivePlanningIndex((prev) =>
+        prev > 0 ? prev - 1 : monthlyPlanningList.length - 1
+      );
+    };
 
   const [planningData, setPlanningData] = useState(emptyPlanning);
 
@@ -300,6 +321,41 @@ const MonthlyPlanning = () => {
 
   };
 
+  const handleConfirmPlanning = () => {
+    setBackendErrors(null);
+    let firstFriday = 1;
+    while (new Date(year, month - 1, firstFriday).getDay() !== 5) {
+        firstFriday++;
+    }
+    console.log(planningData);
+
+    const convertedPlanningData = {
+        monthlyAssignationsDtos: planningData.monthlyPlanningDtos.map(person => {
+            const staffMember = staffList.find(staff => staff.name.toLowerCase() === person.name.toLowerCase());
+
+            return {
+                ...person,
+                assignations: Object.values(person.assignations),
+                notValidAssignations: Object.values(person.notValidAssignations),
+                level: staffMember ? staffMember.level : null
+            };
+        }),
+        numberOfDays: daysInMonth,
+        numberOfDaysPrevMonth: daysInPrevMonth,
+        month: getMonthName(month),
+        year: year,
+        firstDay: getDayOfWeek(1,month,year),
+        firstFriday: firstFriday,
+        weekends: [],
+        festivos: []
+    }
+    dispatch(actions.saveMonthlyPlanning(convertedPlanningData, (errorPayload) => {
+      const message = errorPayload?.globalError || "Ha ocurrido un error";
+      setBackendErrors(message);
+      setIsLoading(false);
+    }));
+  };
+
   const exportToPDF = () => {
     const doc = new jsPDF({ orientation: "landscape" });
     doc.text("Planificación Mensual", 10, 10);
@@ -471,6 +527,53 @@ const MonthlyPlanning = () => {
                 Vaciar Planificación
               </button>
             </div>
+            {monthlyPlanningList.length > 1 && (
+              <div className="flex gap-2 items-center">
+                <button
+                  onClick={goToPrevPlanning}
+                  style={{
+                    padding: "5px 10px",
+                    backgroundColor: "#6c757d",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                  }}
+                >
+                  ◀
+                </button>
+                <span style={{ fontWeight: "bold" }}>
+                  Planning {activePlanningIndex + 1} de {monthlyPlanningList.length}
+                </span>
+                <button
+                  onClick={goToNextPlanning}
+                  style={{
+                    padding: "5px 10px",
+                    backgroundColor: "#6c757d",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                  }}
+                >
+                  ▶
+                </button>
+                <button
+                  onClick={handleConfirmPlanning}
+                  style={{
+                    padding: "5px 15px",
+                    backgroundColor: "#17a2b8",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    marginLeft: "10px",
+                  }}
+                >
+                  Confirmar plan
+                </button>
+              </div>
+            )}
 
             {isLoading && <div className="loader"></div>}
             {backendErrors && (

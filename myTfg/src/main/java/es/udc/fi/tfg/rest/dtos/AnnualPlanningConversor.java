@@ -24,17 +24,21 @@ public class AnnualPlanningConversor {
             Map.entry("nutrition", "NUTRI")
     );
 
-    public static List<AnnualPlanningDto> toAnnualPlanningDtos(Map<String, Map<Integer, String>> planningMap,
+    public static List<List<AnnualPlanningDto>> toAnnualPlanningDtos(List<Map<String, Map<Integer, String>>> planningMap,
                     List<AnnualPlanningDataDto> params) {
-        List<AnnualPlanningDto> list = new ArrayList<>();
-        for (AnnualPlanningDataDto annualPlanningDataDto : params) {
-            Map<Integer, String> value =  planningMap.get(annualPlanningDataDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
-            list.add(new AnnualPlanningDto(annualPlanningDataDto.getName(), annualPlanningDataDto.getLevel(), transformTasksMap(value)));
+        List<List<AnnualPlanningDto>> result = new ArrayList<>();
+        for (Map<String, Map<Integer, String>> map : planningMap) {
+            List<AnnualPlanningDto> list = new ArrayList<>();
+            for (AnnualPlanningDataDto annualPlanningDataDto : params) {
+                Map<Integer, String> value = map.get(annualPlanningDataDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+                list.add(new AnnualPlanningDto(annualPlanningDataDto.getName(), annualPlanningDataDto.getLevel(), transformTasksMap(value)));
+            }
+            if (isNull(list)) {
+                return null;
+            }
+            result.add(list);
         }
-        if (isNull(list)) {
-            return null;
-        }
-        return list;
+        return result;
     }
 
     private static Map<Integer, String> transformTasksMap(Map<Integer, String> value) {

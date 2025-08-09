@@ -23,3 +23,9 @@ export const getWeeklyPlanning = (month, year, week, onSuccess, onErrors) =>
 
 export const saveWeeklyPlanning = (planningData, onSuccess, onErrors) =>
   appFetch(`/plannings/saveWeekly`, fetchConfig("POST", planningData), onSuccess, onErrors);
+
+export const saveMonthlyPlanning = (planningData, onSuccess, onErrors) =>
+  appFetch(`/plannings/saveMonthly`, fetchConfig("POST", planningData), onSuccess, onErrors);
+
+export const saveYearlyPlanning = (planningData, year, onSuccess, onErrors) =>
+  appFetch(`/plannings/saveYearly?year=${year}`, fetchConfig("POST", planningData), onSuccess, onErrors);

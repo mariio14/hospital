@@ -11,3 +11,9 @@ export const getWeeklyPlanning = state =>
 
 export const getWeeklyPlanningList = state =>
     getModuleState(state).weeklyPlanningList;
+
+export const getMonthlyPlanningList = state =>
+    getModuleState(state).monthlyPlanningList;
+
+export const getAnnualPlanningList = state =>
+    getModuleState(state).annualPlanningList;

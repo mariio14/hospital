@@ -10,6 +10,8 @@ import es.udc.fi.tfg.model.entities.Staff;
 import es.udc.fi.tfg.model.services.exceptions.NoSolutionException;
 import es.udc.fi.tfg.model.services.exceptions.PlanningNotGeneratedException;
 import es.udc.fi.tfg.rest.dtos.ActivityDto;
+import es.udc.fi.tfg.rest.dtos.AnnualPlanningDataDto;
+import es.udc.fi.tfg.rest.dtos.MonthlyAssignationsDto;
 import es.udc.fi.tfg.rest.dtos.WeeklyAssignationsDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,8 +32,25 @@ public class PlanningServiceImpl implements PlanningService {
             Map.entry("azul", "blue")
     );
 
+    private static final Map<String, String> CONSTANTS_MAP = Map.ofEntries(
+            Map.entry("red", "ROJOS"),
+            Map.entry("yellow", "AMARILLO"),
+            Map.entry("blue", "COLON"),
+            Map.entry("pink", "MAMA"),
+            Map.entry("purple", "URGENCIAS"),
+            Map.entry("green", "PARED"),
+            Map.entry("brown", "PROCTO"),
+            Map.entry("other", "OTRAS"),
+            Map.entry("xray", "RAYOS"),
+            Map.entry("rea", "REA"),
+            Map.entry("thoracic", "TORACICA"),
+            Map.entry("valencia", "VALENCIA"),
+            Map.entry("vascular", "VASCULAR"),
+            Map.entry("nutrition", "NUTRI")
+    );
+
     @Override
-    public Map<String, Map<Integer, String>> getAnnualPlanning(String params, int year) throws NoSolutionException{
+    public List<Map<String, Map<Integer, String>>> getAnnualPlanning(String params, int year) throws NoSolutionException{
         String command = "python decode_yearly.py yearly.lp input_yearly.lp";
 
         try {
@@ -55,7 +74,7 @@ public class PlanningServiceImpl implements PlanningService {
                 System.out.println("Script ejecutado correctamente.");
                 System.out.println("Salida del script (JSON): " + output);
 
-                Map<String, Map<Integer, String>> planning = parseJson(output.toString());
+                List<Map<String, Map<Integer, String>>> planning = parseJson(output.toString());
 
                 if (planning.isEmpty()) {
                     throw new NoSolutionException("Sin solucion para los parametros proporcionados.");
@@ -77,7 +96,7 @@ public class PlanningServiceImpl implements PlanningService {
     }
 
     @Override
-    public Map<String, Map<Integer, String>> getMonthlyPlanning(String params, String month, int year) throws NoSolutionException {
+    public List<Map<String, Map<Integer, String>>> getMonthlyPlanning(String params, String month, int year) throws NoSolutionException {
         String command = "python decode_monthly.py monthly.lp input_monthly.lp";
         try {
             writeInputFile(params, pathname + "/input_monthly.lp");
@@ -100,7 +119,7 @@ public class PlanningServiceImpl implements PlanningService {
                 System.out.println("Script ejecutado correctamente.");
                 System.out.println("Salida del script (JSON): " + output);
 
-                Map<String, Map<Integer, String>> planning = parseJson(output.toString());
+                List<Map<String, Map<Integer, String>>> planning = parseJson(output.toString());
 
                 if (planning.isEmpty()) {
                     throw new NoSolutionException("Sin solucion para los parametros proporcionados.");
@@ -166,7 +185,7 @@ public class PlanningServiceImpl implements PlanningService {
     }
 
     @Override
-    public Map<String, Map<Integer, String>> getMonthFromJson(String currentMonth, int year, boolean previous,
+    public List<Map<String, Map<Integer, String>>> getMonthFromJson(String currentMonth, int year, boolean previous,
                                                               boolean throwException) throws IOException, ClassNotFoundException, PlanningNotGeneratedException {
 
         String month = currentMonth;
@@ -177,7 +196,7 @@ public class PlanningServiceImpl implements PlanningService {
         ObjectMapper mapper = new ObjectMapper();
         File outputFile = new File(pathname + "/solutionMonthly.json");
 
-        Map<String, Map<String, Map<String, Map<Integer, String>>>> existingData = new HashMap<>();
+        Map<String, Map<String, List<Map<String, Map<Integer, String>>>>> existingData = new HashMap<>();
         try {
             existingData = mapper.readValue(outputFile, new TypeReference<>() {});
         } catch (Exception e) {
@@ -186,7 +205,7 @@ public class PlanningServiceImpl implements PlanningService {
 
         List<Staff> staffList =  staffService.getStaff();
 
-        Map<String, Map<Integer, String>> yearData = existingData.get(String.valueOf(year)) != null
+        List<Map<String, Map<Integer, String>>> yearData = existingData.get(String.valueOf(year)) != null
                 ? existingData.get(String.valueOf(year)).get(month)
                 : null;
 
@@ -196,21 +215,23 @@ public class PlanningServiceImpl implements PlanningService {
             if (throwException) {
                 throw new PlanningNotGeneratedException("El planning del mes " + month + " del año " + year + " no ha sido generado.");
             }
-            Map<String, Map<Integer, String>> emptyData = new HashMap<>();
+            List<Map<String, Map<Integer, String>>> emptyData = new ArrayList<>();
+            Map<String, Map<Integer, String>> emptyMonthData = new HashMap<>();
             for (Staff staff : staffList) {
-                emptyData.put(staff.getName(), new HashMap<>());
+                emptyMonthData.put(staff.getName(), new HashMap<>());
             }
+            emptyData.add(emptyMonthData);
             return emptyData;
         }
     }
 
     @Override
-    public Map<String, Map<Integer, String>> getYearFromJson(int year, boolean throwException) throws IOException, ClassNotFoundException, PlanningNotGeneratedException {
+    public List<Map<String, Map<Integer, String>>> getYearFromJson(int year, boolean throwException) throws IOException, ClassNotFoundException, PlanningNotGeneratedException {
 
         ObjectMapper mapper = new ObjectMapper();
         File outputFile = new File(pathname + "/solution_yearly.json");
 
-        Map<String, Map<String, Map<Integer, String>>> existingData = new HashMap<>();
+        Map<String, List<Map<String, Map<Integer, String>>>> existingData = new HashMap<>();
         try {
             existingData = mapper.readValue(outputFile, new TypeReference<>() {});
         } catch (Exception e) {
@@ -219,7 +240,7 @@ public class PlanningServiceImpl implements PlanningService {
 
         List<Staff> staffList =  staffService.getStaff();
 
-        Map<String, Map<Integer, String>> yearData = existingData.get(String.valueOf(year));
+        List<Map<String, Map<Integer, String>>> yearData = existingData.get(String.valueOf(year));
 
         if (yearData != null) {
             return yearData;
@@ -227,14 +248,16 @@ public class PlanningServiceImpl implements PlanningService {
             if (throwException) {
                 throw new PlanningNotGeneratedException("El planning del año " + year + " no ha sido generado.");
             }
-            Map<String, Map<Integer, String>> emptyData = new HashMap<>();
+            List<Map<String, Map<Integer, String>>> emptyData = new ArrayList<>();
+            Map<String, Map<Integer, String>> emptyYearData = new HashMap<>();
             for (Staff staff : staffList) {
                 Map<Integer, String> monthsMap = new HashMap<>();
                 for (int month = 1; month <= 12; month++) {
                     monthsMap.put(month, null);
                 }
-                emptyData.put(staff.getName().toLowerCase(Locale.ROOT), monthsMap);
+                emptyYearData.put(staff.getName().toLowerCase(Locale.ROOT), monthsMap);
             }
+            emptyData.add(emptyYearData);
             return emptyData;
         }
     }
@@ -281,7 +304,7 @@ public class PlanningServiceImpl implements PlanningService {
                 .getOrDefault(month, new HashMap<>())
                 .getOrDefault(week, emptyList);
 
-        return new ActivityAndPlanning(activitiesDataForWeek, weekData, getYearFromJson(year, false));
+        return new ActivityAndPlanning(activitiesDataForWeek, weekData, getYearFromJson(year, false).get(0));
     }
 
     @Override
@@ -290,7 +313,7 @@ public class PlanningServiceImpl implements PlanningService {
         List<Map<String, Map<Integer, List<String>>>> result = new ArrayList<>();
         Map<String, Map<Integer, List<String>>> weekMap = new HashMap<>();
         for (WeeklyAssignationsDto weeklyAssignationsDto : planning) {
-            String name = weeklyAssignationsDto.getName();
+            String name = weeklyAssignationsDto.getName().toLowerCase(Locale.ROOT);
             Map<Integer, List<String>> assignationsMap = new HashMap<>();
             int i = 0;
             for (String assignation : weeklyAssignationsDto.getAssignations()) {
@@ -357,6 +380,54 @@ public class PlanningServiceImpl implements PlanningService {
         saveWeekToJsonFile(result, "/solutionWeekly.json", year, month, week, activities);
     }
 
+    @Override
+    public void saveMonthInJson(int year, String month, List<MonthlyAssignationsDto> planning) {
+        List<Map<String, Map<Integer, String>>> result = new ArrayList<>();
+        Map<String, Map<Integer, String>> monthMap = new HashMap<>();
+
+        for (MonthlyAssignationsDto monthlyAssignationsDto : planning) {
+            String name = monthlyAssignationsDto.getName().toLowerCase(Locale.ROOT);
+            Map<Integer, String> assignationsMap = new HashMap<>();
+            int i = 1;
+            for (String assignation : monthlyAssignationsDto.getAssignations()) {
+                if (assignation != null) {
+                    assignationsMap.put(i, assignation);
+                }
+                i++;
+            }
+            monthMap.put(name, assignationsMap);
+        }
+
+        result.add(monthMap);
+        saveMonthToJsonFile(result, "/solution_yearly.json", month, year);
+    }
+
+    @Override
+    public void saveYearInJson(int year, List<AnnualPlanningDataDto> planning) {
+        List<Map<String, Map<Integer, String>>> result = new ArrayList<>();
+        Map<String, Map<Integer, String>> yearMap = new HashMap<>();
+        for (AnnualPlanningDataDto annualPlanningDataDto : planning) {
+            String name = annualPlanningDataDto.getName().toLowerCase(Locale.ROOT);
+            Map<Integer, String> assignationsMap = new HashMap<>();
+            int i = 1;
+            for (String assignation : annualPlanningDataDto.getAssignations()) {
+                if (assignation != null) {
+                    String key = CONSTANTS_MAP.entrySet().stream()
+                            .filter(entry -> entry.getValue().equals(assignation))
+                            .map(Map.Entry::getKey)
+                            .findFirst()
+                            .orElse("unknown");
+                    assignationsMap.put(i, key);
+                }
+                i++;
+            }
+            yearMap.put(name, assignationsMap);
+        }
+
+        result.add(yearMap);
+        saveYearJsonFile(result, "/solution_yearly.json", year);
+    }
+
     private List<ActivityDto> getFloors(){
         List<ActivityDto> floors = new ArrayList<>();
         floors.add(new ActivityDto("FLOOR", "blue", 1, "morning", null));
@@ -365,7 +436,7 @@ public class PlanningServiceImpl implements PlanningService {
         return floors;
     }
 
-    private Map<String, Map<Integer, String>> parseJson(String jsonString) throws Exception {
+    private List<Map<String, Map<Integer, String>>> parseJson(String jsonString) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(jsonString, new TypeReference<>() {});
     }
@@ -375,10 +446,10 @@ public class PlanningServiceImpl implements PlanningService {
         return mapper.readValue(jsonString, new TypeReference<>() {});
     }
 
-    private void saveYearJsonFile(Map<String, Map<Integer, String>> planning, String file, int year) {
+    private void saveYearJsonFile(List<Map<String, Map<Integer, String>>> planning, String file, int year) {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            Map<Integer, Map<String, Map<Integer, String>>> wrappedPlanning = new HashMap<>();
+            Map<Integer, List<Map<String, Map<Integer, String>>>> wrappedPlanning = new HashMap<>();
             wrappedPlanning.put(year, planning);
             File outputFile = new File(pathname + file);
             mapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, wrappedPlanning);
@@ -389,16 +460,16 @@ public class PlanningServiceImpl implements PlanningService {
     }
 
 
-    private void saveMonthToJsonFile(Map<String, Map<Integer, String>> planning, String file, String month, int year) {
+    private void saveMonthToJsonFile(List<Map<String, Map<Integer, String>>> planning, String file, String month, int year) {
         ObjectMapper mapper = new ObjectMapper();
         File outputFile = new File(pathname + file);
-        Map<Integer, Map<String, Map<String, Map<Integer, String>>>> existingData = new HashMap<>();
+        Map<Integer, Map<String, List<Map<String, Map<Integer, String>>>>> existingData = new HashMap<>();
         try {
             existingData = mapper.readValue(outputFile, new TypeReference<>() {});
         } catch (Exception e) {
             System.err.println("Error al leer el archivo JSON existente. Se usará un mapa vacío.");
         }
-        Map<String, Map<String, Map<Integer, String>>> yearMap = existingData.getOrDefault(year, new HashMap<>());
+        Map<String, List<Map<String, Map<Integer, String>>>> yearMap = existingData.getOrDefault(year, new HashMap<>());
         yearMap.put(month, planning);
         existingData.put(year, yearMap);
         try {
