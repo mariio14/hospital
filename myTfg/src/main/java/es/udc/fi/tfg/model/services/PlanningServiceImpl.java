@@ -428,6 +428,129 @@ public class PlanningServiceImpl implements PlanningService {
         saveYearJsonFile(result, "/solution_yearly.json", year);
     }
 
+    @Override
+    public void checkAnnualPlanning(String params, int year, List<Map<String, Map<Integer, String>>> map) throws NoSolutionException {
+        String command = "python decode_yearly.py yearly.lp input_yearly.lp";
+
+        try {
+            writeInputFile(params, pathname + "/input_yearly.lp");
+
+            ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
+            processBuilder.directory(new File(pathname));
+            processBuilder.redirectErrorStream(true);
+
+            Process process = processBuilder.start();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            StringBuilder output = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line);
+            }
+
+            int exitCode = process.waitFor();
+            if (exitCode == 0) {
+                System.out.println("Script ejecutado correctamente.");
+                System.out.println("Salida del script (JSON): " + output);
+
+                List<Map<String, Map<Integer, String>>> planning = parseJson(output.toString());
+                if (planning.isEmpty()) {
+                    throw new NoSolutionException("Sin solucion para los parametros proporcionados.");
+                }
+                saveYearJsonFile(map, "/solution_yearly.json", year);
+            }  else {
+                System.err.println("Error en la ejecución del script. Código de salida: " + exitCode);
+                throw new RuntimeException("El script Python falló con código de salida: " + exitCode);
+            }
+        } catch (NoSolutionException e) {
+            throw e;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void checkMonthlyPlanning(String params, String month, int year, List<Map<String, Map<Integer, String>>> map) throws NoSolutionException {
+        String command = "python decode_monthly.py monthly.lp input_monthly.lp";
+        try {
+            writeInputFile(params, pathname + "/input_monthly.lp");
+
+            ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
+            processBuilder.directory(new File(pathname));
+            processBuilder.redirectErrorStream(true);
+
+            Process process = processBuilder.start();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            StringBuilder output = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line);
+            }
+
+            int exitCode = process.waitFor();
+            if (exitCode == 0) {
+                System.out.println("Script ejecutado correctamente.");
+                System.out.println("Salida del script (JSON): " + output);
+
+                List<Map<String, Map<Integer, String>>> planning = parseJson(output.toString());
+
+                if (planning.isEmpty()) {
+                    throw new NoSolutionException("Sin solucion para los parametros proporcionados.");
+                }
+                saveMonthToJsonFile(map, "/solutionMonthly.json", month, year);
+            }  else {
+                System.err.println("Error en la ejecución del script. Código de salida: " + exitCode);
+                throw new RuntimeException("El script Python falló con código de salida: " + exitCode);
+            }
+        } catch (NoSolutionException e) {
+            throw e;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void checkWeeklyPlanning(String params, int year, String month, String week, List<List<ActivityDto>> activities, List<Map<String, Map<Integer, List<String>>>> map) throws NoSolutionException {
+        String command = "python decode_weekly.py weekly.lp input_weekly.lp";
+        try {
+            writeInputFile(params, pathname + "/input_weekly.lp");
+
+            ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
+            processBuilder.directory(new File(pathname));
+            processBuilder.redirectErrorStream(true);
+
+            Process process = processBuilder.start();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            StringBuilder output = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line);
+            }
+
+            int exitCode = process.waitFor();
+            if (exitCode == 0) {
+                System.out.println("Script ejecutado correctamente.");
+                System.out.println("Salida del script (JSON): " + output);
+
+                List<Map<String, Map<Integer, List<String>>>> planning = parseJsonToList(output.toString());
+
+                if (planning.isEmpty()) {
+                    throw new NoSolutionException("Sin solucion para los parametros proporcionados.");
+                }
+                saveWeekToJsonFile(map, "/solutionWeekly.json", year, month, week, activities);
+            }  else {
+                System.err.println("Error en la ejecución del script. Código de salida: " + exitCode);
+                throw new RuntimeException("El script Python falló con código de salida: " + exitCode);
+            }
+        } catch (NoSolutionException e) {
+            throw e;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private List<ActivityDto> getFloors(){
         List<ActivityDto> floors = new ArrayList<>();
         floors.add(new ActivityDto("FLOOR", "blue", 1, "morning", null));

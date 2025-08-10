@@ -14,15 +14,18 @@ public class WeeklyResultDto {
 
     private List<List<ActivityDto>> activities;
 
+    private Boolean complete;
+
     public WeeklyResultDto() {
     }
 
-    public WeeklyResultDto(int year, String month, String week, List<WeeklyPlanningDto> weeklyPlanningDtos, List<List<ActivityDto>> activities) {
+    public WeeklyResultDto(int year, String month, String week, List<WeeklyPlanningDto> weeklyPlanningDtos, List<List<ActivityDto>> activities, Boolean complete) {
         this.year = year;
         this.month = month;
         this.week = week;
         this.weeklyPlanningDtos = weeklyPlanningDtos;
         this.activities = activities;
+        this.complete = complete;
     }
 
     public int getYear() {
@@ -63,5 +66,13 @@ public class WeeklyResultDto {
 
     public void setActivities(List<List<ActivityDto>> activities) {
         this.activities = activities;
+    }
+
+    public Boolean getComplete() {
+        return complete;
+    }
+
+    public void setComplete(Boolean complete) {
+        this.complete = complete;
     }
 }

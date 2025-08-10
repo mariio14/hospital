@@ -129,7 +129,8 @@ const WeeklyPlanning = () => {
       { type: "FLOOR", color: "azul", slots: 0, time: "morning" },
       { type: "FLOOR", color: "amarillo", slots: 0, time: "morning" },
       { type: "FLOOR", color: "rojo", slots: 0, time: "morning" }
-    ])
+    ]),
+    complete: false
   };
 
   const [planningData, setPlanningData] = useState(emptyPlanning);

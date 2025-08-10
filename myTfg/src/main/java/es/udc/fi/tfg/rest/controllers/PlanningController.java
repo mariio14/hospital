@@ -223,4 +223,71 @@ public class PlanningController {
 
         planningService.saveYearInJson(year, params);
     }
+
+    @PostMapping("/checkAnnual")
+    public void checkAnnualPlanning(@Validated @RequestBody List<AnnualPlanningDataDto> params, @RequestParam int year)
+            throws NoSolutionException, IOException, ClassNotFoundException {
+        try {
+            List<Priority> costs = prioritiesService.getPriorities().get("Anual");
+            planningService.checkAnnualPlanning(AnnualPlanningDataConversor.toClingoParams(params, costs), year,
+                    AnnualPlanningDataConversor.toMap(params));
+        } catch (NoSolutionException e) {
+            throw new NoSolutionException("Cambio no válido");
+        }
+    }
+
+    @PostMapping("/checkMonthly")
+    public void checkMonthlyPlanning(@Validated @RequestBody MonthlyDataDto params)
+            throws NoSolutionException, IOException, ClassNotFoundException, PlanningNotGeneratedException {
+        try {
+            List<Priority> costs = prioritiesService.getPriorities().get("Mensual");
+
+            Map<String, Map<Integer, String>> previousMonthPlanning = planningService.getMonthFromJson(
+                    params.getMonth(), params.getYear(), true, false).get(0);
+
+            planningService.checkMonthlyPlanning(MonthlyDataConversor.toClingoParams(
+                            params, costs, previousMonthPlanning), params.getMonth(), params.getYear(),
+                            MonthlyDataConversor.toMap(params));
+        } catch (NoSolutionException e) {
+            throw new NoSolutionException("Cambio no válido");
+        }
+    }
+
+    @PostMapping("/checkWeekly")
+    public void checkWeeklyPlanning(@Validated @RequestBody WeeklyDataDto params)
+            throws IOException, ClassNotFoundException, NoSolutionException, PlanningNotGeneratedException {
+        try {
+            List<Priority> costs = prioritiesService.getPriorities().get("Semanal");
+
+            Map<String, Map<Integer, String>> annualData = planningService.getYearFromJson(params.getYear(), true).get(0);
+
+            Month monthEnum = MONTH_TRANSLATION.get(params.getMonth().toUpperCase());
+            int daysInMonth = YearMonth.of(params.getYear(), monthEnum).lengthOfMonth();
+            MonthlyResultDto monthData = getMonthlyPlanning(params.getMonth(), params.getYear(), daysInMonth, true).get(0);
+
+            if (params.getDays().contains(1)) {
+                Month monthEnum2 = MONTH_TRANSLATION.get(NEXT_MONTH.get(params.getMonth().toUpperCase()));
+                int daysInMonth2 = monthEnum2.equals(Month.JANUARY) ? YearMonth.of(params.getYear() + 1, monthEnum2).lengthOfMonth() :
+                        YearMonth.of(params.getYear(), monthEnum2).lengthOfMonth();
+                String nextMonth = NEXT_MONTH.get(params.getMonth().toUpperCase());
+                String capitalized = nextMonth.substring(0, 1).toUpperCase() + nextMonth.substring(1).toLowerCase();
+                MonthlyResultDto monthDataNext = getMonthlyPlanning(capitalized, params.getYear(), daysInMonth2, true).get(0);
+                for (MonthlyPlanningDto monthlyPlanningDto : monthData.getMonthlyPlanningDtos()) {
+                    String worker = monthlyPlanningDto.getName();
+                    for (MonthlyPlanningDto dtoNextMonth : monthDataNext.getMonthlyPlanningDtos()) {
+                        if (dtoNextMonth.getName().equals(worker)) {
+                            for (int i = 0; i < 8; i++) {
+                                monthlyPlanningDto.getAssignations().set(i, dtoNextMonth.getAssignations().get(i));
+                            }
+                        }
+                    }
+                }
+            }
+            planningService.checkWeeklyPlanning(WeeklyDataConversor.toClingoParams(params, costs, annualData, monthData,
+                    params.getYear(), params.getMonth()), params.getYear(), params.getMonth(), params.getWeek(), params.getActivities(),
+                    WeeklyDataConversor.toMap(params));
+        } catch (NoSolutionException e) {
+            throw new NoSolutionException("Cambio no válido");
+        }
+    }
 }

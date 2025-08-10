@@ -2,10 +2,7 @@ package es.udc.fi.tfg.rest.dtos;
 
 import es.udc.fi.tfg.model.entities.Priority;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class MonthlyDataConversor {
 
@@ -140,5 +137,26 @@ public class MonthlyDataConversor {
         }
 
         return clingoParams.toString();
+    }
+
+    public static List<Map<String, Map<Integer, String>>> toMap(MonthlyDataDto monthlyDataDto) {
+        List<Map<String, Map<Integer, String>>> result = new ArrayList<>();
+        Map<String, Map<Integer, String>> map = new HashMap<>();
+        for (MonthlyAssignationsDto monthlyAssignationsDto : monthlyDataDto.getMonthlyPlanningDtos()) {
+            String personName = monthlyAssignationsDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT);
+            Map<Integer, String> assignationsMap = new HashMap<>();
+            List<String> assignations = monthlyAssignationsDto.getAssignations();
+            if (assignations != null) {
+                for (int i = 0; i < assignations.size(); i++) {
+                    String assignation = assignations.get(i);
+                    if (assignation != null) {
+                        assignationsMap.put(i + 1, assignation.toLowerCase());
+                    }
+                }
+            }
+            map.put(personName, assignationsMap);
+        }
+        result.add(map);
+        return result;
     }
 }

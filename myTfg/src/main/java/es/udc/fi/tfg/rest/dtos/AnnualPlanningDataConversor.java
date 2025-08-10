@@ -2,9 +2,7 @@ package es.udc.fi.tfg.rest.dtos;
 
 import es.udc.fi.tfg.model.entities.Priority;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 public class AnnualPlanningDataConversor {
 
@@ -56,5 +54,31 @@ public class AnnualPlanningDataConversor {
             clingoParams.append(String.format("cost(%s,%d). ", priority.getId(), priority.getCost()));
         }
         return clingoParams.toString();
+    }
+
+    public static List<Map<String, Map<Integer, String>>> toMap(List<AnnualPlanningDataDto> params) {
+        List<Map<String, Map<Integer, String>>> result = new ArrayList<>();
+        Map<String, Map<Integer, String>> map = new HashMap<>();
+        for (AnnualPlanningDataDto annualPlanningDataDto : params) {
+            String personName = annualPlanningDataDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT);
+            Map<Integer, String> assignationsMap = new HashMap<>();
+            List<String> assignations = annualPlanningDataDto.getAssignations();
+            if (assignations != null) {
+                for (int i = 0; i < assignations.size(); i++) {
+                    String assignation = assignations.get(i);
+                    if (assignation != null) {
+                        String key = CONSTANTS_MAP.entrySet().stream()
+                                .filter(entry -> entry.getValue().equals(assignation))
+                                .map(Map.Entry::getKey)
+                                .findFirst()
+                                .orElse("unknown");
+                        assignationsMap.put(i + 1, key);
+                    }
+                }
+            }
+            map.put(personName, assignationsMap);
+        }
+        result.add(map);
+        return result;
     }
 }

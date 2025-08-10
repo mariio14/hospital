@@ -16,6 +16,8 @@ public class WeeklyDataDto {
 
     private List<List<ActivityDto>> activities;
 
+    private Boolean complete;
+
     public WeeklyDataDto() {
     }
 
@@ -65,5 +67,13 @@ public class WeeklyDataDto {
 
     public void setActivities(List<List<ActivityDto>> activities) {
         this.activities = activities;
+    }
+
+    public Boolean getComplete() {
+        return complete;
+    }
+
+    public void setComplete(Boolean complete) {
+        this.complete = complete;
     }
 }

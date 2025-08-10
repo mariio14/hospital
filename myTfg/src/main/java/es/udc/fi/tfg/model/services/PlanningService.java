@@ -33,4 +33,10 @@ public interface PlanningService {
 
     void saveYearInJson(int year, List<AnnualPlanningDataDto> planning) throws IOException, ClassNotFoundException, PlanningNotGeneratedException;
 
+    void checkAnnualPlanning(String params, int year, List<Map<String, Map<Integer, String>>> map) throws NoSolutionException;
+
+    void checkMonthlyPlanning(String params, String month, int year, List<Map<String, Map<Integer, String>>> map) throws NoSolutionException;
+
+    void checkWeeklyPlanning(String params, int year, String month, String week, List<List<ActivityDto>> activities, List<Map<String, Map<Integer, List<String>>>> map) throws NoSolutionException;
+
 }

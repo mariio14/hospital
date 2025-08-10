@@ -90,3 +90,15 @@ const getYearlyConfirmCompleted = annualPlanning => ({
 export const saveYearlyPlanning = (planningData, year, onErrors) => dispatch =>
     backend.planningService.saveYearlyPlanning(planningData, year,
     () => dispatch(getYearlyConfirmCompleted(planningData)), onErrors);
+
+export const checkAnnualPlanning = (planningData, year, onErrors) => dispatch =>
+    backend.planningService.checkAnnualPlanning(planningData, year,
+    () => {}, onErrors);
+
+export const checkMonthlyPlanning = (planningData, onErrors) => dispatch =>
+    backend.planningService.checkMonthlyPlanning(planningData,
+    () => {}, onErrors);
+
+export const checkWeeklyPlanning = (planningData, onErrors) => dispatch =>
+    backend.planningService.checkWeeklyPlanning(planningData,
+    () => {}, onErrors);

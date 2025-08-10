@@ -4,10 +4,7 @@ import es.udc.fi.tfg.model.entities.Priority;
 
 import java.time.Month;
 import java.time.YearMonth;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class WeeklyDataConversor {
 
@@ -206,5 +203,86 @@ public class WeeklyDataConversor {
             clingoParams.append("vacation(dummyname,1). ");
         }
         return clingoParams.toString();
+    }
+
+    public static List<Map<String, Map<Integer, List<String>>>> toMap(WeeklyDataDto weeklyDataDto) {
+        List<Map<String, Map<Integer, List<String>>>> result = new ArrayList<>();
+        Map<String, Map<Integer, List<String>>> map = new HashMap<>();
+        for (WeeklyAssignationsDto weeklyAssignationsDto : weeklyDataDto.getWeeklyPlanningDtos()) {
+            String personName = weeklyAssignationsDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT);
+            if (weeklyAssignationsDto.getAssignations() != null) {
+                int i = 0;
+                for (String assignation : weeklyAssignationsDto.getAssignations()) {
+                    if (assignation != null) {
+                        if (assignation.startsWith("PLANTA/QX")) {
+                            String[] parts = assignation.split("_");
+                            String identifier = (parts.length > 1 && parts[1] != null) ? parts[1].toLowerCase(Locale.ROOT) : null;
+                            if (!map.containsKey(personName)) {
+                                map.put(personName, new HashMap<>());
+                            }
+                            if (!map.get(personName).containsKey(weeklyDataDto.getDays().get(i))) {
+                                map.get(personName).put(weeklyDataDto.getDays().get(i), new ArrayList<>());
+                            }
+                            map.get(personName).get(weeklyDataDto.getDays().get(i)).add(String.format("morningqx_yellow_%s", identifier));
+                            map.get(personName).get(weeklyDataDto.getDays().get(i)).add("morningfloor_yellow");
+                            continue;
+                        }
+                        String[] partes = assignation.split("_");
+                        String tipo = partes[0].toLowerCase(Locale.ROOT);
+                        String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
+                        String identifier = (partes.length > 2 && tipo.equals("qx")) ? partes[2].toLowerCase(Locale.ROOT) : null;
+                        if (identifier != null) {
+                            if (!map.containsKey(personName)) {
+                                map.put(personName, new HashMap<>());
+                            }
+                            if (!map.get(personName).containsKey(weeklyDataDto.getDays().get(i))) {
+                                map.get(personName).put(weeklyDataDto.getDays().get(i), new ArrayList<>());
+                            }
+                            map.get(personName).get(weeklyDataDto.getDays().get(i)).add(String.format("morning%s_%s_%s", tipo, color, identifier));
+                        } else {
+                            if (!map.containsKey(personName)) {
+                                map.put(personName, new HashMap<>());
+                            }
+                            if (!map.get(personName).containsKey(weeklyDataDto.getDays().get(i))) {
+                                map.get(personName).put(weeklyDataDto.getDays().get(i), new ArrayList<>());
+                            }
+                            map.get(personName).get(weeklyDataDto.getDays().get(i)).add(String.format("morning%s_%s", tipo, color));
+                        }
+                    }
+                    i++;
+                }
+            }
+            if (weeklyAssignationsDto.getEveningAssignations() != null) {
+                int i = 0;
+                for (String assignation : weeklyAssignationsDto.getEveningAssignations()) {
+                    if (assignation != null) {
+                        String[] partes = assignation.split("_");
+                        String tipo = partes[0].toLowerCase(Locale.ROOT);
+                        String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
+                        String identifier = (partes.length > 2 && tipo.equals("qx")) ? partes[2].toLowerCase(Locale.ROOT) : null;
+                        if (identifier != null) {
+                            if (!map.containsKey(personName)) {
+                                map.put(personName, new HashMap<>());
+                            }
+                            if (!map.get(personName).containsKey(weeklyDataDto.getDays().get(i))) {
+                                map.get(personName).put(weeklyDataDto.getDays().get(i), new ArrayList<>());
+                            }
+                            map.get(personName).get(weeklyDataDto.getDays().get(i)).add(String.format("evening%s_%s_%s", tipo, color, identifier));
+                        } else {
+                            if (!map.containsKey(personName)) {
+                                map.put(personName, new HashMap<>());
+                            }
+                            if (!map.get(personName).containsKey(weeklyDataDto.getDays().get(i))) {
+                                map.get(personName).put(weeklyDataDto.getDays().get(i), new ArrayList<>());
+                            }
+                            map.get(personName).get(weeklyDataDto.getDays().get(i)).add(String.format("evening%s_%s", tipo, color));
+                        }
+                    }
+                    i++;
+                }
+            }
+        }
+        result.add(map);
+        return result;
     }
 }
