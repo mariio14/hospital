@@ -51,7 +51,7 @@ const monthlyPlanning = (state = initialState.monthlyPlanning, action) => {
 const monthlyPlanningList = (state = initialState.monthlyPlanningList, action) => {
     switch (action.type) {
         case actionTypes.MONTHLY_PLANNING_COMPLETED:
-            return action.weeklyPlanning;
+            return action.monthlyPlanning;
         case actionTypes.MONTHLY_CONFIRM_COMPLETED:
             return [];
         case actionTypes.CLEAR_MONTHLY_LIST:

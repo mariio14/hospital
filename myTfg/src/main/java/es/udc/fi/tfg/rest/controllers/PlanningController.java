@@ -214,7 +214,7 @@ public class PlanningController {
     public void saveMonthlyPlanning(@Validated @RequestBody MonthlyDataDto params)
             throws NoSolutionException, IOException, ClassNotFoundException, PlanningNotGeneratedException {
 
-        planningService.saveMonthInJson(params.getYear(), params.getMonth(), params.getMonthlyAssignationsDtos());
+        planningService.saveMonthInJson(params.getYear(), params.getMonth(), params.getMonthlyPlanningDtos());
     }
 
     @PostMapping("/saveYearly")

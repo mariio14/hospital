@@ -20,7 +20,7 @@ const AnnualPlanning = () => {
         assignations: Array(12).fill(null)
     }));
 
-    const [planningData, setPlanningData] = useState(annualPlanning ? annualPlanning : emptyPlanning);
+    const [planningData, setPlanningData] = useState(emptyPlanning);
     const [isExpanded, setIsExpanded] = useState(false);
     const [backendErrors, setBackendErrors] = useState(null);
      const [isLoading, setIsLoading] = useState(false);

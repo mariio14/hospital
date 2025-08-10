@@ -18,7 +18,7 @@ public class MonthlyPlanningConversor {
             for (Staff staff : staffList) {
                 Map<Integer, String> assignations = map.get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
                 if (assignations == null) {
-                    assignations = map.get(staff.getName().toLowerCase(Locale.ROOT));
+                    assignations = map.get(staff.getName());
                 }
                 list.add(toMonthlyPlanningDto(staff.getName(), assignations, numDays));
             }
@@ -32,7 +32,7 @@ public class MonthlyPlanningConversor {
         List<MonthlyResultDto> monthlyResultDtos = new ArrayList<>();
         for (Map<String, Map<Integer, String>> map : planningMap) {
             List<MonthlyPlanningDto> list = new ArrayList<>();
-            for (MonthlyAssignationsDto monthlyAssignationsDto : monthlyData.getMonthlyAssignationsDtos()) {
+            for (MonthlyAssignationsDto monthlyAssignationsDto : monthlyData.getMonthlyPlanningDtos()) {
                 Map<Integer, String> value = map.get(monthlyAssignationsDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
                 if (value == null) {
                     value = map.get(monthlyAssignationsDto.getName().toLowerCase(Locale.ROOT));

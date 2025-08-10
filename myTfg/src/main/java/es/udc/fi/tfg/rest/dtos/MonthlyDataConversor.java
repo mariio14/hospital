@@ -32,7 +32,7 @@ public class MonthlyDataConversor {
 
         boolean vacation = false;
         boolean notValid = false;
-        for (MonthlyAssignationsDto monthlyAssignationsDto : monthlyDataDto.getMonthlyAssignationsDtos()) {
+        for (MonthlyAssignationsDto monthlyAssignationsDto : monthlyDataDto.getMonthlyPlanningDtos()) {
             String personName = monthlyAssignationsDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT);
             clingoParams.append(String.format("person(%s). ", personName));
 

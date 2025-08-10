@@ -12,24 +12,35 @@ for arg in sys.argv[1:]:
     ctl.load(arg)
 ctl.ground([("base", [])])
 
-with ctl.solve(yield_=True) as handle:
-    assignments = {}
+solutions = []
 
+with ctl.solve(yield_=True) as handle:
     for model in handle:
+        assignments = {}
+
         for atom in model.symbols(atoms=True):
             if atom.name == "month_assign" and len(atom.arguments) == 3:
                 person = str(atom.arguments[0])
                 month = atom.arguments[1].number
                 turn = str(atom.arguments[2])
-                
+
                 if person not in assignments:
                     assignments[person] = {}
                 assignments[person][month] = turn
 
-ordered_assignments = OrderedDict(
-    sorted(
-        {person: OrderedDict(sorted(months.items())) for person, months in assignments.items()}.items()
-    )
-)
+        ordered_assignments = OrderedDict(
+            sorted(
+                {person: OrderedDict(sorted(months.items())) for person, months in assignments.items()}.items()
+            )
+        )
 
-print(json.dumps(ordered_assignments, indent=4))
+        cost = tuple(model.cost)  # Guardamos el coste como tupla
+        solutions.append((cost, ordered_assignments))
+
+# Ordenar por coste ascendente
+solutions.sort(key=lambda x: x[0])
+
+# Quedarse con las 5 mejores
+best_5 = [assignments for cost, assignments in solutions[:5]]
+
+print(json.dumps(best_5, indent=4))

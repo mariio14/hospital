@@ -134,7 +134,7 @@ public class WeeklyPlanningConversor {
                 }
             });
         }
-        return new WeeklyPlanningDto(name, CONSTANTS_MAP.get(service), list, eveningList);
+        return new WeeklyPlanningDto(name, service == null ? null : CONSTANTS_MAP.get(service), list, eveningList);
     }
 
     public static void changeColors(List<List<ActivityDto>> activities) {

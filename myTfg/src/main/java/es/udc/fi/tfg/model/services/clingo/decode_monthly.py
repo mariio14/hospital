@@ -9,21 +9,20 @@ if len(sys.argv) < 2:
 
 ctl = clingo.Control()
 
+# Si quieres permitir soluciones no óptimas, comenta la siguiente línea
 ctl.configuration.solve.opt_mode = "opt"
 
 for arg in sys.argv[1:]:
     ctl.load(arg)
 ctl.ground([("base", [])])
 
+solutions = []
+
 with ctl.solve(yield_=True) as handle:
-    optimal_model = None
     for model in handle:
-        optimal_model = model
+        assignments = {}
 
-    assignments = {}
-
-    if optimal_model:
-        for atom in optimal_model.symbols(shown=True):
+        for atom in model.symbols(shown=True):
             if atom.name == "day_assign" and len(atom.arguments) == 3:
                 person = str(atom.arguments[0])
                 day = atom.arguments[1].number
@@ -47,10 +46,19 @@ with ctl.solve(yield_=True) as handle:
                     assignments[person] = {}
                 assignments[person][day] = "v"
 
-ordered_assignments = OrderedDict(
-    sorted(
-        {person: OrderedDict(sorted(days.items())) for person, days in assignments.items()}.items()
-    )
-)
+        ordered_assignments = OrderedDict(
+            sorted(
+                {person: OrderedDict(sorted(days.items())) for person, days in assignments.items()}.items()
+            )
+        )
 
-print(json.dumps(ordered_assignments, indent=4))
+        cost = tuple(model.cost)  # Guardamos el coste para ordenar
+        solutions.append((cost, ordered_assignments))
+
+# Ordenar por coste ascendente
+solutions.sort(key=lambda x: x[0])
+
+# Quedarse con las 5 mejores
+best_5 = [assignments for cost, assignments in solutions[:5]]
+
+print(json.dumps(best_5, indent=4))

@@ -20,22 +20,21 @@ public class MonthlyDataDto {
 
     private List<Integer> festivos;
 
-    private List<MonthlyAssignationsDto> monthlyAssignationsDtos;
+    private List<MonthlyAssignationsDto> monthlyPlanningDtos;
 
     public MonthlyDataDto() {
     }
 
-    public MonthlyDataDto(String month, int numberOfDays, int numberOfDaysPrevMonth, List<MonthlyAssignationsDto> monthlyAssignationsDtos,
-                          List<Integer> weekends, List<Integer> festivos, int year, String firstDay, int firstFriday) {
+    public MonthlyDataDto(String month, int year, int numberOfDays, int numberOfDaysPrevMonth, String firstDay, int firstFriday, List<Integer> weekends, List<Integer> festivos, List<MonthlyAssignationsDto> monthlyPlanningDtos) {
         this.month = month;
+        this.year = year;
         this.numberOfDays = numberOfDays;
         this.numberOfDaysPrevMonth = numberOfDaysPrevMonth;
-        this.monthlyAssignationsDtos = monthlyAssignationsDtos;
-        this.weekends = weekends;
-        this.festivos = festivos;
-        this.year = year;
         this.firstDay = firstDay;
         this.firstFriday = firstFriday;
+        this.weekends = weekends;
+        this.festivos = festivos;
+        this.monthlyPlanningDtos = monthlyPlanningDtos;
     }
 
     public String getMonth() {
@@ -54,12 +53,12 @@ public class MonthlyDataDto {
         this.numberOfDays = numberOfDays;
     }
 
-    public List<MonthlyAssignationsDto> getMonthlyAssignationsDtos() {
-        return monthlyAssignationsDtos;
+    public List<MonthlyAssignationsDto> getMonthlyPlanningDtos() {
+        return monthlyPlanningDtos;
     }
 
-    public void setMonthlyAssignationsDtos(List<MonthlyAssignationsDto> monthlyAssignationsDtos) {
-        this.monthlyAssignationsDtos = monthlyAssignationsDtos;
+    public void setMonthlyPlanningDtos(List<MonthlyAssignationsDto> monthlyPlanningDtos) {
+        this.monthlyPlanningDtos = monthlyPlanningDtos;
     }
 
     public int getNumberOfDaysPrevMonth() {

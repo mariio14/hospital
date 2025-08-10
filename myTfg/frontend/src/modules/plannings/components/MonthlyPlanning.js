@@ -291,7 +291,7 @@ const MonthlyPlanning = () => {
     console.log(planningData);
 
     const convertedPlanningData = {
-        monthlyAssignationsDtos: planningData.monthlyPlanningDtos.map(person => {
+        monthlyPlanningDtos: planningData.monthlyPlanningDtos.map(person => {
             const staffMember = staffList.find(staff => staff.name.toLowerCase() === person.name.toLowerCase());
 
             return {
@@ -327,10 +327,9 @@ const MonthlyPlanning = () => {
     while (new Date(year, month - 1, firstFriday).getDay() !== 5) {
         firstFriday++;
     }
-    console.log(planningData);
 
     const convertedPlanningData = {
-        monthlyAssignationsDtos: planningData.monthlyPlanningDtos.map(person => {
+        monthlyPlanningDtos: planningData.monthlyPlanningDtos.map(person => {
             const staffMember = staffList.find(staff => staff.name.toLowerCase() === person.name.toLowerCase());
 
             return {
