@@ -14,11 +14,14 @@ const AnnualPlanning = () => {
     const annualPlanningList = useSelector(selectors.getAnnualPlanningList);
     const staffList = useSelector(staffSelectors.getStaffList);
 
-    const emptyPlanning = staffList.map(person => ({
-        name: person.name,
-        level: `R${person.level}`,
-        assignations: Array(12).fill(null)
-    }));
+    const emptyPlanning = {
+      assignations: staffList.map(person => ({
+            name: person.name,
+            level: `R${person.level}`,
+            assignations: Array(12).fill(null)
+          })),
+      complete: false
+    }
 
     const [planningData, setPlanningData] = useState(emptyPlanning);
     const [isExpanded, setIsExpanded] = useState(false);
@@ -61,10 +64,12 @@ const AnnualPlanning = () => {
     const handleGeneratePlanning = () => {
         setBackendErrors(null);
         setIsLoading(true);
-        const convertedPlanningData = planningData.map(person => ({
-            ...person,
-            assignations: Object.values(person.assignations)
-        }));
+        const convertedPlanningData = {
+            assignations : planningData.assignations.map(person => ({
+                ...person,
+                assignations: Object.values(person.assignations)
+            }))
+        }
 
         dispatch(actions.getAnnualPlanning(
             convertedPlanningData,
@@ -78,10 +83,13 @@ const AnnualPlanning = () => {
 
     const handleConfirmPlanning = () => {
       setBackendErrors(null);
-      const convertedPlanningData = planningData.map(person => ({
+      const convertedPlanningData = {
+        assignations: planningData.assignations.map(person => ({
           ...person,
           assignations: Object.values(person.assignations)
-      }));
+        })),
+        complete: true
+      }
       dispatch(actions.saveYearlyPlanning(convertedPlanningData, year,
         (errorPayload) => {
         const message = errorPayload?.globalError || "Ha ocurrido un error";
@@ -91,10 +99,12 @@ const AnnualPlanning = () => {
     };
 
     useEffect(() => {
-        const convertedPlanningData = planningData.map(person => ({
+        const convertedPlanningData = {
+            assignations: planningData.assignations.map(person => ({
                 ...person,
                 assignations: Object.values(person.assignations)
-            }));
+            }))
+        }
         dispatch(actions.getSavedAnnualPlanning(
             convertedPlanningData,
             year,
@@ -132,31 +142,62 @@ const AnnualPlanning = () => {
     const activities = Object.keys(colorMap);
 
     const handleSelectChange = (personName, month, value) => {
-        const updatedPlanning = planningData.map((person) => {
+      setPlanningData((prevPlanning) => {
+        const updatedPlanning = {
+          ...prevPlanning,
+          assignations: prevPlanning.assignations.map((person) => {
             if (person.name === personName) {
-                return {
-                    ...person,
-                    assignations: Object.keys(person.assignations).reduce((acc, key) => {
-                        // Si la clave corresponde al mes, actualizamos el valor
-                        if (months[key] === month) {
-                            acc[key] = value === "-" ? null : value;
-                        } else {
-                            acc[key] = person.assignations[key]; // Mantenemos el valor actual para otras claves
-                        }
-                        return acc;
-                    }, {})
-                };
+              return {
+                ...person,
+                assignations: Object.keys(person.assignations).reduce((acc, key) => {
+                  if (months[key] === month) {
+                    acc[key] = value === "-" ? null : value;
+                  } else {
+                    acc[key] = person.assignations[key];
+                  }
+                  return acc;
+                }, Array.isArray(person.assignations) ? [] : {}), // soporta array u objeto
+              };
             }
             return person;
-        });
-        setPlanningData(updatedPlanning);
+          }),
+        };
+
+        if (updatedPlanning.complete) {
+            setIsLoading(true);
+            setBackendErrors(null);
+            const convertedPlanningData = {
+                assignations : updatedPlanning.assignations.map(person => ({
+                    ...person,
+                    assignations: Object.values(person.assignations)
+                })),
+                complete: true
+            }
+
+            dispatch(actions.checkAnnualPlanning(
+                convertedPlanningData,
+                year,
+                () => {
+                  setBackendErrors(null);
+                  setIsLoading(false);
+                }, (errorPayload) => {
+                  const message = errorPayload?.globalError || "Ha ocurrido un error";
+                  setBackendErrors(message);
+                  setIsLoading(false);
+                })
+            );
+        }
+
+
+        return updatedPlanning;
+      });
     };
 
     const exportToPDF = () => {
         const doc = new jsPDF({ orientation: "landscape" });
         doc.text("Planificación Anual", 10, 10);
 
-        const tableData = (annualPlanning ? annualPlanning : planningData).map((person) => {
+        const tableData = (annualPlanning ? annualPlanning : planningData).assignations.map((person) => {
             const assignations = person.assignations || {};
             const assignationsList = months.map((_, index) => {
                 const value = assignations[index.toString()];
@@ -353,7 +394,7 @@ const AnnualPlanning = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {planningData.map((person) => (
+                                    {planningData.assignations.map((person) => (
                                         <tr
                                             key={person.name}
                                             style={{

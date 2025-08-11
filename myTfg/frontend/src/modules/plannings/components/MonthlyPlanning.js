@@ -52,7 +52,8 @@ const MonthlyPlanning = () => {
       level: `R${person.level}`,
       assignations: Array(daysInMonth).fill(null),
       notValidAssignations: Array(daysInMonth).fill([])
-    }))
+    })),
+    complete: false
   };
 
   useEffect(() => {
@@ -131,19 +132,64 @@ const MonthlyPlanning = () => {
   const activities_real = activities;
 
   const handleSelectChange = (personName, dayIndex, value) => {
-    setPlanningData((prevPlanning) => ({
-      ...month,
-      monthlyPlanningDtos: prevPlanning.monthlyPlanningDtos.map((person) =>
-        person.name === personName
-          ? {
-              ...person,
-              assignations: person.assignations.map((shift, index) =>
-                index === dayIndex ? (value === "-" ? null : value) : shift
-              ),
-            }
-          : person
-      ),
-    }));
+    setPlanningData((prevPlanning) => {
+      const updatedData = {
+        ...prevPlanning,
+        monthlyPlanningDtos: prevPlanning.monthlyPlanningDtos.map((person) =>
+          person.name === personName
+            ? {
+                ...person,
+                assignations: person.assignations.map((shift, index) =>
+                  index === dayIndex ? (value === "-" ? null : value) : shift
+                ),
+              }
+            : person
+        ),
+      };
+
+      if (updatedData.complete) {
+        setIsLoading(true);
+        setBackendErrors(null);
+        let firstFriday = 1;
+        while (new Date(year, month - 1, firstFriday).getDay() !== 5) {
+            firstFriday++;
+        }
+
+        const convertedPlanningData = {
+            monthlyPlanningDtos: updatedData.monthlyPlanningDtos.map(person => {
+                const staffMember = staffList.find(staff => staff.name.toLowerCase() === person.name.toLowerCase());
+
+                return {
+                    ...person,
+                    assignations: Object.values(person.assignations),
+                    notValidAssignations: Object.values(person.notValidAssignations),
+                    level: staffMember ? staffMember.level : null
+                };
+            }),
+            numberOfDays: daysInMonth,
+            numberOfDaysPrevMonth: daysInPrevMonth,
+            month: getMonthName(month),
+            year: year,
+            firstDay: getDayOfWeek(1,month,year),
+            firstFriday: firstFriday,
+            weekends: [],
+            festivos: [],
+            complete: true
+        }
+
+        dispatch(actions.checkMonthlyPlanning(updatedData,
+            () => {
+              setBackendErrors(null);
+              setIsLoading(false);
+            }, (errorPayload) => {
+              const message = errorPayload?.globalError || "Ha ocurrido un error";
+              setBackendErrors(message);
+              setIsLoading(false);
+            })
+          );
+      }
+      return updatedData;
+    });
   };
 
   const toggleNotValidActivity = (personName, dayIndex, activity) => {
@@ -288,7 +334,6 @@ const MonthlyPlanning = () => {
     while (new Date(year, month - 1, firstFriday).getDay() !== 5) {
         firstFriday++;
     }
-    console.log(planningData);
 
     const convertedPlanningData = {
         monthlyPlanningDtos: planningData.monthlyPlanningDtos.map(person => {
@@ -346,7 +391,8 @@ const MonthlyPlanning = () => {
         firstDay: getDayOfWeek(1,month,year),
         firstFriday: firstFriday,
         weekends: [],
-        festivos: []
+        festivos: [],
+        complete: true
     }
     dispatch(actions.saveMonthlyPlanning(convertedPlanningData, (errorPayload) => {
       const message = errorPayload?.globalError || "Ha ocurrido un error";
@@ -411,6 +457,7 @@ const MonthlyPlanning = () => {
   const handleClearPlanning = () => {
     setBackendErrors(null);
     setPlanningData(emptyPlanning);
+    dispatch(actions.getMonthlyClear(emptyPlanning));
   };
 
   const handleMonthChange = (event) => {

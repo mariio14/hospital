@@ -1,0 +1,75 @@
+{
+  "2025" : {
+    "Agosto" : {
+      "2" : [ {
+        "brais" : { },
+        "clara" : {
+          "11" : [ "morningfloor_blue" ]
+        },
+        "pablo" : {
+          "13" : [ "morningfloor_blue" ],
+          "15" : [ "morningfloor_blue" ]
+        },
+        "marta" : {
+          "11" : [ "morningfloor_red" ],
+          "12" : [ "morningfloor_red" ],
+          "13" : [ "morningfloor_red" ],
+          "14" : [ "morningfloor_red" ],
+          "15" : [ "morningfloor_red" ]
+        },
+        "jose" : {
+          "13" : [ "morningfloor_yellow" ]
+        },
+        "mario" : {
+          "12" : [ "morningfloor_blue" ],
+          "14" : [ "morningfloor_blue" ]
+        },
+        "esther" : { },
+        "laura" : { },
+        "elena" : { },
+        "andrea" : { },
+        "sandra" : { },
+        "pedro" : { },
+        "julia" : { },
+        "javier" : {
+          "11" : [ "morningfloor_yellow" ],
+          "12" : [ "morningfloor_yellow" ],
+          "14" : [ "morningfloor_yellow" ],
+          "15" : [ "morningfloor_yellow" ]
+        },
+        "pepe" : { }
+      } ],
+      "1" : [ {
+        "clara" : {
+          "4" : [ "morningfloor_blue" ],
+          "6" : [ "morningfloor_blue" ]
+        },
+        "pablo" : {
+          "7" : [ "morningfloor_blue" ],
+          "8" : [ "morningfloor_blue" ]
+        },
+        "julia" : {
+          "4" : [ "morningfloor_red" ],
+          "6" : [ "morningfloor_red" ],
+          "7" : [ "morningfloor_red" ],
+          "8" : [ "morningfloor_red" ]
+        },
+        "marta" : {
+          "5" : [ "morningfloor_red" ]
+        },
+        "jose" : {
+          "5" : [ "morningfloor_yellow" ],
+          "6" : [ "morningfloor_yellow" ],
+          "8" : [ "morningfloor_yellow" ]
+        },
+        "javier" : {
+          "4" : [ "morningfloor_yellow" ],
+          "7" : [ "morningfloor_yellow" ]
+        },
+        "mario" : {
+          "5" : [ "morningfloor_blue" ]
+        }
+      } ]
+    }
+  }
+}

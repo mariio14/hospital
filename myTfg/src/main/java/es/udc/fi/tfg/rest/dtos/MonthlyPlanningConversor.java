@@ -22,7 +22,7 @@ public class MonthlyPlanningConversor {
                 }
                 list.add(toMonthlyPlanningDto(staff.getName(), assignations, numDays));
             }
-            monthlyResultDtos.add(new MonthlyResultDto(month, list));
+            monthlyResultDtos.add(new MonthlyResultDto(month, list, true));
         }
         return monthlyResultDtos;
     }
@@ -39,7 +39,7 @@ public class MonthlyPlanningConversor {
                 }
                 list.add(toMonthlyPlanningDto(monthlyAssignationsDto.getName(), value, monthlyData.getNumberOfDays()));
             }
-            monthlyResultDtos.add(new MonthlyResultDto(monthlyData.getMonth(), list));
+            monthlyResultDtos.add(new MonthlyResultDto(monthlyData.getMonth(), list, true));
         }
         return monthlyResultDtos;
     }

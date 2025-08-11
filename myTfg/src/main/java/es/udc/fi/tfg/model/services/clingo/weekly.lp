@@ -91,7 +91,7 @@ color_floor_assigned(C,D) :- day_assign(P,D,floor,C,_,_), person(P), month_assig
 :- day_assign(P,D,_,_,evening,_), day_assign_from_month(P,D,e).
 :- day_assign(P,D,_,_,evening,_), day_assign_from_month(P,D,i).
 % SemanalR_18
-:- day_assign(P,D,_,_,evening,_), prev_day(D,D'), day_assign_guard_from_month(P,D').
+:- day_assign(P,D,_,_,_,_), prev_day(D,D'), day_assign_guard_from_month(P,D').
 
 % SemanalP_21
 #minimize { V,P,D :

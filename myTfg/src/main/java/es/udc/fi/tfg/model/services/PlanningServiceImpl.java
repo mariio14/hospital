@@ -9,10 +9,7 @@ import es.udc.fi.tfg.model.entities.ActivityAndPlanning;
 import es.udc.fi.tfg.model.entities.Staff;
 import es.udc.fi.tfg.model.services.exceptions.NoSolutionException;
 import es.udc.fi.tfg.model.services.exceptions.PlanningNotGeneratedException;
-import es.udc.fi.tfg.rest.dtos.ActivityDto;
-import es.udc.fi.tfg.rest.dtos.AnnualPlanningDataDto;
-import es.udc.fi.tfg.rest.dtos.MonthlyAssignationsDto;
-import es.udc.fi.tfg.rest.dtos.WeeklyAssignationsDto;
+import es.udc.fi.tfg.rest.dtos.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -399,14 +396,14 @@ public class PlanningServiceImpl implements PlanningService {
         }
 
         result.add(monthMap);
-        saveMonthToJsonFile(result, "/solution_yearly.json", month, year);
+        saveMonthToJsonFile(result, "/solutionMonthly.json", month, year);
     }
 
     @Override
-    public void saveYearInJson(int year, List<AnnualPlanningDataDto> planning) {
+    public void saveYearInJson(int year, AnnualDataDto planning) {
         List<Map<String, Map<Integer, String>>> result = new ArrayList<>();
         Map<String, Map<Integer, String>> yearMap = new HashMap<>();
-        for (AnnualPlanningDataDto annualPlanningDataDto : planning) {
+        for (AnnualPlanningDataDto annualPlanningDataDto : planning.getAssignations()) {
             String name = annualPlanningDataDto.getName().toLowerCase(Locale.ROOT);
             Map<Integer, String> assignationsMap = new HashMap<>();
             int i = 1;

@@ -99,7 +99,7 @@ public class PlanningController {
     }
 
     @PostMapping("/annual")
-    public List<List<AnnualPlanningDto>> annualPlanning(@Validated @RequestBody List<AnnualPlanningDataDto> params, @RequestParam int year)
+    public List<AnnualResultDto> annualPlanning(@Validated @RequestBody AnnualDataDto params, @RequestParam int year)
             throws NoSolutionException, IOException, ClassNotFoundException {
 
         List<Priority> costs = prioritiesService.getPriorities().get("Anual");
@@ -111,7 +111,7 @@ public class PlanningController {
     }
 
     @PostMapping("/savedYearly")
-    public List<List<AnnualPlanningDto>> getAnnualPlanning(@RequestParam int year, @Validated @RequestBody List<AnnualPlanningDataDto> params)
+    public List<AnnualResultDto> getAnnualPlanning(@RequestParam int year, @Validated @RequestBody AnnualDataDto params)
             throws NoSolutionException, IOException, ClassNotFoundException, PlanningNotGeneratedException {
 
         List<Map<String, Map<Integer, String>>> annualPlanning = planningService.getYearFromJson(year, false);
@@ -218,14 +218,14 @@ public class PlanningController {
     }
 
     @PostMapping("/saveYearly")
-    public void saveYearlyPlanning(@Validated @RequestBody List<AnnualPlanningDataDto> params, @RequestParam int year)
+    public void saveYearlyPlanning(@Validated @RequestBody AnnualDataDto params, @RequestParam int year)
             throws NoSolutionException, IOException, ClassNotFoundException, PlanningNotGeneratedException {
 
         planningService.saveYearInJson(year, params);
     }
 
     @PostMapping("/checkAnnual")
-    public void checkAnnualPlanning(@Validated @RequestBody List<AnnualPlanningDataDto> params, @RequestParam int year)
+    public void checkAnnualPlanning(@Validated @RequestBody AnnualDataDto params, @RequestParam int year)
             throws NoSolutionException, IOException, ClassNotFoundException {
         try {
             List<Priority> costs = prioritiesService.getPriorities().get("Anual");

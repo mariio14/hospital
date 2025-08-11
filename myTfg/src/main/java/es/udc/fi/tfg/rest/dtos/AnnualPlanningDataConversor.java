@@ -23,10 +23,10 @@ public class AnnualPlanningDataConversor {
             Map.entry("nutrition", "NUTRI")
     );
 
-    public static String toClingoParams(List<AnnualPlanningDataDto> annualPlanningList, List<Priority> costs) {
+    public static String toClingoParams(AnnualDataDto annualPlanningList, List<Priority> costs) {
         StringBuilder clingoParams = new StringBuilder();
 
-        for (AnnualPlanningDataDto annualPlanningDto : annualPlanningList) {
+        for (AnnualPlanningDataDto annualPlanningDto : annualPlanningList.getAssignations()) {
             String personName = annualPlanningDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT);
             clingoParams.append(String.format("person(%s). ", personName));
 
@@ -56,10 +56,10 @@ public class AnnualPlanningDataConversor {
         return clingoParams.toString();
     }
 
-    public static List<Map<String, Map<Integer, String>>> toMap(List<AnnualPlanningDataDto> params) {
+    public static List<Map<String, Map<Integer, String>>> toMap(AnnualDataDto params) {
         List<Map<String, Map<Integer, String>>> result = new ArrayList<>();
         Map<String, Map<Integer, String>> map = new HashMap<>();
-        for (AnnualPlanningDataDto annualPlanningDataDto : params) {
+        for (AnnualPlanningDataDto annualPlanningDataDto : params.getAssignations()) {
             String personName = annualPlanningDataDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT);
             Map<Integer, String> assignationsMap = new HashMap<>();
             List<String> assignations = annualPlanningDataDto.getAssignations();

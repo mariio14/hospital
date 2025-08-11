@@ -207,19 +207,26 @@ const WeeklyPlanning = () => {
 
   const handleClearPlanning = () => {
     setBackendErrors(null);
+
     const updatedDtos = emptyPlanning.weeklyPlanningDtos.map((emptyPerson) => {
-      const currentPerson = planningData.weeklyPlanningDtos.find(p => p.name === emptyPerson.name);
+      const currentPerson = planningData.weeklyPlanningDtos.find(
+        (p) => p.name === emptyPerson.name
+      );
       return {
         ...emptyPerson,
-        color: currentPerson?.color || null
+        color: currentPerson?.color || null,
       };
     });
 
-    setPlanningData({
+    const updatedData = {
       ...emptyPlanning,
-      weeklyPlanningDtos: updatedDtos
-    });
-    dispatch(actions.getWeeklyClear(planningData));
+      weeklyPlanningDtos: updatedDtos,
+      complete: false,
+    };
+
+    setPlanningData(updatedData);
+
+    dispatch(actions.getWeeklyClear(updatedData));
   };
 
   const exportToPDF = () => {
@@ -279,7 +286,8 @@ const WeeklyPlanning = () => {
         month: months[month],
         year,
         days: days.map(d => d.getDate()),
-        activities: planningData.activities
+        activities: planningData.activities,
+        complete: planningData.complete
       };
       dispatch(actions.saveWeeklyPlanning(dataToSend, (errorPayload) => {
         const message = errorPayload?.globalError || "Ha ocurrido un error";
@@ -387,22 +395,68 @@ const WeeklyPlanning = () => {
     } else {
       activityWithColor = `${activityType}${color ? `_${color}` : "_null"}${id ? `_${id}` : ""}`;
     }
-    setPlanningData((prev) => ({
-      ...prev,
-      weeklyPlanningDtos: prev.weeklyPlanningDtos.map((p) =>
-        p.name === personName
-          ? {
+
+    setPlanningData((prev) => {
+      const updatedData = {
+        ...prev,
+        weeklyPlanningDtos: prev.weeklyPlanningDtos.map((p) =>
+          p.name === personName
+            ? {
+                ...p,
+                assignations:
+                  time === "morning"
+                    ? p.assignations.map((a, i) =>
+                        i === dayIndex ? activityWithColor : a
+                      )
+                    : p.assignations,
+                eveningAssignations:
+                  time === "evening"
+                    ? (p.eveningAssignations || []).map((a, i) =>
+                        i === dayIndex ? activityWithColor : a
+                      )
+                    : p.eveningAssignations || [],
+              }
+            : p
+        ),
+      };
+
+      if (updatedData.complete) {
+        setIsLoading(true);
+        setBackendErrors(null);
+        const dataToSend = {
+          weeklyPlanningDtos: updatedData.weeklyPlanningDtos.map((p) => {
+            const staffMember = staffList.find(
+              (staff) => staff.name.toLowerCase() === p.name.toLowerCase()
+            );
+            return {
               ...p,
-              assignations: time === "morning"
-                ? p.assignations.map((a, i) => i === dayIndex ? activityWithColor : a)
-                : p.assignations,
-              eveningAssignations: time === "evening"
-                ? (p.eveningAssignations || []).map((a, i) => i === dayIndex ? activityWithColor : a)
-                : p.eveningAssignations || [],
-            }
-          : p
-      ),
-    }));
+              level: staffMember ? staffMember.level : null,
+              assignations: [...p.assignations],
+            };
+          }),
+          week: weekInMonth + 1,
+          month: months[month],
+          year,
+          days: days.map((d) => d.getDate()),
+          activities: updatedData.activities,
+          complete: true,
+        };
+        dispatch(
+          actions.checkWeeklyPlanning(dataToSend,
+          () => {
+            setBackendErrors(null);
+            setIsLoading(false);
+          }, (errorPayload) => {
+            const message = errorPayload?.globalError || "Ha ocurrido un error";
+            setBackendErrors(message);
+            setIsLoading(false);
+          })
+        );
+      }
+
+      return updatedData;
+    });
+
     setEditingSlot({ personName: null, dayIndex: null, time: null });
   };
 
@@ -526,6 +580,7 @@ const WeeklyPlanning = () => {
             )}
 
           </div>
+          {isLoading && <div className="loader"></div>}
           {backendErrors ? <p style={{ color: 'red', textAlign: 'center', marginTop: '30px', marginBottom: '20px' }}>{backendErrors}</p> : null}
           <div className="overflow-auto">
             <table className="w-full text-sm text-center border">

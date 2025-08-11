@@ -8,12 +8,15 @@ public class MonthlyResultDto {
 
     private List<MonthlyPlanningDto> monthlyPlanningDtos;
 
+    private Boolean complete;
+
     public MonthlyResultDto() {
     }
 
-    public MonthlyResultDto(String month, List<MonthlyPlanningDto> monthlyPlanningDtos) {
+    public MonthlyResultDto(String month, List<MonthlyPlanningDto> monthlyPlanningDtos, Boolean complete) {
         this.month = month;
         this.monthlyPlanningDtos = monthlyPlanningDtos;
+        this.complete = complete;
     }
 
     public String getMonth() {
@@ -30,5 +33,13 @@ public class MonthlyResultDto {
 
     public void setMonthlyPlanningDtos(List<MonthlyPlanningDto> monthlyPlanningDtos) {
         this.monthlyPlanningDtos = monthlyPlanningDtos;
+    }
+
+    public Boolean getComplete() {
+        return complete;
+    }
+
+    public void setComplete(Boolean complete) {
+        this.complete = complete;
     }
 }

@@ -22,19 +22,9 @@ public class MonthlyDataDto {
 
     private List<MonthlyAssignationsDto> monthlyPlanningDtos;
 
-    public MonthlyDataDto() {
-    }
+    private Boolean complete;
 
-    public MonthlyDataDto(String month, int year, int numberOfDays, int numberOfDaysPrevMonth, String firstDay, int firstFriday, List<Integer> weekends, List<Integer> festivos, List<MonthlyAssignationsDto> monthlyPlanningDtos) {
-        this.month = month;
-        this.year = year;
-        this.numberOfDays = numberOfDays;
-        this.numberOfDaysPrevMonth = numberOfDaysPrevMonth;
-        this.firstDay = firstDay;
-        this.firstFriday = firstFriday;
-        this.weekends = weekends;
-        this.festivos = festivos;
-        this.monthlyPlanningDtos = monthlyPlanningDtos;
+    public MonthlyDataDto() {
     }
 
     public String getMonth() {
@@ -107,5 +97,13 @@ public class MonthlyDataDto {
 
     public void setFirstFriday(int firstFriday) {
         this.firstFriday = firstFriday;
+    }
+
+    public Boolean getComplete() {
+        return complete;
+    }
+
+    public void setComplete(Boolean complete) {
+        this.complete = complete;
     }
 }

@@ -3,10 +3,7 @@ package es.udc.fi.tfg.model.services;
 import es.udc.fi.tfg.model.entities.ActivityAndPlanning;
 import es.udc.fi.tfg.model.services.exceptions.NoSolutionException;
 import es.udc.fi.tfg.model.services.exceptions.PlanningNotGeneratedException;
-import es.udc.fi.tfg.rest.dtos.ActivityDto;
-import es.udc.fi.tfg.rest.dtos.AnnualPlanningDataDto;
-import es.udc.fi.tfg.rest.dtos.MonthlyAssignationsDto;
-import es.udc.fi.tfg.rest.dtos.WeeklyAssignationsDto;
+import es.udc.fi.tfg.rest.dtos.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,7 +28,7 @@ public interface PlanningService {
 
     void saveMonthInJson(int year, String month, List<MonthlyAssignationsDto> planning) throws IOException, ClassNotFoundException, PlanningNotGeneratedException;
 
-    void saveYearInJson(int year, List<AnnualPlanningDataDto> planning) throws IOException, ClassNotFoundException, PlanningNotGeneratedException;
+    void saveYearInJson(int year, AnnualDataDto planning) throws IOException, ClassNotFoundException, PlanningNotGeneratedException;
 
     void checkAnnualPlanning(String params, int year, List<Map<String, Map<Integer, String>>> map) throws NoSolutionException;
 

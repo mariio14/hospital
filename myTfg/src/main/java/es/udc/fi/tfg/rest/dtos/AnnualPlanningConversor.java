@@ -24,16 +24,16 @@ public class AnnualPlanningConversor {
             Map.entry("nutrition", "NUTRI")
     );
 
-    public static List<List<AnnualPlanningDto>> toAnnualPlanningDtos(List<Map<String, Map<Integer, String>>> planningMap,
-                    List<AnnualPlanningDataDto> params) {
-        List<List<AnnualPlanningDto>> result = new ArrayList<>();
+    public static List<AnnualResultDto> toAnnualPlanningDtos(List<Map<String, Map<Integer, String>>> planningMap,
+                    AnnualDataDto params) {
+        List<AnnualResultDto> result = new ArrayList<>();
         for (Map<String, Map<Integer, String>> map : planningMap) {
             List<AnnualPlanningDto> list = new ArrayList<>();
-            for (AnnualPlanningDataDto annualPlanningDataDto : params) {
+            for (AnnualPlanningDataDto annualPlanningDataDto : params.getAssignations()) {
                 Map<Integer, String> value = map.get(annualPlanningDataDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
                 list.add(new AnnualPlanningDto(annualPlanningDataDto.getName(), annualPlanningDataDto.getLevel(), transformTasksMap(value)));
             }
-            result.add(list);
+            result.add(new AnnualResultDto(list,true));
         }
         return result;
     }
@@ -46,19 +46,5 @@ public class AnnualPlanningConversor {
             result.put(e.getKey()-1, transformed);
         }
         return result;
-    }
-
-    private static boolean isNull(List<AnnualPlanningDto> list) {
-        if (list == null || list.isEmpty()) {
-            return true;
-        }
-        for (AnnualPlanningDto dto : list) {
-            for (Map.Entry<Integer,String> map : dto.getAssignations().entrySet()) {
-                if (map.getValue() != null) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 }
