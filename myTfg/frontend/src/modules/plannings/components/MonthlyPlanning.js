@@ -35,6 +35,7 @@ const MonthlyPlanning = () => {
   const [rightClickData, setRightClickData] = useState(null);
   const prohibitedMenuRef = useRef(null);
   const [activePlanningIndex, setActivePlanningIndex] = useState(0);
+  const [draggedCell, setDraggedCell] = useState(null);
 
 
   const getMonthName = (month) => {
@@ -190,6 +191,88 @@ const MonthlyPlanning = () => {
       }
       return updatedData;
     });
+  };
+
+  const handleDragStart = (personName, monthIndex) => {
+    setDraggedCell({ personName, monthIndex });
+  };
+
+  const handleDrop = (targetPersonName, targetMonthIndex) => {
+    if (!draggedCell) return;
+
+    setPlanningData((prevPlanning) => {
+      const updated = {
+        ...prevPlanning,
+        monthlyPlanningDtos: prevPlanning.monthlyPlanningDtos.map((person) => ({
+          ...person,
+          notValidAssignations: {...person.notValidAssignations},
+          assignations: {...person.assignations}
+        })),
+      };
+
+      const sourcePersonIndex = updated.monthlyPlanningDtos.findIndex(
+        (p) => p.name === draggedCell.personName
+      );
+      const targetPersonIndex = updated.monthlyPlanningDtos.findIndex(
+        (p) => p.name === targetPersonName
+      );
+
+      const sourceValue = updated.monthlyPlanningDtos[sourcePersonIndex].assignations[draggedCell.monthIndex];
+      const targetValue = updated.monthlyPlanningDtos[targetPersonIndex].assignations[targetMonthIndex];
+
+      updated.monthlyPlanningDtos[sourcePersonIndex].assignations[draggedCell.monthIndex] = targetValue;
+      updated.monthlyPlanningDtos[targetPersonIndex].assignations[targetMonthIndex] = sourceValue;
+
+      if (updated.complete) {
+          setIsLoading(true);
+          setBackendErrors(null);
+          let firstFriday = 1;
+          while (new Date(year, month - 1, firstFriday).getDay() !== 5) {
+              firstFriday++;
+          }
+
+          const convertedPlanningData = {
+              monthlyPlanningDtos: updated.monthlyPlanningDtos.map(person => {
+                  const staffMember = staffList.find(staff => staff.name.toLowerCase() === person.name.toLowerCase());
+
+                  return {
+                      ...person,
+                      assignations: Object.values(person.assignations),
+                      notValidAssignations: Object.values(person.notValidAssignations),
+                      level: staffMember ? staffMember.level : null
+                  };
+              }),
+              numberOfDays: daysInMonth,
+              numberOfDaysPrevMonth: daysInPrevMonth,
+              month: getMonthName(month),
+              year: year,
+              firstDay: getDayOfWeek(1,month,year),
+              firstFriday: firstFriday,
+              weekends: [],
+              festivos: [],
+              complete: true
+          }
+
+          dispatch(actions.checkMonthlyPlanning(convertedPlanningData,
+              () => {
+                setBackendErrors(null);
+                setIsLoading(false);
+              }, (errorPayload) => {
+                const message = errorPayload?.globalError || "Ha ocurrido un error";
+                setBackendErrors(message);
+                setIsLoading(false);
+              })
+            );
+        }
+
+      return updated;
+    });
+
+    setDraggedCell(null);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault(); // Necesario para permitir el drop
   };
 
   const toggleNotValidActivity = (personName, dayIndex, activity) => {
@@ -691,9 +774,14 @@ const MonthlyPlanning = () => {
                                 color: "#000",
                                 textAlign: "center",
                                 fontWeight: "bold",
+                                cursor: "grab",
                               }}
                               onContextMenu={(e) => handleRightClick(e, person.name, Number(dayIndex))}
                               title={activity || "Sin asignación"}
+                              draggable
+                              onDragStart={() => handleDragStart(person.name, dayIndex)}
+                              onDrop={() => handleDrop(person.name, dayIndex)}
+                              onDragOver={handleDragOver}
                             >
                               {rightClickData && (
                                 <div

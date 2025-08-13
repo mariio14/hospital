@@ -16,7 +16,7 @@ public class MonthlyDataDto {
 
     private int firstFriday;
 
-    private List<Integer> weekends;  // quitar?
+    private List<Integer> weekends;
 
     private List<Integer> festivos;
 

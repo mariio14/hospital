@@ -70,6 +70,7 @@ const WeeklyPlanning = () => {
   const [month, setMonth] = useState(new Date().getMonth());
   const [weekInMonth, setWeekInMonth] = useState(0);
   const [activePlanningIndex, setActivePlanningIndex] = useState(0);
+  const [draggedCell, setDraggedCell] = useState(null);
 
   useEffect(() => {
     if (weeklyPlanningList && weeklyPlanningList.length > 0) {
@@ -178,15 +179,80 @@ const WeeklyPlanning = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleSelectChange = (personName, dayIndex, value) => {
-    setPlanningData((prev) => ({
-      ...prev,
-      weeklyPlanningDtos: prev.weeklyPlanningDtos.map((p) =>
-        p.name === personName
-          ? { ...p, assignations: p.assignations.map((a, i) => i === dayIndex ? (value === "-" ? null : value) : a) }
-          : p
-      )
-    }));
+  const handleDragStart = (personName, monthIndex) => {
+    setDraggedCell({ personName, monthIndex });
+  };
+
+  const handleDrop = (targetPersonName, targetMonthIndex) => {
+    if (!draggedCell) return;
+
+    setPlanningData((prevPlanning) => {
+      console.log(prevPlanning);
+      const updated = {
+        ...prevPlanning,
+        weeklyPlanningDtos: prevPlanning.weeklyPlanningDtos.map((person) => ({
+          ...person,
+          assignations: [...person.assignations]
+        }))
+      };
+
+      const sourcePersonIndex = updated.weeklyPlanningDtos.findIndex(
+        (p) => p.name === draggedCell.personName
+      );
+      const targetPersonIndex = updated.weeklyPlanningDtos.findIndex(
+        (p) => p.name === targetPersonName
+      );
+
+      const sourceValue = updated.weeklyPlanningDtos[sourcePersonIndex].assignations[draggedCell.monthIndex];
+      const targetValue = updated.weeklyPlanningDtos[targetPersonIndex].assignations[targetMonthIndex];
+
+      updated.weeklyPlanningDtos[sourcePersonIndex].assignations[draggedCell.monthIndex] = targetValue;
+      updated.weeklyPlanningDtos[targetPersonIndex].assignations[targetMonthIndex] = sourceValue;
+
+      console.log(updated);
+      if (updated.complete) {
+        setIsLoading(true);
+        setBackendErrors(null);
+        const dataToSend = {
+          weeklyPlanningDtos: updated.weeklyPlanningDtos.map((p) => {
+            const staffMember = staffList.find(staff => staff.name.toLowerCase() === p.name.toLowerCase());
+            return {
+              ...p,
+              level: staffMember ? staffMember.level : null,
+              assignations: [...p.assignations]
+            };
+          }),
+          week: weekInMonth + 1,
+          month: months[month],
+          year,
+          days: days.map(d => d.getDate()),
+          activities: updated.activities,
+          complete: true
+        };
+
+        dispatch(
+          actions.checkWeeklyPlanning(
+            dataToSend,
+            () => {
+              setBackendErrors(null);
+              setIsLoading(false);
+            },
+            (errorPayload) => {
+              const message = errorPayload?.globalError || "Ha ocurrido un error";
+              setBackendErrors(message);
+              setIsLoading(false);
+            }
+          )
+        );
+      }
+      return updated;
+    });
+
+    setDraggedCell(null);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
   };
 
   const toggleNotValidActivity = (personName, dayIndex, activity) => {
@@ -609,7 +675,12 @@ const WeeklyPlanning = () => {
                       const filteredEvening = dayActivities.filter((a) => a.time === "evening");
 
                       return (
-                        <td key={idx} className="p-0 border">
+                        <td key={idx} className="p-0 border"
+                          draggable
+                          onDragStart={() => handleDragStart(person.name, idx)}
+                          onDrop={() => handleDrop(person.name, idx)}
+                          onDragOver={handleDragOver}
+                        >
                           <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                             {/* Mañana */}
                             <div style={{ flex: 1, borderBottom: "1px solid #ccc", padding: "2px" }}>
@@ -917,6 +988,7 @@ const WeeklyPlanning = () => {
                 )}
 
                 {/* Slots */}
+                {newActivity.type === "QX" && (
                 <label className="text-sm">
                   Residentes:
                   <input
@@ -933,6 +1005,7 @@ const WeeklyPlanning = () => {
                     className="ml-2 border p-1 rounded w-16"
                   />
                 </label>
+                )}
 
                 {/* Botón crear */}
                 <button

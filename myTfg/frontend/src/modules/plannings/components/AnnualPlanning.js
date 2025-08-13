@@ -30,6 +30,7 @@ const AnnualPlanning = () => {
      const currentYear = new Date().getFullYear();
      const [year, setYear] = useState(currentYear);
      const [activePlanningIndex, setActivePlanningIndex] = useState(0);
+     const [draggedCell, setDraggedCell] = useState(null);
 
     useEffect(() => {
       if (annualPlanningList && annualPlanningList.length > 0) {
@@ -96,6 +97,73 @@ const AnnualPlanning = () => {
         setBackendErrors(message);
         setIsLoading(false);
       }));
+    };
+
+    const handleDragStart = (personName, monthIndex) => {
+      setDraggedCell({ personName, monthIndex });
+    };
+
+    const handleDrop = (targetPersonName, targetMonthIndex) => {
+      if (!draggedCell) return;
+
+      setPlanningData((prevPlanning) => {
+        const updated = {
+          ...prevPlanning,
+          assignations: prevPlanning.assignations.map((person) => ({
+            ...person,
+            assignations: {...person.assignations}
+          }))
+        };
+
+        const sourcePersonIndex = updated.assignations.findIndex(
+          (p) => p.name === draggedCell.personName
+        );
+        const targetPersonIndex = updated.assignations.findIndex(
+          (p) => p.name === targetPersonName
+        );
+
+        const sourceValue = updated.assignations[sourcePersonIndex].assignations[draggedCell.monthIndex];
+        const targetValue = updated.assignations[targetPersonIndex].assignations[targetMonthIndex];
+
+        updated.assignations[sourcePersonIndex].assignations[draggedCell.monthIndex] = targetValue;
+        updated.assignations[targetPersonIndex].assignations[targetMonthIndex] = sourceValue;
+
+        if (updated.complete) {
+          setIsLoading(true);
+          setBackendErrors(null);
+          const convertedPlanningData = {
+            assignations: updated.assignations.map((person) => ({
+              ...person,
+              assignations: Object.values(person.assignations)
+            })),
+            complete: true
+          };
+
+          dispatch(
+            actions.checkAnnualPlanning(
+              convertedPlanningData,
+              year,
+              () => {
+                setBackendErrors(null);
+                setIsLoading(false);
+              },
+              (errorPayload) => {
+                const message = errorPayload?.globalError || "Ha ocurrido un error";
+                setBackendErrors(message);
+                setIsLoading(false);
+              }
+            )
+          );
+        }
+
+        return updated;
+      });
+
+      setDraggedCell(null);
+    };
+
+    const handleDragOver = (e) => {
+      e.preventDefault(); // Necesario para permitir el drop
     };
 
     useEffect(() => {
@@ -407,46 +475,50 @@ const AnnualPlanning = () => {
                                                 const activity = person.assignations[index];
                                                 return (
                                                     <td
-                                                        key={`${person.name}-${month}`}
-                                                        style={{
-                                                            backgroundColor: colorMap[activity] || "#E0E0E0",
-                                                            color: "#000",
-                                                            textAlign: "center",
-                                                            fontWeight: "bold",
-                                                            cursor: activity ? "pointer" : "default"
-                                                        }}
-                                                        title={activity || "Sin asignación"}
+                                                      key={`${person.name}-${month}`}
+                                                      style={{
+                                                        backgroundColor: colorMap[activity] || "#E0E0E0",
+                                                        color: "#000",
+                                                        textAlign: "center",
+                                                        fontWeight: "bold",
+                                                        cursor: "grab"
+                                                      }}
+                                                      title={activity || "Sin asignación"}
+                                                      draggable // Permite arrastrar
+                                                      onDragStart={() => handleDragStart(person.name, index)}
+                                                      onDrop={() => handleDrop(person.name, index)}
+                                                      onDragOver={handleDragOver}
                                                     >
-                                                        <select
-                                                            value={activity || ""}
-                                                            onChange={(e) =>
-                                                                handleSelectChange(person.name, month, e.target.value)
-                                                            }
+                                                      <select
+                                                        value={activity || ""}
+                                                        onChange={(e) =>
+                                                          handleSelectChange(person.name, month, e.target.value)
+                                                        }
+                                                        style={{
+                                                          backgroundColor: "transparent",
+                                                          border: "none",
+                                                          color: "#000",
+                                                          cursor: "pointer",
+                                                          width: "100%",
+                                                          textAlign: "center",
+                                                          fontWeight: "bold",
+                                                          appearance: "none"
+                                                        }}
+                                                      >
+                                                        <option value="-">-</option>
+                                                        {activities.map((act) => (
+                                                          <option
+                                                            key={act}
+                                                            value={act}
                                                             style={{
-                                                                backgroundColor: "transparent",
-                                                                border: "none",
-                                                                color: "#000",
-                                                                cursor: "pointer",
-                                                                width: "100%",
-                                                                textAlign: "center",
-                                                                fontWeight: "bold",
-                                                                appearance: "none"
+                                                              backgroundColor: colorMap[act],
+                                                              color: "#000"
                                                             }}
-                                                        >
-                                                            <option value="-">-</option>
-                                                            {activities.map((act) => (
-                                                                <option
-                                                                    key={act}
-                                                                    value={act}
-                                                                    style={{
-                                                                        backgroundColor: colorMap[act],
-                                                                        color: "#000"
-                                                                    }}
-                                                                >
-                                                                    {act}
-                                                                </option>
-                                                            ))}
-                                                        </select>
+                                                          >
+                                                            {act}
+                                                          </option>
+                                                        ))}
+                                                      </select>
                                                     </td>
                                                 );
                                             })}
