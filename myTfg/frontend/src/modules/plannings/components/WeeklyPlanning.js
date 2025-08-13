@@ -160,6 +160,7 @@ const WeeklyPlanning = () => {
           getMonthName(month + 1),
           year,
           weekInMonth + 1,
+          {days: days.map(d => d.getDate())},
           () => setBackendErrors("No se ha podido cargar la planificación guardada.")
       ));
     }, [weekInMonth, month, year]);

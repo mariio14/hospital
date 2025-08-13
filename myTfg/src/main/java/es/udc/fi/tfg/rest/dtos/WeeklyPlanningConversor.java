@@ -49,7 +49,8 @@ public class WeeklyPlanningConversor {
     );
 
     public static List<WeeklyResultDto> toWeeklyPlanningDtos(ActivityAndPlanning planningMap,
-                                                       int year, String month, String week, List<Staff> staffList) {
+                                                       int year, String month, String week,
+                                                       List<Staff> staffList, GetWeeklyDataDto dto) {
         List<Map<String, Map<Integer, List<String>>>> planning = planningMap.getPlanning();
         List<WeeklyResultDto> result = new ArrayList<>();
         for (Map<String, Map<Integer, List<String>>> map : planning) {
@@ -61,8 +62,7 @@ public class WeeklyPlanningConversor {
                 }
                 String service = planningMap.getAnnualData().get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT))
                         .get(MONTH_TO_NUM.get(month.toUpperCase(Locale.ROOT)));
-                List<Integer> sortedDays = assignations != null ? assignations.keySet().stream().sorted().toList() : new ArrayList<>();
-                list.add(toWeeklyPlanningDto(staff.getName(), assignations, service, sortedDays));
+                list.add(toWeeklyPlanningDto(staff.getName(), assignations, service, dto.getDays()));
 
             }
             changeColors(planningMap.getActivities());

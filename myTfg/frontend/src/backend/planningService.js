@@ -18,8 +18,8 @@ export const getMonthlyPlanning = (month, year, numDays, onSuccess, onErrors) =>
 export const weeklyPlanning = (planningData, onSuccess, onErrors) =>
   appFetch(`/plannings/weekly`, fetchConfig("POST", planningData), onSuccess, onErrors);
 
-export const getWeeklyPlanning = (month, year, week, onSuccess, onErrors) =>
-  appFetch(`/plannings/weekly?month=${month}&year=${year}&week=${week}`, fetchConfig("GET"), onSuccess, onErrors);
+export const getWeeklyPlanning = (month, year, week, days, onSuccess, onErrors) =>
+  appFetch(`/plannings/getWeekly?month=${month}&year=${year}&week=${week}`, fetchConfig("POST", days), onSuccess, onErrors);
 
 export const saveWeeklyPlanning = (planningData, onSuccess, onErrors) =>
   appFetch(`/plannings/saveWeekly`, fetchConfig("POST", planningData), onSuccess, onErrors);

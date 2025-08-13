@@ -38,30 +38,99 @@ task_evening_color(dummy, dummy, dummy, dummy).
 %cost(semanalP_21, 25).
 cost(semanalP_22, 1).
 cost(semanalP_23, 2).
+cost(semanalP_24, 1).
+cost(semanalP_25, 2).
+cost(semanalP_26, 1).
+cost(semanalP_27, 1).
+cost(semanalP_28, 1).
+cost(semanalP_29, 1).
 
 % SemanalR_01
-1 {day_assign(P,D,qx,C,morning,I) : person(P), not vacation(P,D), not day_not_assign(P,D,qx)} :- task_color(qx, C, D, N, I).
+N {day_assign(P,D,qx,C,morning,I) : person(P), not vacation(P,D), not day_not_assign(P,D,qx)} :- task_color(qx, C, D, N, I).
 % SemanalP_22
+cnt_assign_qx_m(D,C,I,Cnt) :-
+    Cnt = #count { P : day_assign(P,D,qx,C,morning,I) },
+    task_color(qx,C,D,N,I).
 #minimize { V*(Cnt-1),D,I :
-    task_color(qx,C,D,N,I), Cnt = #count { P : day_assign(P,D,qx,C,morning,I) }, Cnt > 1,
+    task_color(qx,C,D,N,I), cnt_assign_qx_m(D,C,I,Cnt), Cnt > 1,
     cost(semanalP_22, V)
 }.
 % SemanalP_23
+cnt_assign_qx_not_color(D,C,I,Cnt) :-
+    Cnt = #count { P : day_assign(P,D,qx,C,morning,I), not month_assign(P,C) },
+    task_color(qx,C,D,N,I).
 #minimize { V*Cnt,D,I :
-    task_color(qx,C,D,N,I), Cnt = #count { P : day_assign(P,D,qx,C,morning,I), not month_assign(P,C) },
+    task_color(qx,C,D,N,I), cnt_assign_qx_not_color(D,C,I,Cnt),
     cost(semanalP_23, V)
 }.
+
+
 % SemanalR_13,
-1 {day_assign(P,D,qx,C,evening,I) : person(P), level(P,L), L>1, not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,qx)} 1 :- task_evening_color(qx, C, D, I).
+1 {day_assign(P,D,qx,C,evening,I) : person(P), level(P,L), L>1, not vacation(P,D), not day_not_assign(P,D,qx)} :- task_evening_color(qx, C, D, I).
+% SemanalP_24
+cnt_assign_qx_e(D,C,I,Cnt) :-
+    Cnt = #count { P : day_assign(P,D,qx,C,morning,I) },
+    task_color(qx,C,D,N,I).
+#minimize { V*(Cnt-1),D,I :
+    task_evening_color(qx, C, D, I), cnt_assign_qx_e(D,C,I,Cnt), Cnt > 1,
+    cost(semanalP_24, V)
+}.
+cnt_assign_qx_e_not_color(D,C,I,Cnt) :-
+    Cnt = #count { P : day_assign(P,D,qx,C,morning,I), not month_assign(P,C) },
+    task_color(qx,C,D,N,I).
+% SemanalP_25
+#minimize { V*Cnt,D,I :
+    task_evening_color(qx, C, D, I), cnt_assign_qx_e_not_color(D,C,I,Cnt),
+    cost(semanalP_25, V)
+}.
+
+
 % SemanalR_06, SemanalR_07
-1 {day_assign(P,D,consultation,null,morning,null) : person(P), level(P,L), L>2, not vacation(P,D), not day_not_assign(P,D,consultation)} 1 :- task(consultation, D), day(D).
+1 {day_assign(P,D,consultation,null,morning,null) : person(P), level(P,L), L>2, not vacation(P,D), not day_not_assign(P,D,consultation)} :- task(consultation, D), day(D).
+cnt_assign_consult_m(D,Cnt) :-
+    Cnt = #count { P : day_assign(P,D,consultation,_,morning,_) },
+    task_color(consultation,D).
+% SemanalP_26
+#minimize { V*(Cnt-1),D :
+    task(consultation, D), cnt_assign_consult_m(D,Cnt), Cnt > 1,
+    cost(semanalP_26, V)
+}.
+
+
 % SemanalR_08
-1 {day_assign(P,D,consultation,null,evening,null) : person(P), level(P,L), L>3, not vacation(P,D), not day_not_assign(P,D,consultation)} 1 :- task_evening(consultation, D).
+1 {day_assign(P,D,consultation,null,evening,null) : person(P), level(P,L), L>3, not vacation(P,D), not day_not_assign(P,D,consultation)} :- task_evening(consultation, D).
+cnt_assign_consult_e(D,Cnt) :-
+    Cnt = #count { P : day_assign(P,D,consultation,_,evening,_) },
+    task_color(consultation,D).
+% SemanalP_27
+#minimize { V*(Cnt-1),D :
+    task(consultation, D), cnt_assign_consult_e(D,Cnt), Cnt > 1,
+    cost(semanalP_27, V)
+}.
+
 % SemanalR_09, SemanalR_10
-1 {day_assign(P,D,carca,null,morning,null) : person(P), level(P,L), L>2, not vacation(P,D), not day_not_assign(P,D,carca)} 1 :- task(carca, D).
+1 {day_assign(P,D,carca,null,morning,null) : person(P), level(P,L), L>2, not vacation(P,D), not day_not_assign(P,D,carca)} :- task(carca, D).
+cnt_assign_carca(D,Cnt) :-
+    Cnt = #count { P : day_assign(P,D,carca,_,morning,_) },
+    task_color(carca,D).
+% SemanalP_28
+#minimize { V*(Cnt-1),D :
+    task(carca, D), cnt_assign_carca(D,Cnt), Cnt > 1,
+    cost(semanalP_28, V)
+}.
+
 
 % SemanalR_11
-2 {day_assign(P,D,cerdo,null,morning,null) : person(P), not vacation(P,D), not day_not_assign(P,D,cerdo)} 2 :- task(cerdo, D).
+2 {day_assign(P,D,cerdo,null,morning,null) : person(P), not vacation(P,D), not day_not_assign(P,D,cerdo)} :- task(cerdo, D).
+cnt_assign_cerdo(D,Cnt) :-
+    Cnt = #count { P : day_assign(P,D,cerdo,_,morning,_) },
+    task_color(cerdo,D).
+% SemanalP_29
+#minimize { V*(Cnt-1),D :
+    task(cerdo, D), cnt_assign_cerdo(D,Cnt), Cnt > 1,
+    cost(semanalP_29, V)
+}.
+
 
 % SemanalR_12
 %:- task(cerdo, D), not 1{day_assign(P,D,cerdo,null,morning,null) : person(P), level(P,L), L>2}.

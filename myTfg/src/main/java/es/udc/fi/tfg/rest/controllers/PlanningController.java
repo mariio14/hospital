@@ -190,16 +190,16 @@ public class PlanningController {
         return WeeklyPlanningConversor.toWeeklyPlanningDtosFromData(planning, params, annualData);
     }
 
-    @GetMapping("/weekly")
+    @PostMapping("/getWeekly")
     public List<WeeklyResultDto> getWeeklyPlanning(@RequestParam String month, @RequestParam int year,
-                                             @RequestParam String week)
+                                             @RequestParam String week, @Validated @RequestBody GetWeeklyDataDto params)
             throws NoSolutionException, IOException, ClassNotFoundException, PlanningNotGeneratedException {
 
         ActivityAndPlanning weekPlanning = planningService.getWeekFromJson(year, month, week);
 
         List<Staff> staffList = staffService.getStaff();
 
-        return WeeklyPlanningConversor.toWeeklyPlanningDtos(weekPlanning, year, month, week, staffList);
+        return WeeklyPlanningConversor.toWeeklyPlanningDtos(weekPlanning, year, month, week, staffList, params);
     }
 
     @PostMapping("/saveWeekly")
