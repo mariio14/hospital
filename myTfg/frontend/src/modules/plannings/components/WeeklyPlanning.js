@@ -329,7 +329,8 @@ const WeeklyPlanning = () => {
       month: months[month],
       year,
       days: days.map(d => d.getDate()),
-      activities: planningData.activities
+      activities: planningData.activities,
+      complete: planningData.complete
     };
     dispatch(actions.getWeeklyPlanning(dataToSend, (errorPayload) => {
       const message = errorPayload?.globalError || "Ha ocurrido un error";

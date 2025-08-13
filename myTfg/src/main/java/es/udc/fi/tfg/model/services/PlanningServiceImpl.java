@@ -139,7 +139,7 @@ public class PlanningServiceImpl implements PlanningService {
     @Override
     public List<Map<String, Map<Integer, List<String>>>> getWeeklyPlanning(String params, int year, String month, String week,
                         List<List<ActivityDto>> activities) throws NoSolutionException {
-        String command = "python decode_weekly.py weekly.lp input_weekly.lp";
+        String command = "python decode_weekly.py weekly_open.lp input_weekly.lp";
         try {
             writeInputFile(params, pathname + "/input_weekly.lp");
 
@@ -509,7 +509,7 @@ public class PlanningServiceImpl implements PlanningService {
 
     @Override
     public void checkWeeklyPlanning(String params, int year, String month, String week, List<List<ActivityDto>> activities, List<Map<String, Map<Integer, List<String>>>> map) throws NoSolutionException {
-        String command = "python decode_weekly.py weekly.lp input_weekly.lp";
+        String command = "python decode_weekly.py weekly_open.lp input_weekly.lp";
         try {
             writeInputFile(params, pathname + "/input_weekly.lp");
 
