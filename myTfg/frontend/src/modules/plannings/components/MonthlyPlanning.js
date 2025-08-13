@@ -14,8 +14,6 @@ const MonthlyPlanning = () => {
   const monthlyPlanning = useSelector(selectors.getMonthlyPlanning);
   const monthlyPlanningList = useSelector(selectors.getMonthlyPlanningList);
 
-  const [isExpanded, setIsExpanded] = useState(false);
-
   const [backendErrors, setBackendErrors] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -405,10 +403,6 @@ const MonthlyPlanning = () => {
       }));
     };
 
-  const toggleSection = () => {
-    setIsExpanded(!isExpanded);
-  };
-
   const handleGeneratePlanning = () => {
     setBackendErrors(null);
     setIsLoading(true);
@@ -572,7 +566,6 @@ const MonthlyPlanning = () => {
     <div style={{ display: "flex", flexDirection: "column" }}>
       <div style={{ width: "100%" }}>
         <h2
-          onClick={toggleSection}
           style={{
             cursor: "pointer",
             padding: "10px",
@@ -582,10 +575,9 @@ const MonthlyPlanning = () => {
             backgroundColor: "#f9f9f9",
           }}
         >
-          Planificación Mensual {isExpanded ? "▲" : "▼"}
+          Planificación Mensual
         </h2>
 
-        {isExpanded && (
           <div
             style={{
               border: "1px solid #ddd",
@@ -896,7 +888,6 @@ const MonthlyPlanning = () => {
               </div>
             </div>
           </div>
-        )}
       </div>
     </div>
   );

@@ -13,7 +13,6 @@ const WeeklyPlanning = () => {
   const weeklyPlanning = useSelector(selectors.getWeeklyPlanning);
   const weeklyPlanningList = useSelector(selectors.getWeeklyPlanningList);
 
-  const [isExpanded, setIsExpanded] = useState(true);
   const [backendErrors, setBackendErrors] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [rightClickData, setRightClickData] = useState(null);
@@ -543,12 +542,10 @@ const WeeklyPlanning = () => {
   return (
     <div className="my-6">
       <h2
-        onClick={() => setIsExpanded((prev) => !prev)}
         className="cursor-pointer text-center text-lg font-bold border p-2 rounded bg-blue-50"
       >
-        Planificación Semanal {isExpanded ? "▲" : "▼"}
+        Planificación Semanal
       </h2>
-      {isExpanded && (
         <div className="p-4 border rounded mt-4">
           <div className="flex gap-4 flex-wrap justify-between items-center mb-4">
             <div className="flex items-center gap-2">
@@ -1022,7 +1019,6 @@ const WeeklyPlanning = () => {
             </div>
           </div>
         </div>
-      )}
     </div>
   );
 };

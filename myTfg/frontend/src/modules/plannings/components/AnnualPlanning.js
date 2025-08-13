@@ -24,7 +24,6 @@ const AnnualPlanning = () => {
     }
 
     const [planningData, setPlanningData] = useState(emptyPlanning);
-    const [isExpanded, setIsExpanded] = useState(false);
     const [backendErrors, setBackendErrors] = useState(null);
      const [isLoading, setIsLoading] = useState(false);
      const currentYear = new Date().getFullYear();
@@ -181,10 +180,6 @@ const AnnualPlanning = () => {
         ));
     }, [year]);
 
-    const toggleSection = () => {
-        setIsExpanded(!isExpanded);
-    };
-
     const months = [
         "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
         "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
@@ -335,7 +330,6 @@ const AnnualPlanning = () => {
 
             <div style={{ width: '100%' }}>
                 <h2
-                    onClick={toggleSection}
                     style={{
                         cursor: "pointer",
                         padding: "10px",
@@ -345,190 +339,188 @@ const AnnualPlanning = () => {
                         backgroundColor: "#f9f9f9"
                     }}
                 >
-                    Planificación Anual {isExpanded ? "▲" : "▼"}
+                    Planificación Anual
                 </h2>
-                {isExpanded && (
-                    <div style={{ border: '1px solid #ddd', padding: '20px', borderRadius: '5px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-                          <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
-                            <label style={{ marginLeft: "10px" }}>Año: </label>
-                            <input type="number" value={year} onChange={handleYearChange} min="2000" max="2100" />
-                          </div>
-                            <button
-                                onClick={handleGeneratePlanning}
-                                style={{
-                                    padding: "5px 15px",
-                                    backgroundColor: "#007BFF",
-                                    color: "#fff",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                    margin: "0 auto",
-                                    display: "block"
-                                }}
-                            >
-                                Generar Planificación
-                            </button>
-                            <button
-                                onClick={exportToPDF}
-                                style={{
-                                    padding: "5px 15px",
-                                    backgroundColor: "#28a745",
-                                    color: "#fff",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                    marginLeft: "10px",
-                                    alignSelf: "flex-end"
-                                }}
-                            >
-                                Exportar a PDF
-                            </button>
-                            <button
-                                onClick={handleClearPlanning}
-                                style={{
-                                    padding: "5px 15px",
-                                    backgroundColor: "#FF5733",
-                                    color: "#fff",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                    marginLeft: "10px",
-                                    alignSelf: "flex-end"
-                                }}
-                            >
-                                Vaciar Planificación
-                            </button>
-                        </div>
-                        {annualPlanningList.length > 1 && (
-                          <div className="flex gap-2 items-center">
-                            <button
-                              onClick={goToPrevPlanning}
-                              style={{
-                                padding: "5px 10px",
-                                backgroundColor: "#6c757d",
-                                color: "#fff",
-                                border: "none",
-                                borderRadius: "5px",
-                                cursor: "pointer",
-                              }}
-                            >
-                              ◀
-                            </button>
-                            <span style={{ fontWeight: "bold" }}>
-                              Planning {activePlanningIndex + 1} de {annualPlanningList.length}
-                            </span>
-                            <button
-                              onClick={goToNextPlanning}
-                              style={{
-                                padding: "5px 10px",
-                                backgroundColor: "#6c757d",
-                                color: "#fff",
-                                border: "none",
-                                borderRadius: "5px",
-                                cursor: "pointer",
-                              }}
-                            >
-                              ▶
-                            </button>
-                            <button
-                              onClick={handleConfirmPlanning}
-                              style={{
+                <div Planificación Anual style={{ border: '1px solid #ddd', padding: '20px', borderRadius: '5px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+                      <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
+                        <label style={{ marginLeft: "10px" }}>Año: </label>
+                        <input type="number" value={year} onChange={handleYearChange} min="2000" max="2100" />
+                      </div>
+                        <button
+                            onClick={handleGeneratePlanning}
+                            style={{
                                 padding: "5px 15px",
-                                backgroundColor: "#17a2b8",
+                                backgroundColor: "#007BFF",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "5px",
+                                cursor: "pointer",
+                                margin: "0 auto",
+                                display: "block"
+                            }}
+                        >
+                            Generar Planificación
+                        </button>
+                        <button
+                            onClick={exportToPDF}
+                            style={{
+                                padding: "5px 15px",
+                                backgroundColor: "#28a745",
                                 color: "#fff",
                                 border: "none",
                                 borderRadius: "5px",
                                 cursor: "pointer",
                                 marginLeft: "10px",
-                              }}
-                            >
-                              Confirmar plan
-                            </button>
-                          </div>
-                        )}
-                        {isLoading && <div className="loader"></div>}
-                        {backendErrors ? <p style={{ color: 'red', textAlign: 'center', marginTop: '30px', marginBottom: '20px' }}>{backendErrors}</p> : null}
+                                alignSelf: "flex-end"
+                            }}
+                        >
+                            Exportar a PDF
+                        </button>
+                        <button
+                            onClick={handleClearPlanning}
+                            style={{
+                                padding: "5px 15px",
+                                backgroundColor: "#FF5733",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "5px",
+                                cursor: "pointer",
+                                marginLeft: "10px",
+                                alignSelf: "flex-end"
+                            }}
+                        >
+                            Vaciar Planificación
+                        </button>
+                    </div>
+                    {annualPlanningList.length > 1 && (
+                      <div className="flex gap-2 items-center">
+                        <button
+                          onClick={goToPrevPlanning}
+                          style={{
+                            padding: "5px 10px",
+                            backgroundColor: "#6c757d",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "5px",
+                            cursor: "pointer",
+                          }}
+                        >
+                          ◀
+                        </button>
+                        <span style={{ fontWeight: "bold" }}>
+                          Planning {activePlanningIndex + 1} de {annualPlanningList.length}
+                        </span>
+                        <button
+                          onClick={goToNextPlanning}
+                          style={{
+                            padding: "5px 10px",
+                            backgroundColor: "#6c757d",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "5px",
+                            cursor: "pointer",
+                          }}
+                        >
+                          ▶
+                        </button>
+                        <button
+                          onClick={handleConfirmPlanning}
+                          style={{
+                            padding: "5px 15px",
+                            backgroundColor: "#17a2b8",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "5px",
+                            cursor: "pointer",
+                            marginLeft: "10px",
+                          }}
+                        >
+                          Confirmar plan
+                        </button>
+                      </div>
+                    )}
+                    {isLoading && <div className="loader"></div>}
+                    {backendErrors ? <p style={{ color: 'red', textAlign: 'center', marginTop: '30px', marginBottom: '20px' }}>{backendErrors}</p> : null}
 
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-                            {/* Tabla de asignaciones */}
-                            <table style={{ width: '100%', tableLayout: 'fixed', fontSize: '12px' }}>
-                                <thead>
-                                    <tr>
-                                        <th>Personas</th>
-                                        {months.map((month) => (
-                                            <th key={month}>{month}</th>
-                                        ))}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {planningData.assignations.map((person) => (
-                                        <tr
-                                            key={person.name}
-                                            style={{
-                                                backgroundColor: "#E0E0E0",
-                                                color: "#000"
-                                            }}
-                                        >
-                                            <td>{person.name}</td>
-                                            {months.map((month, index) => {
-                                                const activity = person.assignations[index];
-                                                return (
-                                                    <td
-                                                      key={`${person.name}-${month}`}
-                                                      style={{
-                                                        backgroundColor: colorMap[activity] || "#E0E0E0",
-                                                        color: "#000",
-                                                        textAlign: "center",
-                                                        fontWeight: "bold",
-                                                        cursor: "grab"
-                                                      }}
-                                                      title={activity || "Sin asignación"}
-                                                      draggable // Permite arrastrar
-                                                      onDragStart={() => handleDragStart(person.name, index)}
-                                                      onDrop={() => handleDrop(person.name, index)}
-                                                      onDragOver={handleDragOver}
-                                                    >
-                                                      <select
-                                                        value={activity || ""}
-                                                        onChange={(e) =>
-                                                          handleSelectChange(person.name, month, e.target.value)
-                                                        }
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+                        {/* Tabla de asignaciones */}
+                        <table style={{ width: '100%', tableLayout: 'fixed', fontSize: '12px' }}>
+                            <thead>
+                                <tr>
+                                    <th>Personas</th>
+                                    {months.map((month) => (
+                                        <th key={month}>{month}</th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {planningData.assignations.map((person) => (
+                                    <tr
+                                        key={person.name}
+                                        style={{
+                                            backgroundColor: "#E0E0E0",
+                                            color: "#000"
+                                        }}
+                                    >
+                                        <td>{person.name}</td>
+                                        {months.map((month, index) => {
+                                            const activity = person.assignations[index];
+                                            return (
+                                                <td
+                                                  key={`${person.name}-${month}`}
+                                                  style={{
+                                                    backgroundColor: colorMap[activity] || "#E0E0E0",
+                                                    color: "#000",
+                                                    textAlign: "center",
+                                                    fontWeight: "bold",
+                                                    cursor: "grab"
+                                                  }}
+                                                  title={activity || "Sin asignación"}
+                                                  draggable // Permite arrastrar
+                                                  onDragStart={() => handleDragStart(person.name, index)}
+                                                  onDrop={() => handleDrop(person.name, index)}
+                                                  onDragOver={handleDragOver}
+                                                >
+                                                  <select
+                                                    value={activity || ""}
+                                                    onChange={(e) =>
+                                                      handleSelectChange(person.name, month, e.target.value)
+                                                    }
+                                                    style={{
+                                                      backgroundColor: "transparent",
+                                                      border: "none",
+                                                      color: "#000",
+                                                      cursor: "pointer",
+                                                      width: "100%",
+                                                      textAlign: "center",
+                                                      fontWeight: "bold",
+                                                      appearance: "none"
+                                                    }}
+                                                  >
+                                                    <option value="-">-</option>
+                                                    {activities.map((act) => (
+                                                      <option
+                                                        key={act}
+                                                        value={act}
                                                         style={{
-                                                          backgroundColor: "transparent",
-                                                          border: "none",
-                                                          color: "#000",
-                                                          cursor: "pointer",
-                                                          width: "100%",
-                                                          textAlign: "center",
-                                                          fontWeight: "bold",
-                                                          appearance: "none"
+                                                          backgroundColor: colorMap[act],
+                                                          color: "#000"
                                                         }}
                                                       >
-                                                        <option value="-">-</option>
-                                                        {activities.map((act) => (
-                                                          <option
-                                                            key={act}
-                                                            value={act}
-                                                            style={{
-                                                              backgroundColor: colorMap[act],
-                                                              color: "#000"
-                                                            }}
-                                                          >
-                                                            {act}
-                                                          </option>
-                                                        ))}
-                                                      </select>
-                                                    </td>
-                                                );
-                                            })}
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                                        {act}
+                                                      </option>
+                                                    ))}
+                                                  </select>
+                                                </td>
+                                            );
+                                        })}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
-                )}
+                </div>
             </div>
         </div>
     );
