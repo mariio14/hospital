@@ -5,7 +5,6 @@ import { Provider } from 'react-redux'
 import configureMockStore from 'redux-mock-store'
 import thunk from 'redux-thunk'
 import userEvent from "@testing-library/user-event";
-import Login from "../../src/modules/users/components/Login"
 import {loginMock} from "./mocks/login.mock";
 import {HashRouter} from "react-router-dom";
 import {App} from "../modules/app";

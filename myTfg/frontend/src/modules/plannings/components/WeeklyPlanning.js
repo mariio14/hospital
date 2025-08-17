@@ -715,7 +715,7 @@ const WeeklyPlanning = () => {
                                   assignCreatedActivity(person.name, idx, "morning", typeSelected, selected?.color, idSelected);
                                 }}
                                 style={{
-                                  backgroundColor: colorMap[morningActivity] || "#f9f9f9",
+                                  backgroundColor: rowColor,
                                   border: "none",
                                   width: "100%",
                                   textAlign: "center",
@@ -784,7 +784,7 @@ const WeeklyPlanning = () => {
                                     assignCreatedActivity(person.name, idx, "evening", typeSelected, selected?.color, idSelected);
                                 }}
                                 style={{
-                                  backgroundColor: colorMap[eveningActivity] || "#f9f9f9",
+                                  backgroundColor: rowColor,
                                   border: "none",
                                   width: "100%",
                                   textAlign: "center",
