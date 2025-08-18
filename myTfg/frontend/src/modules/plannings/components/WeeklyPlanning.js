@@ -187,7 +187,6 @@ const WeeklyPlanning = () => {
     if (!draggedCell) return;
 
     setPlanningData((prevPlanning) => {
-      console.log(prevPlanning);
       const updated = {
         ...prevPlanning,
         weeklyPlanningDtos: prevPlanning.weeklyPlanningDtos.map((person) => ({
@@ -209,7 +208,6 @@ const WeeklyPlanning = () => {
       updated.weeklyPlanningDtos[sourcePersonIndex].assignations[draggedCell.monthIndex] = targetValue;
       updated.weeklyPlanningDtos[targetPersonIndex].assignations[targetMonthIndex] = sourceValue;
 
-      console.log(updated);
       if (updated.complete) {
         setIsLoading(true);
         setBackendErrors(null);
@@ -460,6 +458,7 @@ const WeeklyPlanning = () => {
     if (activityType === "PLANTA/QX") {
       activityWithColor = `PLANTA/QX${id ? `_${id}` : ""}`;
     } else {
+      console.log(activityType, color, id);
       activityWithColor = `${activityType}${color ? `_${color}` : "_null"}${id ? `_${id}` : ""}`;
     }
 
@@ -688,11 +687,15 @@ const WeeklyPlanning = () => {
                                   (morningActivity || "").startsWith("PLANTA/QX")
                                     ? morningActivity || ""
                                     : (morningActivity || "").startsWith("QX_")
-                                      ? (morningActivity || "").split("_").slice(0, 2).join("_")
+                                      ? (() => {
+                                          const parts = (morningActivity || "").split("_");
+                                          return parts.length === 3 ? `${parts[0]}_${parts[2]}` : parts[0];
+                                        })()
                                       : (morningActivity || "").split("_")[0]
                                 }
                                 onChange={(e) => {
                                   const selectedActivity = e.target.value;
+                                  console.log("Selected activity:", selectedActivity);
                                   const [type, id] = selectedActivity.split("_");
                                   let selected;
                                   let typeSelected = type;
@@ -703,7 +706,12 @@ const WeeklyPlanning = () => {
                                     selected = filteredMorning.find(
                                       (a) => a.type === "QX" && a.identifier === id
                                     );
-                                  } else if (type === "PLANTA/QX") {
+                                  } else if (type === "QX") {
+                                    selected = filteredMorning.find(
+                                      (a) => a.type === "QX" && !a.identifier
+                                    );
+                                  }
+                                  else if (type === "PLANTA/QX") {
                                     selected = filteredMorning.find(
                                       (a) => a.type === type
                                     );
