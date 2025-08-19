@@ -260,7 +260,7 @@ public class PlanningServiceImpl implements PlanningService {
     }
 
     @Override
-    public ActivityAndPlanning getWeekFromJson(int year, String month, String week) throws IOException, ClassNotFoundException, PlanningNotGeneratedException {
+    public ActivityAndPlanning getWeekFromJson(int year, String month, String week, boolean yearChanged) throws IOException, ClassNotFoundException, PlanningNotGeneratedException {
         ObjectMapper mapper = new ObjectMapper();
         File outputFile = new File(pathname + "/solutionWeekly.json");
         File activitiesFile = new File(pathname + "/activities.json");
@@ -301,7 +301,8 @@ public class PlanningServiceImpl implements PlanningService {
                 .getOrDefault(month, new HashMap<>())
                 .getOrDefault(week, emptyList);
 
-        return new ActivityAndPlanning(activitiesDataForWeek, weekData, getYearFromJson(year, false).get(0));
+        return new ActivityAndPlanning(activitiesDataForWeek, weekData, getYearFromJson(year, false).get(0),
+                yearChanged ? getYearFromJson(year - 1, false).get(0) : new HashMap<>());
     }
 
     @Override

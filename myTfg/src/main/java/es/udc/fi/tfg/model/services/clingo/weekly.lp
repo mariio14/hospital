@@ -38,10 +38,10 @@ task_evening_color(dummy, dummy, dummy, dummy).
 %cost(semanalP_21, 25).
 
 % SemanalR_01
-N {day_assign(P,D,qx,C,morning,I) : person(P), not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,qx)} N :- task_color(qx, C, D, N, I).
+N {day_assign(P,D,qx,C,morning,I) : person(P), not vacation(P,D), month_assign(P,D,C), not day_not_assign(P,D,qx)} N :- task_color(qx, C, D, N, I).
 
 % SemanalR_13,
-1 {day_assign(P,D,qx,C,evening,I) : person(P), level(P,L), L>1, not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,qx)} 1 :- task_evening_color(qx, C, D, I).
+1 {day_assign(P,D,qx,C,evening,I) : person(P), level(P,L), L>1, not vacation(P,D), month_assign(P,D,C), not day_not_assign(P,D,qx)} 1 :- task_evening_color(qx, C, D, I).
 
 % SemanalR_06, SemanalR_07
 1 {day_assign(P,D,consultation,null,morning,null) : person(P), level(P,L), L>2, not vacation(P,D), not day_not_assign(P,D,consultation)} 1 :- task(consultation, D), day(D).
@@ -61,10 +61,10 @@ N {day_assign(P,D,qx,C,morning,I) : person(P), not vacation(P,D), month_assign(P
 1 {day_assign(P,D,qxrobot,null,morning,null) : person(P), level(P,L), L>2, not vacation(P,D), not day_not_assign(P,D,qxrobot)} 1 :- task(qxrobot, D).
 
 % SemanalR_02
-{day_assign(P,D,floor,C,morning,null) : person(P), not vacation(P,D), month_assign(P,C), not day_not_assign(P,D,floor)} :- task_color(floor,C,D,_).
+{day_assign(P,D,floor,C,morning,null) : person(P), not vacation(P,D), month_assign(P,D,C), not day_not_assign(P,D,floor)} :- task_color(floor,C,D,_).
 % SemanalP_22
 #minimize { V,D :
-    task_color(floor,yellow,D,_), day_assign(P,D,qx,yellow,_,_), month_assign(P,yellow),
+    task_color(floor,yellow,D,_), day_assign(P,D,qx,yellow,_,_), month_assign(P,D,yellow),
     not day_assign(P,D,floor,yellow,_,_),
     cost(semanalP_22, V)
 }.
@@ -74,7 +74,7 @@ N {day_assign(P,D,qx,C,morning,I) : person(P), not vacation(P,D), month_assign(P
     (T,C,I) < (T',C',I'), (T,C)!=(floor,yellow), (T',C')!=(floor,yellow).
 
 % SemanalP_03, SemanalP_04, SemanalP_05
-color_floor_assigned(C,D) :- day_assign(P,D,floor,C,_,_), person(P), month_assign(P,C).
+color_floor_assigned(C,D) :- day_assign(P,D,floor,C,_,_), person(P), month_assign(P,D,C).
 #minimize { V,C,D :
     day(D), not color_floor_assigned(C,D),   % IDEA: cambiar por conditional literal
     cost(semanalP_03_4_5, C,V)
@@ -99,6 +99,6 @@ color_floor_assigned(C,D) :- day_assign(P,D,floor,C,_,_), person(P), month_assig
     cost(semanalP_21, V)
 }.
 
-%#show month_assign/2.
+%#show month_assign/3.
 %#show day_assign_from_month/3.
 #show day_assign/6.

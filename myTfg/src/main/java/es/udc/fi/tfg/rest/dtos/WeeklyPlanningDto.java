@@ -6,7 +6,7 @@ public class WeeklyPlanningDto {
 
     private String name;
 
-    private String color;
+    private List<String> colors;
 
     private List<String> assignations;
 
@@ -15,9 +15,9 @@ public class WeeklyPlanningDto {
     public WeeklyPlanningDto() {
     }
 
-    public WeeklyPlanningDto(String name, String color, List<String> assignations, List<String> eveningAssignations) {
+    public WeeklyPlanningDto(String name, List<String> colors, List<String> assignations, List<String> eveningAssignations) {
         this.name = name;
-        this.color = color;
+        this.colors = colors;
         this.assignations = assignations;
         this.eveningAssignations = eveningAssignations;
     }
@@ -30,12 +30,12 @@ public class WeeklyPlanningDto {
         this.name = name;
     }
 
-    public String getColor() {
-        return color;
+    public List<String> getColors() {
+        return colors;
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public void setColors(List<String> colors) {
+        this.colors = colors;
     }
 
     public List<String> getAssignations() {

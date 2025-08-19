@@ -120,7 +120,7 @@ const WeeklyPlanning = () => {
     weeklyPlanningDtos: staffList.map((person) => ({
       name: person.name,
       level: `R${person.level}`,
-      color: null,
+      colors: Array(5).fill(null),
       assignations: Array(5).fill(null),
       eveningAssignations: Array(5).fill(null),
       notValidAssignations: Array(5).fill([])
@@ -278,7 +278,7 @@ const WeeklyPlanning = () => {
       );
       return {
         ...emptyPerson,
-        color: currentPerson?.color || null,
+        colors: currentPerson?.colors || null,
       };
     });
 
@@ -458,7 +458,6 @@ const WeeklyPlanning = () => {
     if (activityType === "PLANTA/QX") {
       activityWithColor = `PLANTA/QX${id ? `_${id}` : ""}`;
     } else {
-      console.log(activityType, color, id);
       activityWithColor = `${activityType}${color ? `_${color}` : "_null"}${id ? `_${id}` : ""}`;
     }
 
@@ -695,7 +694,6 @@ const WeeklyPlanning = () => {
                                 }
                                 onChange={(e) => {
                                   const selectedActivity = e.target.value;
-                                  console.log("Selected activity:", selectedActivity);
                                   const [type, id] = selectedActivity.split("_");
                                   let selected;
                                   let typeSelected = type;

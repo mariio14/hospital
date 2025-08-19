@@ -13,11 +13,14 @@ public class ActivityAndPlanning {
 
     private Map<String, Map<Integer, String>> annualData;
 
+    private Map<String, Map<Integer, String>> prevAnnualData;
+
     public ActivityAndPlanning(List<List<ActivityDto>> activities, List<Map<String, Map<Integer, List<String>>>> planning,
-                               Map<String, Map<Integer, String>> annualData) {
+                               Map<String, Map<Integer, String>> annualData, Map<String, Map<Integer, String>> prevAnnualData) {
         this.activities = activities;
         this.planning = planning;
         this.annualData = annualData;
+        this.prevAnnualData = prevAnnualData;
     }
 
     public List<List<ActivityDto>> getActivities() {
@@ -42,5 +45,13 @@ public class ActivityAndPlanning {
 
     public void setAnnualData(Map<String, Map<Integer, String>> annualData) {
         this.annualData = annualData;
+    }
+
+    public Map<String, Map<Integer, String>> getPrevAnnualData() {
+        return prevAnnualData;
+    }
+
+    public void setPrevAnnualData(Map<String, Map<Integer, String>> prevAnnualData) {
+        this.prevAnnualData = prevAnnualData;
     }
 }

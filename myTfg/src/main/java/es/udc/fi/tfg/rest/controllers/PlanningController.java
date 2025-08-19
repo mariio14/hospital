@@ -158,7 +158,10 @@ public class PlanningController {
 
         List<Priority> costs = prioritiesService.getPriorities().get("Semanal");
 
+        boolean yearChanged = isYearChenged(params.getMonth(), params.getDays());
         Map<String, Map<Integer, String>> annualData = planningService.getYearFromJson(params.getYear(), true).get(0);
+        Map<String, Map<Integer, String>> prevAnnualData = yearChanged ?
+                planningService.getYearFromJson(params.getYear() - 1, true).get(0) : null;
 
         Month monthEnum = MONTH_TRANSLATION.get(params.getMonth().toUpperCase());
         int daysInMonth = YearMonth.of(params.getYear(), monthEnum).lengthOfMonth();
@@ -183,11 +186,11 @@ public class PlanningController {
             }
         }
         List<Map<String, Map<Integer, List<String>>>> planning =
-                planningService.getWeeklyPlanning(WeeklyDataConversor.toClingoParams(params, costs, annualData, monthData,
-                                params.getYear(), params.getMonth()),
+                planningService.getWeeklyPlanning(WeeklyDataConversor.toClingoParams(params, costs, annualData, prevAnnualData,
+                                monthData, params.getYear(), params.getMonth()),
                         params.getYear(), params.getMonth(), params.getWeek(), params.getActivities());
 
-        return WeeklyPlanningConversor.toWeeklyPlanningDtosFromData(planning, params, annualData);
+        return WeeklyPlanningConversor.toWeeklyPlanningDtosFromData(planning, params, annualData, prevAnnualData, yearChanged);
     }
 
     @PostMapping("/getWeekly")
@@ -195,11 +198,12 @@ public class PlanningController {
                                              @RequestParam String week, @Validated @RequestBody GetWeeklyDataDto params)
             throws NoSolutionException, IOException, ClassNotFoundException, PlanningNotGeneratedException {
 
-        ActivityAndPlanning weekPlanning = planningService.getWeekFromJson(year, month, week);
+        boolean yearChanged = isYearChenged(month, params.getDays());
+        ActivityAndPlanning weekPlanning = planningService.getWeekFromJson(year, month, week, yearChanged);
 
         List<Staff> staffList = staffService.getStaff();
 
-        return WeeklyPlanningConversor.toWeeklyPlanningDtos(weekPlanning, year, month, week, staffList, params);
+        return WeeklyPlanningConversor.toWeeklyPlanningDtos(weekPlanning, year, month, week, staffList, params, yearChanged);
     }
 
     @PostMapping("/saveWeekly")
@@ -260,6 +264,9 @@ public class PlanningController {
             List<Priority> costs = prioritiesService.getPriorities().get("Semanal");
 
             Map<String, Map<Integer, String>> annualData = planningService.getYearFromJson(params.getYear(), true).get(0);
+            boolean yearChanged = isYearChenged(params.getMonth(), params.getDays());
+            Map<String, Map<Integer, String>> prevAnnualData = yearChanged ?
+                    planningService.getYearFromJson(params.getYear() - 1, true).get(0) : null;
 
             Month monthEnum = MONTH_TRANSLATION.get(params.getMonth().toUpperCase());
             int daysInMonth = YearMonth.of(params.getYear(), monthEnum).lengthOfMonth();
@@ -283,11 +290,25 @@ public class PlanningController {
                     }
                 }
             }
-            planningService.checkWeeklyPlanning(WeeklyDataConversor.toClingoParams(params, costs, annualData, monthData,
-                    params.getYear(), params.getMonth()), params.getYear(), params.getMonth(), params.getWeek(), params.getActivities(),
-                    WeeklyDataConversor.toMap(params));
+            planningService.checkWeeklyPlanning(WeeklyDataConversor.toClingoParams(params, costs, annualData, prevAnnualData,
+                            monthData, params.getYear(), params.getMonth()), params.getYear(), params.getMonth(),
+                    params.getWeek(), params.getActivities(), WeeklyDataConversor.toMap(params));
         } catch (NoSolutionException e) {
             throw new NoSolutionException("Cambio no válido");
         }
+    }
+
+    private boolean isYearChenged(String month, List<Integer> days) {
+        Integer prevDay = 0;
+        boolean yearChanged = false;
+        if (month.equalsIgnoreCase("ENERO")) {
+            for (Integer day : days) {
+                if (day < prevDay) {
+                    yearChanged = true;
+                }
+                prevDay = day;
+            }
+        }
+        return yearChanged;
     }
 }

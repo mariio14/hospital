@@ -60,7 +60,8 @@ public class WeeklyDataConversor {
     );
 
     public static String toClingoParams(WeeklyDataDto weeklyDataDto, List<Priority> costs,
-                     Map<String, Map<Integer, String>> yearData, MonthlyResultDto monthData, int year, String month) {
+                     Map<String, Map<Integer, String>> yearData, Map<String, Map<Integer, String>> prevYearData,
+                                        MonthlyResultDto monthData, int year, String month) {
 
         StringBuilder clingoParams = new StringBuilder();
         int prevDay;
@@ -142,10 +143,32 @@ public class WeeklyDataConversor {
                         clingoParams.append(String.format("cost(%s,%d). ", priority.getId(), priority.getCost()));
             }
         }
-        for (Map.Entry<String, Map<Integer, String>> entry : yearData.entrySet()) {
-            String personName = entry.getKey().replace(" ", "_").toLowerCase(Locale.ROOT);
-            String service = entry.getValue().get(MONTH_TO_NUM.get(weeklyDataDto.getMonth().toUpperCase()));
-            clingoParams.append(String.format("month_assign(%s,%s). ", personName, service));
+        boolean hasMonthChange = false;
+        int prevDay1 = 0;
+        for (Integer day : weeklyDataDto.getDays()) {
+            if (day < prevDay1) {
+                hasMonthChange = true;
+                break;
+            }
+            prevDay1 = day;
+        }
+        boolean hasYearChange = hasMonthChange && month.equalsIgnoreCase("ENERO");
+        prevDay1 = 0;
+        boolean change = false;
+        for (Integer day : weeklyDataDto.getDays()) {
+            if (day < prevDay1) {
+                change = true;
+            }
+            for (Map.Entry<String, Map<Integer, String>> entry : yearData.entrySet()) {
+                String personName = entry.getKey().replace(" ", "_").toLowerCase(Locale.ROOT);
+                String service = hasMonthChange ? change
+                        ? entry.getValue().get(MONTH_TO_NUM.get(weeklyDataDto.getMonth().toUpperCase()))
+                        : hasYearChange
+                            ? prevYearData.get(personName).get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(weeklyDataDto.getMonth().toUpperCase())))
+                            : entry.getValue().get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(weeklyDataDto.getMonth().toUpperCase())))
+                    : entry.getValue().get(MONTH_TO_NUM.get(weeklyDataDto.getMonth().toUpperCase()));
+                clingoParams.append(String.format("month_assign(%s,%d,%s). ", personName, day, service));
+            }
         }
         boolean vacation = false;
         for (MonthlyPlanningDto monthlyPlanningDto : monthData.getMonthlyPlanningDtos()) {

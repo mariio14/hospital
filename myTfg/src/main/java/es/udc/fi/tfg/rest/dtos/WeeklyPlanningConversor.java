@@ -25,6 +25,21 @@ public class WeeklyPlanningConversor {
             Map.entry("DICIEMBRE", 12)
     );
 
+    private static final Map<String, String> PREVIOUS_MONTH = Map.ofEntries(
+            Map.entry("ENERO", "DICIEMBRE"),
+            Map.entry("FEBRERO", "ENERO"),
+            Map.entry("MARZO", "FEBRERO"),
+            Map.entry("ABRIL", "MARZO"),
+            Map.entry("MAYO", "ABRIL"),
+            Map.entry("JUNIO", "MAYO"),
+            Map.entry("JULIO", "JUNIO"),
+            Map.entry("AGOSTO", "JULIO"),
+            Map.entry("SEPTIEMBRE", "AGOSTO"),
+            Map.entry("OCTUBRE", "SEPTIEMBRE"),
+            Map.entry("NOVIEMBRE", "OCTUBRE"),
+            Map.entry("DICIEMBRE", "NOVIEMBRE")
+    );
+
     private static final Map<String, String> COLORS = Map.ofEntries(
             Map.entry("red", "rojo"),
             Map.entry("yellow", "amarillo"),
@@ -50,7 +65,7 @@ public class WeeklyPlanningConversor {
 
     public static List<WeeklyResultDto> toWeeklyPlanningDtos(ActivityAndPlanning planningMap,
                                                        int year, String month, String week,
-                                                       List<Staff> staffList, GetWeeklyDataDto dto) {
+                                                       List<Staff> staffList, GetWeeklyDataDto dto, boolean yearChanged) {
         List<Map<String, Map<Integer, List<String>>>> planning = planningMap.getPlanning();
         List<WeeklyResultDto> result = new ArrayList<>();
         for (Map<String, Map<Integer, List<String>>> map : planning) {
@@ -62,7 +77,15 @@ public class WeeklyPlanningConversor {
                 }
                 String service = planningMap.getAnnualData().get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT))
                         .get(MONTH_TO_NUM.get(month.toUpperCase(Locale.ROOT)));
-                list.add(toWeeklyPlanningDto(staff.getName(), assignations, service, dto.getDays()));
+                String servicePrev;
+                if (yearChanged) {
+                    servicePrev = planningMap.getPrevAnnualData().get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT))
+                            .get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(month.toUpperCase(Locale.ROOT))));
+                } else {
+                    servicePrev = planningMap.getAnnualData().get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT))
+                            .get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(month.toUpperCase(Locale.ROOT))));
+                }
+                list.add(toWeeklyPlanningDto(staff.getName(), assignations, service,servicePrev, dto.getDays()));
 
             }
             changeColors(planningMap.getActivities());
@@ -72,7 +95,8 @@ public class WeeklyPlanningConversor {
     }
 
     public static List<WeeklyResultDto> toWeeklyPlanningDtosFromData(List<Map<String, Map<Integer, List<String>>>> planningMap,
-                                                               WeeklyDataDto data, Map<String, Map<Integer, String>> yearData) {
+                                                               WeeklyDataDto data, Map<String, Map<Integer, String>> yearData,
+                                                               Map<String, Map<Integer, String>> prevYearData, boolean yearChanged) {
         List<WeeklyResultDto> result = new ArrayList<>();
         for (Map<String, Map<Integer, List<String>>> map : planningMap) {
             List<WeeklyPlanningDto> list = new ArrayList<>();
@@ -82,7 +106,11 @@ public class WeeklyPlanningConversor {
                     value = map.get(dto.getName());
                 }
                 String service = yearData.get(dto.getName().toLowerCase(Locale.ROOT)).get(MONTH_TO_NUM.get(data.getMonth().toUpperCase()));
-                list.add(toWeeklyPlanningDto(dto.getName(), value, service, data.getDays()));
+
+                String servicePrev = yearChanged
+                        ? prevYearData.get(dto.getName().toLowerCase(Locale.ROOT)).get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(data.getMonth().toUpperCase())))
+                        : yearData.get(dto.getName().toLowerCase(Locale.ROOT)).get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(data.getMonth().toUpperCase())));
+                list.add(toWeeklyPlanningDto(dto.getName(), value, service, servicePrev, data.getDays()));
             }
             changeColors(data.getActivities());
             result.add(new WeeklyResultDto(data.getYear(), data.getMonth(), data.getWeek(), list, data.getActivities(), true));
@@ -90,7 +118,8 @@ public class WeeklyPlanningConversor {
         return result;
     }
 
-    public static WeeklyPlanningDto toWeeklyPlanningDto(String name, Map<Integer, List<String>> asignations, String service, List<Integer> days) {
+    public static WeeklyPlanningDto toWeeklyPlanningDto(String name, Map<Integer, List<String>> asignations, String service,
+                                                        String servicePrev, List<Integer> days) {
 
         List<String> list = new ArrayList<>(Collections.nCopies(5, null));
         List<String> eveningList = new ArrayList<>(Collections.nCopies(5, null));
@@ -134,7 +163,28 @@ public class WeeklyPlanningConversor {
                 }
             });
         }
-        return new WeeklyPlanningDto(name, service == null ? null : CONSTANTS_MAP.get(service), list, eveningList);
+
+        List<String> colors = new ArrayList<>(Collections.nCopies(5, null));
+        Integer prevDay = 0;
+        boolean monthChanged = false;
+        for (Integer day : days) {
+            if (day < prevDay){
+                monthChanged = true;
+            }
+            prevDay = day;
+        }
+        String currentColor = monthChanged ? servicePrev : service;
+        prevDay = 0;
+        int index = 0;
+        for(Integer day : days) {
+            if (day < prevDay){
+                currentColor = service;
+            }
+            prevDay = day;
+            colors.add(index, currentColor == null ? null : CONSTANTS_MAP.get(currentColor));
+            index ++;
+        }
+        return new WeeklyPlanningDto(name, colors, list, eveningList);
     }
 
     public static void changeColors(List<List<ActivityDto>> activities) {
