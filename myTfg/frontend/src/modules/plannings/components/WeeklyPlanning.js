@@ -91,10 +91,21 @@ const WeeklyPlanning = () => {
 
   const getWeekStartDate = (y, m, weekIndex) => {
     const firstDay = new Date(y, m, 1);
-    const startOffset = (8 - firstDay.getDay()) % 7;
-    const startDate = new Date(y, m, 1 + startOffset + weekIndex * 7);
+    
+    // Find the first Monday where Friday falls within the target month
+    let mondayDate = new Date(y, m, 1);
+    
+    // Go back to find the Monday of the week containing the first day of the month
+    const dayOfWeek = firstDay.getDay(); // 0=Sunday, 1=Monday, ..., 6=Saturday
+    const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Convert to Monday-based week
+    mondayDate.setDate(1 - daysToSubtract);
+    
+    // Add weeks based on weekIndex
+    mondayDate.setDate(mondayDate.getDate() + weekIndex * 7);
+    
+    // Return Monday through Friday of this week
     return [...Array(5)].map((_, i) => {
-      const d = new Date(startDate);
+      const d = new Date(mondayDate);
       d.setDate(d.getDate() + i);
       return d;
     });
