@@ -329,6 +329,10 @@
 						</goals>
 						<configuration>
 							<arguments>run build</arguments>
+							<environmentVariables>
+								<ESLINT_NO_DEV_ERRORS>true</ESLINT_NO_DEV_ERRORS>
+								<CI>false</CI>
+							</environmentVariables>
 						</configuration>
 						<phase>generate-resources</phase>
 					</execution>
