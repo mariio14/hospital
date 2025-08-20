@@ -150,7 +150,7 @@ const WeeklyPlanning = () => {
         }
       }
     }
-  }, [month, year, validWeeks]);
+  }, [month, year]);
 
 
   const colorMap = {
