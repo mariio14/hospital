@@ -100,7 +100,33 @@ const WeeklyPlanning = () => {
     });
   };
 
+  // Get valid weeks for a month (only weeks where Friday belongs to the selected month)
+  const getValidWeeksForMonth = (y, m) => {
+    const validWeeks = [];
+    
+    // Check up to 6 possible weeks to cover all edge cases
+    for (let weekIndex = 0; weekIndex < 6; weekIndex++) {
+      const weekDays = getWeekStartDate(y, m, weekIndex);
+      const friday = weekDays[4]; // Friday is index 4 (Mon=0, Tue=1, Wed=2, Thu=3, Fri=4)
+      
+      // Week belongs to the month if Friday is in that month
+      if (friday.getMonth() === m) {
+        validWeeks.push(weekIndex);
+      }
+    }
+    
+    return validWeeks;
+  };
+
   const days = getWeekStartDate(year, month, weekInMonth);
+  const validWeeks = getValidWeeksForMonth(year, month);
+
+  // Reset weekInMonth to 0 if current selection is not valid for the new month
+  useEffect(() => {
+    if (!validWeeks.includes(weekInMonth) && validWeeks.length > 0) {
+      setWeekInMonth(validWeeks[0]);
+    }
+  }, [month, year, weekInMonth, validWeeks]);
 
   const colorMap = {
     QX: "#81C784", PEONAGE: "#E57373", CONSULTATION: "#FF9800", FLOOR: "#E57373", QXROBOT: "#2196F3", CERDO: "#2196F3", CARCA: "#2196F3"
@@ -555,7 +581,7 @@ const WeeklyPlanning = () => {
               </select>
               <label>Semana:</label>
               <select value={weekInMonth} onChange={(e) => setWeekInMonth(Number(e.target.value))} className="border p-1 rounded">
-                {[0, 1, 2, 3, 4].map(i => <option key={i} value={i}>{`Semana ${i + 1}`}</option>)}
+                {validWeeks.map(i => <option key={i} value={i}>{`Semana ${i + 1}`}</option>)}
               </select>
             </div>
             <div className="flex gap-2">
