@@ -1,39 +1,45 @@
-/* Hide scrollbar for Chrome, Safari and Opera */
-html::-webkit-scrollbar {
-	display: none;
-}
-  
-  /* Hide scrollbar for IE, Edge and Firefox */
+/* Modern scrollbar styling - don't hide, make it beautiful */
 html {
-	-ms-overflow-style: none;  /* IE and Edge */
-	scrollbar-width: none;  /* Firefox */
+	scroll-behavior: smooth;
 }
   
  
 .App {
 	text-align: center;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
 }
 
 .App-logo {
 	animation: App-logo-spin infinite 20s linear;
 	height: 80px;
+	filter: drop-shadow(0 4px 6px rgb(0 0 0 / 0.1));
 }
 
 .App-header {
 	height: auto;
-	padding: 20px;
-	color: white;
+	padding: 1.5rem;
+	color: var(--surface-color);
+	background: var(--surface-color);
+	border-bottom: 1px solid var(--border-color);
 }
 
 .App-title {
-	font-size: 1.5em;
+	font-size: 1.875rem;
+	font-weight: 700;
+	letter-spacing: -0.025em;
+	color: var(--text-primary);
 }
 
 .App-intro {
-	font-size: large;
+	font-size: 1.125rem;
+	color: var(--text-secondary);
+	line-height: 1.75;
 }
 
 
+/* Modern utility classes */
 .centered {
 	margin: auto;
 }
@@ -46,29 +52,34 @@ html {
 	margin: 0;
 }
 
+/* Enhanced navigation links */
 .nav-link {
-	color: white;
-	font-weight: bold;
+	color: var(--surface-color);
+	font-weight: 600;
+	transition: var(--transition);
 }
 
 .nav-link:hover {
-	color: rgb(128, 128, 128);
+	color: var(--accent-color);
+	transform: translateY(-1px);
 }
 
+/* Modern background variants */
 .bg-white {
-	background-color: rgb(255, 255, 255);
+	background-color: var(--surface-color);
 }
 
 .bg-lightblue {
-	background-color: rgb(183, 224, 243);
+	background: linear-gradient(135deg, rgb(59 130 246 / 0.1), rgb(99 102 241 / 0.1));
 }
 
 .bg-lightcoral {
-	background-color: rgb(240,128,128);
+	background: linear-gradient(135deg, rgb(236 72 153 / 0.1), rgb(239 68 68 / 0.1));
 }
 
 .outline {
-	border: 2px solid rgb(167, 167, 167);
+	border: 2px solid var(--border-color);
+	border-radius: var(--radius-md);
 }
 
 
@@ -80,15 +91,24 @@ html {
 	display: block;
 	justify-content: center;
 	margin: auto;
-	border-radius: 10px;
+	border-radius: var(--radius-lg);
 	height: 200px;
 	object-fit: cover;
+	box-shadow: var(--shadow-md);
+	transition: var(--transition);
+}
+
+.fixed-image:hover {
+	transform: scale(1.02);
+	box-shadow: var(--shadow-lg);
 }
 .fixed-image-big {
 	width: 205px;
 	height: 175px;
 	object-fit: contain;
 	padding-right: 1rem;
+	border-radius: var(--radius-md);
+	transition: var(--transition);
 }
 
 
@@ -101,28 +121,49 @@ html {
 	justify-content: center;
 	border: none;
 	cursor: pointer;
-	box-shadow: -2px 6px 17px -5px rgba(0,0,0,0.5);
-	transition: 0.3s ease-out;
+	box-shadow: var(--shadow-md);
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	min-height: 380px;
+	border-radius: var(--radius-xl);
+	background: var(--surface-color);
+	overflow: hidden;
+	position: relative;
 }
-.post-card:hover{
-	box-shadow: -2px 6px 17px 0px rgba(0,0,0,0.5);
-	transform: scale(1.03);
+
+.post-card:before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 4px;
+	background: var(--primary-gradient);
+	transform: scaleX(0);
+	transition: transform 0.3s ease;
+}
+
+.post-card:hover {
+	box-shadow: var(--shadow-lg);
+	transform: translateY(-4px) scale(1.02);
+}
+
+.post-card:hover:before {
+	transform: scaleX(1);
 }
 .post-card-complete {
-	box-shadow: -2px 6px 17px -5px rgba(0,0,0,0.5);
+	box-shadow: var(--shadow-lg);
 	border: none;
+	border-radius: var(--radius-xl);
+	background: var(--surface-color);
 }
 .post-complete {
-	padding-top: 2rem;
-	padding-bottom: 2rem;
-	padding-left: 2rem;
-	padding-right: 1rem;
+	padding: 2rem;
 	overflow: hidden;
 }
 
 .post-text {
-	color: rgba(0,0,0,0.5);
+	color: var(--text-secondary);
+	line-height: 1.7;
 }
 
 .descripcion {
