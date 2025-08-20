@@ -107,7 +107,8 @@ public class PlanningController {
         List<Map<String, Map<Integer, String>>> planning =
                 planningService.getAnnualPlanning(AnnualPlanningDataConversor.toClingoParams(params, costs), year);
 
-        return AnnualPlanningConversor.toAnnualPlanningDtos(planning, params);
+        List<Staff> staffList = staffService.getStaff();
+        return AnnualPlanningConversor.toAnnualPlanningDtos(planning, staffList);
     }
 
     @PostMapping("/savedYearly")
@@ -116,7 +117,8 @@ public class PlanningController {
 
         List<Map<String, Map<Integer, String>>> annualPlanning = planningService.getYearFromJson(year, false);
 
-        return AnnualPlanningConversor.toAnnualPlanningDtos(annualPlanning, params);
+        List<Staff> staffList = staffService.getStaff();
+        return AnnualPlanningConversor.toAnnualPlanningDtos(annualPlanning, staffList);
     }
 
     @PostMapping("/monthly")
@@ -132,7 +134,8 @@ public class PlanningController {
                 planningService.getMonthlyPlanning(MonthlyDataConversor.toClingoParams(
                         params, costs, previousMonthPlanning), params.getMonth(), params.getYear());
 
-        return MonthlyPlanningConversor.toMonthlyPlanningDtosFromData(planning, params);
+        List<Staff> staffList = staffService.getStaff();
+        return MonthlyPlanningConversor.toMonthlyPlanningDtosFromData(planning, params.getMonth(), params.getNumberOfDays(), staffList);
     }
 
     @GetMapping("/monthly")
@@ -190,7 +193,8 @@ public class PlanningController {
                                 monthData, params.getYear(), params.getMonth()),
                         params.getYear(), params.getMonth(), params.getWeek(), params.getActivities());
 
-        return WeeklyPlanningConversor.toWeeklyPlanningDtosFromData(planning, params, annualData, prevAnnualData, yearChanged);
+        List<Staff> staffList = staffService.getStaff();
+        return WeeklyPlanningConversor.toWeeklyPlanningDtosFromData(planning, params, annualData, prevAnnualData, yearChanged, staffList);
     }
 
     @PostMapping("/getWeekly")

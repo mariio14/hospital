@@ -75,19 +75,18 @@ public class WeeklyPlanningConversor {
                 if (assignations == null) {
                     assignations = map.get(staff.getName());
                 }
-                String service = planningMap.getAnnualData().get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT))
-                        .get(MONTH_TO_NUM.get(month.toUpperCase(Locale.ROOT)));
+                Map<Integer, String> staffYearData = planningMap.getAnnualData().get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+                String service = staffYearData != null ? staffYearData.get(MONTH_TO_NUM.get(month.toUpperCase(Locale.ROOT))) : null;
                 String servicePrev;
                 if (yearChanged) {
                     if (planningMap.getPrevAnnualData() == null || planningMap.getPrevAnnualData().isEmpty()) {
                         servicePrev = null;
                     } else {
-                        servicePrev = planningMap.getPrevAnnualData().get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT))
-                                .get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(month.toUpperCase(Locale.ROOT))));
+                        Map<Integer, String> staffPrevYearData = planningMap.getPrevAnnualData().get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+                        servicePrev = staffPrevYearData != null ? staffPrevYearData.get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(month.toUpperCase(Locale.ROOT)))) : null;
                     }
                 } else {
-                    servicePrev = planningMap.getAnnualData().get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT))
-                            .get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(month.toUpperCase(Locale.ROOT))));
+                    servicePrev = staffYearData != null ? staffYearData.get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(month.toUpperCase(Locale.ROOT)))) : null;
                 }
                 list.add(toWeeklyPlanningDto(staff.getName(), assignations, service,servicePrev, dto.getDays()));
 
@@ -100,21 +99,34 @@ public class WeeklyPlanningConversor {
 
     public static List<WeeklyResultDto> toWeeklyPlanningDtosFromData(List<Map<String, Map<Integer, List<String>>>> planningMap,
                                                                WeeklyDataDto data, Map<String, Map<Integer, String>> yearData,
-                                                               Map<String, Map<Integer, String>> prevYearData, boolean yearChanged) {
+                                                               Map<String, Map<Integer, String>> prevYearData, boolean yearChanged, List<Staff> staffList) {
         List<WeeklyResultDto> result = new ArrayList<>();
         for (Map<String, Map<Integer, List<String>>> map : planningMap) {
             List<WeeklyPlanningDto> list = new ArrayList<>();
-            for (WeeklyAssignationsDto dto : data.getWeeklyPlanningDtos()) {
-                Map<Integer, List<String>> value = map.get(dto.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+            for (Staff staff : staffList) {
+                Map<Integer, List<String>> value = map.get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
                 if (value == null) {
-                    value = map.get(dto.getName());
+                    value = map.get(staff.getName());
                 }
-                String service = yearData.get(dto.getName().toLowerCase(Locale.ROOT)).get(MONTH_TO_NUM.get(data.getMonth().toUpperCase()));
+                
+                Map<Integer, String> staffYearData = yearData.get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+                if (staffYearData == null) {
+                    staffYearData = yearData.get(staff.getName());
+                }
+                String service = staffYearData != null ? staffYearData.get(MONTH_TO_NUM.get(data.getMonth().toUpperCase())) : null;
 
-                String servicePrev = yearChanged
-                        ? prevYearData.get(dto.getName().toLowerCase(Locale.ROOT)).get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(data.getMonth().toUpperCase())))
-                        : yearData.get(dto.getName().toLowerCase(Locale.ROOT)).get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(data.getMonth().toUpperCase())));
-                list.add(toWeeklyPlanningDto(dto.getName(), value, service, servicePrev, data.getDays()));
+                String servicePrev;
+                if (yearChanged && prevYearData != null) {
+                    Map<Integer, String> staffPrevYearData = prevYearData.get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+                    if (staffPrevYearData == null) {
+                        staffPrevYearData = prevYearData.get(staff.getName());
+                    }
+                    servicePrev = staffPrevYearData != null ? staffPrevYearData.get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(data.getMonth().toUpperCase()))) : null;
+                } else {
+                    servicePrev = staffYearData != null ? staffYearData.get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(data.getMonth().toUpperCase()))) : null;
+                }
+                
+                list.add(toWeeklyPlanningDto(staff.getName(), value, service, servicePrev, data.getDays()));
             }
             changeColors(data.getActivities());
             result.add(new WeeklyResultDto(data.getYear(), data.getMonth(), data.getWeek(), list, data.getActivities(), true));

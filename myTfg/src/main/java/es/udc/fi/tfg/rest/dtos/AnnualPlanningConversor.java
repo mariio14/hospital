@@ -1,5 +1,7 @@
 package es.udc.fi.tfg.rest.dtos;
 
+import es.udc.fi.tfg.model.entities.Staff;
+
 import java.util.*;
 
 public class AnnualPlanningConversor {
@@ -25,13 +27,16 @@ public class AnnualPlanningConversor {
     );
 
     public static List<AnnualResultDto> toAnnualPlanningDtos(List<Map<String, Map<Integer, String>>> planningMap,
-                    AnnualDataDto params) {
+                    List<Staff> staffList) {
         List<AnnualResultDto> result = new ArrayList<>();
         for (Map<String, Map<Integer, String>> map : planningMap) {
             List<AnnualPlanningDto> list = new ArrayList<>();
-            for (AnnualPlanningDataDto annualPlanningDataDto : params.getAssignations()) {
-                Map<Integer, String> value = map.get(annualPlanningDataDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
-                list.add(new AnnualPlanningDto(annualPlanningDataDto.getName(), annualPlanningDataDto.getLevel(), transformTasksMap(value)));
+            for (Staff staff : staffList) {
+                Map<Integer, String> value = map.get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+                if (value == null) {
+                    value = map.get(staff.getName());
+                }
+                list.add(new AnnualPlanningDto(staff.getName(), staff.getLevel().toString(), transformTasksMap(value)));
             }
             result.add(new AnnualResultDto(list,true));
         }
@@ -40,10 +45,12 @@ public class AnnualPlanningConversor {
 
     private static Map<Integer, String> transformTasksMap(Map<Integer, String> value) {
         Map<Integer, String> result = new HashMap<>();
-        for (Map.Entry<Integer, String> e : value.entrySet()) {
-            String val = e.getValue();
-            String transformed = val == null ? null : CONSTANTS_MAP.getOrDefault(val, val);
-            result.put(e.getKey()-1, transformed);
+        if (value != null) {
+            for (Map.Entry<Integer, String> e : value.entrySet()) {
+                String val = e.getValue();
+                String transformed = val == null ? null : CONSTANTS_MAP.getOrDefault(val, val);
+                result.put(e.getKey()-1, transformed);
+            }
         }
         return result;
     }
