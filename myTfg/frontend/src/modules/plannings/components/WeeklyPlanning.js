@@ -659,14 +659,18 @@ const WeeklyPlanning = () => {
               </thead>
               <tbody>
                 {planningData.weeklyPlanningDtos && planningData.weeklyPlanningDtos.map((person) => {
-                  const rowColor = colorPersonMap[person.color] || "#fff";
+                  // Use first day color for person's name cell
+                  const nameColor = colorPersonMap[person.colors && person.colors[0] ? person.colors[0] : null] || "#fff";
                   return(
-                  <tr key={person.name} style={{ backgroundColor: rowColor }}>
-                    <td className="font-medium">{person.name}</td>
+                  <tr key={person.name}>
+                    <td className="font-medium" style={{ backgroundColor: nameColor }}>{person.name}</td>
                     {person.assignations.map((_, idx) => {
                       const morningActivity = person.assignations[idx];
                       const eveningActivity = person.eveningAssignations?.[idx] || null;
                       const dayActivities = planningData.activities[idx] || [];
+                      
+                      // Use day-specific color for this cell
+                      const dayColor = colorPersonMap[person.colors && person.colors[idx] ? person.colors[idx] : null] || "#fff";
 
                       const filteredMorning = dayActivities.filter((a) => a.time === "morning");
                       const filteredEvening = dayActivities.filter((a) => a.time === "evening");
@@ -698,7 +702,6 @@ const WeeklyPlanning = () => {
                                   let selected;
                                   let typeSelected = type;
                                   let idSelected = id;
-                                  let color;
 
                                   if (type === "QX" && id) {
                                     selected = filteredMorning.find(
@@ -721,7 +724,7 @@ const WeeklyPlanning = () => {
                                   assignCreatedActivity(person.name, idx, "morning", typeSelected, selected?.color, idSelected);
                                 }}
                                 style={{
-                                  backgroundColor: rowColor,
+                                  backgroundColor: dayColor,
                                   border: "none",
                                   width: "100%",
                                   textAlign: "center",
@@ -790,7 +793,7 @@ const WeeklyPlanning = () => {
                                     assignCreatedActivity(person.name, idx, "evening", typeSelected, selected?.color, idSelected);
                                 }}
                                 style={{
-                                  backgroundColor: rowColor,
+                                  backgroundColor: dayColor,
                                   border: "none",
                                   width: "100%",
                                   textAlign: "center",
