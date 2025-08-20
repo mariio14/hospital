@@ -79,8 +79,12 @@ public class WeeklyPlanningConversor {
                         .get(MONTH_TO_NUM.get(month.toUpperCase(Locale.ROOT)));
                 String servicePrev;
                 if (yearChanged) {
-                    servicePrev = planningMap.getPrevAnnualData().get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT))
-                            .get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(month.toUpperCase(Locale.ROOT))));
+                    if (planningMap.getPrevAnnualData() == null || planningMap.getPrevAnnualData().isEmpty()) {
+                        servicePrev = null;
+                    } else {
+                        servicePrev = planningMap.getPrevAnnualData().get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT))
+                                .get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(month.toUpperCase(Locale.ROOT))));
+                    }
                 } else {
                     servicePrev = planningMap.getAnnualData().get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT))
                             .get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(month.toUpperCase(Locale.ROOT))));

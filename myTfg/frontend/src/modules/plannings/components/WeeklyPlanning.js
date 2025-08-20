@@ -139,6 +139,20 @@ const WeeklyPlanning = () => {
     }
   }, [month, year, weekInMonth, validWeeks]);
 
+  useEffect(() => {
+    const today = new Date();
+    if (today.getFullYear() === year && today.getMonth() === month) {
+      for (let i = 0; i < validWeeks.length; i++) {
+        const weekDays = getWeekStartDate(year, month, validWeeks[i]);
+        if (weekDays.some(d => d.getDate() === today.getDate())) {
+          setWeekInMonth(validWeeks[i]);
+          break;
+        }
+      }
+    }
+  }, [month, year, validWeeks]);
+
+
   const colorMap = {
     QX: "#81C784", PEONAGE: "#E57373", CONSULTATION: "#FF9800", FLOOR: "#E57373", QXROBOT: "#2196F3", CERDO: "#2196F3", CARCA: "#2196F3"
   };
