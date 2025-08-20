@@ -91,16 +91,53 @@ const WeeklyPlanning = () => {
 
   const getWeekStartDate = (y, m, weekIndex) => {
     const firstDay = new Date(y, m, 1);
-    const startOffset = (8 - firstDay.getDay()) % 7;
-    const startDate = new Date(y, m, 1 + startOffset + weekIndex * 7);
+    
+    // Find the first Monday where Friday falls within the target month
+    let mondayDate = new Date(y, m, 1);
+    
+    // Go back to find the Monday of the week containing the first day of the month
+    const dayOfWeek = firstDay.getDay(); // 0=Sunday, 1=Monday, ..., 6=Saturday
+    const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Convert to Monday-based week
+    mondayDate.setDate(1 - daysToSubtract);
+    
+    // Add weeks based on weekIndex
+    mondayDate.setDate(mondayDate.getDate() + weekIndex * 7);
+    
+    // Return Monday through Friday of this week
     return [...Array(5)].map((_, i) => {
-      const d = new Date(startDate);
+      const d = new Date(mondayDate);
       d.setDate(d.getDate() + i);
       return d;
     });
   };
 
+  // Get valid weeks for a month (only weeks where Friday belongs to the selected month)
+  const getValidWeeksForMonth = (y, m) => {
+    const validWeeks = [];
+    
+    // Check up to 6 possible weeks to cover all edge cases
+    for (let weekIndex = 0; weekIndex < 6; weekIndex++) {
+      const weekDays = getWeekStartDate(y, m, weekIndex);
+      const friday = weekDays[4]; // Friday is index 4 (Mon=0, Tue=1, Wed=2, Thu=3, Fri=4)
+      
+      // Week belongs to the month if Friday is in that month
+      if (friday.getMonth() === m) {
+        validWeeks.push(weekIndex);
+      }
+    }
+    
+    return validWeeks;
+  };
+
   const days = getWeekStartDate(year, month, weekInMonth);
+  const validWeeks = getValidWeeksForMonth(year, month);
+
+  // Reset weekInMonth to 0 if current selection is not valid for the new month
+  useEffect(() => {
+    if (!validWeeks.includes(weekInMonth) && validWeeks.length > 0) {
+      setWeekInMonth(validWeeks[0]);
+    }
+  }, [month, year, weekInMonth, validWeeks]);
 
   const colorMap = {
     QX: "#81C784", PEONAGE: "#E57373", CONSULTATION: "#FF9800", FLOOR: "#E57373", QXROBOT: "#2196F3", CERDO: "#2196F3", CARCA: "#2196F3"
@@ -555,7 +592,7 @@ const WeeklyPlanning = () => {
               </select>
               <label>Semana:</label>
               <select value={weekInMonth} onChange={(e) => setWeekInMonth(Number(e.target.value))} className="border p-1 rounded">
-                {[0, 1, 2, 3, 4].map(i => <option key={i} value={i}>{`Semana ${i + 1}`}</option>)}
+                {validWeeks.map(i => <option key={i} value={i}>{`Semana ${i + 1}`}</option>)}
               </select>
             </div>
             <div className="flex gap-2">
