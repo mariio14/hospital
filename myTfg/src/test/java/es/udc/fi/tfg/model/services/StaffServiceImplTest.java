@@ -27,33 +27,33 @@ public class StaffServiceImplTest {
     @Test
     void testStaffDtoCreation() {
         // Given
-        StaffDto staff1 = new StaffDto(1, "Dr. Juan", 3);
-        StaffDto staff2 = new StaffDto(2, "Dr. Maria", 2);
+        StaffDto staff1 = new StaffDto(1, "Laura", 5);
+        StaffDto staff2 = new StaffDto(2, "Mario", 5);
         
         // When
         List<StaffDto> staffList = Arrays.asList(staff1, staff2);
         
         // Then
         assertEquals(2, staffList.size());
-        assertEquals("Dr. Juan", staff1.getName());
-        assertEquals(3, staff1.getLevel());
-        assertEquals("Dr. Maria", staff2.getName());
-        assertEquals(2, staff2.getLevel());
+        assertEquals("Laura", staff1.getName());
+        assertEquals(5, staff1.getLevel());
+        assertEquals("Mario", staff2.getName());
+        assertEquals(5, staff2.getLevel());
     }
 
     @Test
     void testStaffEntityCreation() {
         // Given & When
-        Staff staff1 = new Staff(1, "Dr. Pedro", 4);
-        Staff staff2 = new Staff(2, "Dr. Ana", 1);
+        Staff staff1 = new Staff(1, "Pedro", 4);
+        Staff staff2 = new Staff(2, "Marta", 4);
         
         // Then
-        assertEquals("Dr. Pedro", staff1.getName());
+        assertEquals("Pedro", staff1.getName());
         assertEquals(4, staff1.getLevel());
         assertEquals(1, staff1.getId());
         
-        assertEquals("Dr. Ana", staff2.getName());
-        assertEquals(1, staff2.getLevel());
+        assertEquals("Marta", staff2.getName());
+        assertEquals(4, staff2.getLevel());
         assertEquals(2, staff2.getId());
     }
 

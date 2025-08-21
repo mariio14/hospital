@@ -57,8 +57,9 @@ public class StaffControllerTest {
     void testGetStaff() throws Exception {
         // Given
         List<Staff> mockStaffList = Arrays.asList(
-            new Staff(1, "Dr. Juan", 3),
-            new Staff(2, "Dr. Maria", 2)
+            new Staff(1, "Laura", 5),
+            new Staff(2, "Mario", 5),
+            new Staff(3, "Esther", 5)
         );
         
         when(staffService.getStaff()).thenReturn(mockStaffList);
@@ -67,11 +68,13 @@ public class StaffControllerTest {
         mockMvc.perform(get("/api/staff"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].name").value("Dr. Juan"))
-                .andExpect(jsonPath("$[0].level").value(3))
-                .andExpect(jsonPath("$[1].name").value("Dr. Maria"))
-                .andExpect(jsonPath("$[1].level").value(2));
+                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$[0].name").value("Laura"))
+                .andExpect(jsonPath("$[0].level").value(5))
+                .andExpect(jsonPath("$[1].name").value("Mario"))
+                .andExpect(jsonPath("$[1].level").value(5))
+                .andExpect(jsonPath("$[2].name").value("Esther"))
+                .andExpect(jsonPath("$[2].level").value(5));
 
         verify(staffService, times(1)).getStaff();
     }
@@ -79,8 +82,9 @@ public class StaffControllerTest {
     @Test
     void testModifyStaff() throws Exception {
         // Given
-        String jsonContent = "[{\"id\":1,\"name\":\"Dr. Juan\",\"level\":3}," +
-                             "{\"id\":2,\"name\":\"Dr. Maria\",\"level\":2}]";
+        String jsonContent = "[{\"id\":1,\"name\":\"Laura\",\"level\":5}," +
+                             "{\"id\":2,\"name\":\"Mario\",\"level\":5}," +
+                             "{\"id\":3,\"name\":\"Esther\",\"level\":5}]";
 
         // When & Then
         mockMvc.perform(put("/api/staff/modify")
