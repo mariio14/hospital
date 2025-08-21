@@ -565,24 +565,13 @@ const MonthlyPlanning = () => {
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <div style={{ width: "100%" }}>
-        <h2
-          style={{
-            cursor: "pointer",
-            padding: "10px",
-            border: "1px solid #ddd",
-            borderRadius: "5px",
-            textAlign: "center",
-            backgroundColor: "#f9f9f9",
-          }}
-        >
-          Planificación Mensual
-        </h2>
-
           <div
             style={{
-              border: "1px solid #ddd",
-              padding: "20px",
-              borderRadius: "5px",
+              border: "1px solid #e2e8f0",
+              padding: "24px",
+              borderRadius: "16px",
+              background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
+              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
             }}
           >
             {/* Botones de acciones */}
@@ -590,108 +579,235 @@ const MonthlyPlanning = () => {
               style={{
                 display: "flex",
                 justifyContent: "space-between",
-                marginBottom: "20px",
+                alignItems: "center",
+                marginBottom: "24px",
+                flexWrap: "wrap",
+                gap: "16px"
               }}
             >
-              <button
-                onClick={handleGeneratePlanning}
-                style={{
-                  padding: "5px 15px",
-                  backgroundColor: "#007BFF",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
-              >
-                Generar Planificación
-              </button>
+              <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+                <button
+                  onClick={handleGeneratePlanning}
+                  style={{
+                    padding: "12px 24px",
+                    background: "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)",
+                    color: "#ffffff",
+                    border: "none",
+                    borderRadius: "12px",
+                    cursor: "pointer",
+                    fontWeight: "600",
+                    fontSize: "14px",
+                    boxShadow: "0 4px 6px -1px rgba(59, 130, 246, 0.3)",
+                    transition: "all 0.2s ease",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px"
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 8px 12px -1px rgba(59, 130, 246, 0.4)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 6px -1px rgba(59, 130, 246, 0.3)';
+                  }}
+                >
+                  ⚡ Generar Planificación
+                </button>
+                <button
+                  onClick={exportToPDF}
+                  style={{
+                    padding: "12px 24px",
+                    background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                    color: "#ffffff",
+                    border: "none",
+                    borderRadius: "12px",
+                    cursor: "pointer",
+                    fontWeight: "600",
+                    fontSize: "14px",
+                    boxShadow: "0 4px 6px -1px rgba(16, 185, 129, 0.3)",
+                    transition: "all 0.2s ease",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px"
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 8px 12px -1px rgba(16, 185, 129, 0.4)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 6px -1px rgba(16, 185, 129, 0.3)';
+                  }}
+                >
+                  📄 Exportar a PDF
+                </button>
+                <button
+                  onClick={handleClearPlanning}
+                  style={{
+                    padding: "12px 24px",
+                    background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+                    color: "#ffffff",
+                    border: "none",
+                    borderRadius: "12px",
+                    cursor: "pointer",
+                    fontWeight: "600",
+                    fontSize: "14px",
+                    boxShadow: "0 4px 6px -1px rgba(239, 68, 68, 0.3)",
+                    transition: "all 0.2s ease",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px"
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 8px 12px -1px rgba(239, 68, 68, 0.4)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 6px -1px rgba(239, 68, 68, 0.3)';
+                  }}
+                >
+                  🗑️ Vaciar Planificación
+                </button>
+              </div>
 
-              <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
-                <label>Mes: </label>
-                <select value={month} onChange={handleMonthChange}>
+              <div style={{ 
+                display: "flex", 
+                alignItems: "center", 
+                gap: "12px",
+                background: '#ffffff',
+                padding: '12px 16px',
+                borderRadius: '12px',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+                border: '1px solid #e2e8f0'
+              }}>
+                <label style={{ 
+                  color: "#374151", 
+                  fontWeight: "600", 
+                  fontSize: "14px"
+                }}>Mes:</label>
+                <select 
+                  value={month} 
+                  onChange={handleMonthChange}
+                  style={{
+                    padding: '8px 12px',
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    transition: 'all 0.2s ease',
+                    outline: 'none',
+                    background: '#ffffff',
+                    cursor: 'pointer'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                >
                   {[...Array(12).keys()].map((m) => (
                     <option key={m + 1} value={m + 1}>{new Date(0, m).toLocaleString('es-ES', { month: 'long' })}</option>
                   ))}
                 </select>
-                <label style={{ marginLeft: "10px" }}>Año: </label>
-                <input type="number" value={year} onChange={handleYearChange} min="2000" max="2100" />
+                <label style={{ 
+                  color: "#374151", 
+                  fontWeight: "600", 
+                  fontSize: "14px"
+                }}>Año:</label>
+                <input 
+                  type="number" 
+                  value={year} 
+                  onChange={handleYearChange} 
+                  min="2000" 
+                  max="2100"
+                  style={{
+                    padding: '8px 12px',
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    transition: 'all 0.2s ease',
+                    outline: 'none',
+                    width: '100px',
+                    background: '#ffffff'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                />
               </div>
-
-              <button
-                onClick={exportToPDF}
-                style={{
-                  padding: "5px 15px",
-                  backgroundColor: "#28a745",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                  marginLeft: "10px",
-                }}
-              >
-                Exportar a PDF
-              </button>
-
-              <button
-                onClick={handleClearPlanning}
-                style={{
-                  padding: "5px 15px",
-                  backgroundColor: "#FF5733",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                  marginLeft: "10px",
-                }}
-              >
-                Vaciar Planificación
-              </button>
             </div>
             {monthlyPlanningList.length > 1 && (
-              <div className="flex gap-2 items-center">
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
                 <button
                   onClick={goToPrevPlanning}
                   style={{
-                    padding: "5px 10px",
-                    backgroundColor: "#6c757d",
-                    color: "#fff",
+                    padding: "10px 14px",
+                    background: "linear-gradient(135deg, #6b7280 0%, #4b5563 100%)",
+                    color: "#ffffff",
                     border: "none",
-                    borderRadius: "5px",
+                    borderRadius: "10px",
                     cursor: "pointer",
+                    fontWeight: "600",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    transition: "all 0.2s ease"
                   }}
+                  onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+                  onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
                 >
                   ◀
                 </button>
-                <span style={{ fontWeight: "bold" }}>
+                <span style={{ 
+                  fontWeight: "700", 
+                  color: "#374151",
+                  background: "#f3f4f6",
+                  padding: "8px 16px",
+                  borderRadius: "8px",
+                  fontSize: "14px"
+                }}>
                   Planning {activePlanningIndex + 1} de {monthlyPlanningList.length}
                 </span>
                 <button
                   onClick={goToNextPlanning}
                   style={{
-                    padding: "5px 10px",
-                    backgroundColor: "#6c757d",
-                    color: "#fff",
+                    padding: "10px 14px",
+                    background: "linear-gradient(135deg, #6b7280 0%, #4b5563 100%)",
+                    color: "#ffffff",
                     border: "none",
-                    borderRadius: "5px",
+                    borderRadius: "10px",
                     cursor: "pointer",
+                    fontWeight: "600",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    transition: "all 0.2s ease"
                   }}
+                  onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+                  onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
                 >
                   ▶
                 </button>
                 <button
                   onClick={handleConfirmPlanning}
                   style={{
-                    padding: "5px 15px",
-                    backgroundColor: "#17a2b8",
-                    color: "#fff",
+                    padding: "10px 20px",
+                    background: "linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)",
+                    color: "#ffffff",
                     border: "none",
-                    borderRadius: "5px",
+                    borderRadius: "10px",
                     cursor: "pointer",
-                    marginLeft: "10px",
+                    fontWeight: "600",
+                    fontSize: "14px",
+                    boxShadow: "0 4px 6px -1px rgba(6, 182, 212, 0.3)",
+                    transition: "all 0.2s ease",
+                    marginLeft: "12px"
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 8px 12px -1px rgba(6, 182, 212, 0.4)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 6px -1px rgba(6, 182, 212, 0.3)';
                   }}
                 >
-                  Confirmar plan
+                  ✓ Confirmar plan
                 </button>
               </div>
             )}
@@ -724,13 +840,13 @@ const MonthlyPlanning = () => {
                 >
                   <thead>
                       <tr>
-                        <th></th>
+                        <th style={{ width: "150px", minWidth: "150px" }}></th>
                         {[...Array(daysInMonth).keys()].map((day) => (
                           <th key={day + 1}>{getDayOfWeek(day + 1, month, year)}</th>
                         ))}
                       </tr>
                       <tr>
-                        <th>{getMonthName(month)}</th>
+                        <th style={{ width: "150px", minWidth: "150px" }}>{getMonthName(month)}</th>
                         {[...Array(daysInMonth).keys()].map((day) => (
                           <th key={day + 1}>{day + 1}</th>
                         ))}
@@ -749,6 +865,8 @@ const MonthlyPlanning = () => {
                             color: "#000",
                             textAlign: "center",
                             fontWeight: "bold",
+                            whiteSpace: "nowrap",
+                            textOverflow: "ellipsis",
                           }}
                         >
                           {person.name}

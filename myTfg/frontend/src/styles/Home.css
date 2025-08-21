@@ -1,10 +1,23 @@
 .container {
    width: 95%;
-   max-width: 8000px;
-   margin: 20px auto;
-   padding: 20px;
-   border: 1px solid #ccc;
-   border-radius: 10px;
-   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-   background-color: #fff;
+   max-width: 1400px;
+   margin: 2rem auto;
+   padding: 2rem;
+   border: 1px solid var(--border-color);
+   border-radius: var(--radius-xl);
+   box-shadow: var(--shadow-lg);
+   background: var(--surface-color);
+   backdrop-filter: blur(20px);
+   position: relative;
+   overflow: hidden;
+}
+
+.container:before {
+   content: '';
+   position: absolute;
+   top: 0;
+   left: 0;
+   right: 0;
+   height: 4px;
+   background: var(--primary-gradient);
 }
