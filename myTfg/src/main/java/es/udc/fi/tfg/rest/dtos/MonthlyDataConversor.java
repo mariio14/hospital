@@ -1,6 +1,7 @@
 package es.udc.fi.tfg.rest.dtos;
 
 import es.udc.fi.tfg.model.entities.Priority;
+import es.udc.fi.tfg.rest.common.ClingoUtils;
 
 import java.util.*;
 
@@ -30,7 +31,7 @@ public class MonthlyDataConversor {
         boolean vacation = false;
         boolean notValid = false;
         for (MonthlyAssignationsDto monthlyAssignationsDto : monthlyDataDto.getMonthlyPlanningDtos()) {
-            String personName = monthlyAssignationsDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT);
+            String personName = ClingoUtils.sanitizeForClingo(monthlyAssignationsDto.getName());
             clingoParams.append(String.format("person(%s). ", personName));
 
             int level = Integer.parseInt(monthlyAssignationsDto.getLevel().replace("R", ""));
@@ -143,7 +144,7 @@ public class MonthlyDataConversor {
         List<Map<String, Map<Integer, String>>> result = new ArrayList<>();
         Map<String, Map<Integer, String>> map = new HashMap<>();
         for (MonthlyAssignationsDto monthlyAssignationsDto : monthlyDataDto.getMonthlyPlanningDtos()) {
-            String personName = monthlyAssignationsDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT);
+            String personName = ClingoUtils.sanitizeForClingo(monthlyAssignationsDto.getName());
             Map<Integer, String> assignationsMap = new HashMap<>();
             List<String> assignations = monthlyAssignationsDto.getAssignations();
             if (assignations != null) {

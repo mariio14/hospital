@@ -107,7 +107,8 @@ public class PlanningController {
         List<Map<String, Map<Integer, String>>> planning =
                 planningService.getAnnualPlanning(AnnualPlanningDataConversor.toClingoParams(params, costs), year);
 
-        return AnnualPlanningConversor.toAnnualPlanningDtos(planning, params);
+        List<Staff> staffList = staffService.getStaff();
+        return AnnualPlanningConversor.toAnnualPlanningDtos(planning, staffList);
     }
 
     @PostMapping("/savedYearly")
@@ -116,7 +117,8 @@ public class PlanningController {
 
         List<Map<String, Map<Integer, String>>> annualPlanning = planningService.getYearFromJson(year, false);
 
-        return AnnualPlanningConversor.toAnnualPlanningDtos(annualPlanning, params);
+        List<Staff> staffList = staffService.getStaff();
+        return AnnualPlanningConversor.toAnnualPlanningDtos(annualPlanning, staffList);
     }
 
     @PostMapping("/monthly")
@@ -132,7 +134,8 @@ public class PlanningController {
                 planningService.getMonthlyPlanning(MonthlyDataConversor.toClingoParams(
                         params, costs, previousMonthPlanning), params.getMonth(), params.getYear());
 
-        return MonthlyPlanningConversor.toMonthlyPlanningDtosFromData(planning, params);
+        List<Staff> staffList = staffService.getStaff();
+        return MonthlyPlanningConversor.toMonthlyPlanningDtosFromData(planning, params.getMonth(), params.getNumberOfDays(), staffList);
     }
 
     @GetMapping("/monthly")
@@ -158,7 +161,7 @@ public class PlanningController {
 
         List<Priority> costs = prioritiesService.getPriorities().get("Semanal");
 
-        boolean yearChanged = isYearChenged(params.getMonth(), params.getDays());
+        boolean yearChanged = isYearChanged(params.getMonth(), params.getDays());
         Map<String, Map<Integer, String>> annualData = planningService.getYearFromJson(params.getYear(), true).get(0);
         Map<String, Map<Integer, String>> prevAnnualData = yearChanged ?
                 planningService.getYearFromJson(params.getYear() - 1, true).get(0) : null;
@@ -190,7 +193,8 @@ public class PlanningController {
                                 monthData, params.getYear(), params.getMonth()),
                         params.getYear(), params.getMonth(), params.getWeek(), params.getActivities());
 
-        return WeeklyPlanningConversor.toWeeklyPlanningDtosFromData(planning, params, annualData, prevAnnualData, yearChanged);
+        List<Staff> staffList = staffService.getStaff();
+        return WeeklyPlanningConversor.toWeeklyPlanningDtosFromData(planning, params, annualData, prevAnnualData, yearChanged, staffList);
     }
 
     @PostMapping("/getWeekly")
@@ -198,7 +202,7 @@ public class PlanningController {
                                              @RequestParam String week, @Validated @RequestBody GetWeeklyDataDto params)
             throws NoSolutionException, IOException, ClassNotFoundException, PlanningNotGeneratedException {
 
-        boolean yearChanged = isYearChenged(month, params.getDays());
+        boolean yearChanged = isYearChanged(month, params.getDays());
         ActivityAndPlanning weekPlanning = planningService.getWeekFromJson(year, month, week, yearChanged);
 
         List<Staff> staffList = staffService.getStaff();
@@ -264,7 +268,7 @@ public class PlanningController {
             List<Priority> costs = prioritiesService.getPriorities().get("Semanal");
 
             Map<String, Map<Integer, String>> annualData = planningService.getYearFromJson(params.getYear(), true).get(0);
-            boolean yearChanged = isYearChenged(params.getMonth(), params.getDays());
+            boolean yearChanged = isYearChanged(params.getMonth(), params.getDays());
             Map<String, Map<Integer, String>> prevAnnualData = yearChanged ?
                     planningService.getYearFromJson(params.getYear() - 1, true).get(0) : null;
 
@@ -298,7 +302,7 @@ public class PlanningController {
         }
     }
 
-    private boolean isYearChenged(String month, List<Integer> days) {
+    private boolean isYearChanged(String month, List<Integer> days) {
         Integer prevDay = 0;
         boolean yearChanged = false;
         if (month.equalsIgnoreCase("ENERO")) {

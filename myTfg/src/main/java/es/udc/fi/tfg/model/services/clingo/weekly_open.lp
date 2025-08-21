@@ -89,7 +89,7 @@ cnt_assign_qx_e_not_color(D,C,I,Cnt) :-
 1 {day_assign(P,D,consultation,null,morning,null) : person(P), level(P,L), L>2, not vacation(P,D), not day_not_assign(P,D,consultation)} :- task(consultation, D), day(D).
 cnt_assign_consult_m(D,Cnt) :-
     Cnt = #count { P : day_assign(P,D,consultation,_,morning,_) },
-    task_color(consultation,D).
+    task(consultation,D).
 % SemanalP_26
 #minimize { V*(Cnt-1),D :
     task(consultation, D), cnt_assign_consult_m(D,Cnt), Cnt > 1,
@@ -101,7 +101,7 @@ cnt_assign_consult_m(D,Cnt) :-
 1 {day_assign(P,D,consultation,null,evening,null) : person(P), level(P,L), L>3, not vacation(P,D), not day_not_assign(P,D,consultation)} :- task_evening(consultation, D).
 cnt_assign_consult_e(D,Cnt) :-
     Cnt = #count { P : day_assign(P,D,consultation,_,evening,_) },
-    task_color(consultation,D).
+    task(consultation,D).
 % SemanalP_27
 #minimize { V*(Cnt-1),D :
     task(consultation, D), cnt_assign_consult_e(D,Cnt), Cnt > 1,
@@ -112,7 +112,7 @@ cnt_assign_consult_e(D,Cnt) :-
 1 {day_assign(P,D,carca,null,morning,null) : person(P), level(P,L), L>2, not vacation(P,D), not day_not_assign(P,D,carca)} :- task(carca, D).
 cnt_assign_carca(D,Cnt) :-
     Cnt = #count { P : day_assign(P,D,carca,_,morning,_) },
-    task_color(carca,D).
+    task(carca,D).
 % SemanalP_28
 #minimize { V*(Cnt-1),D :
     task(carca, D), cnt_assign_carca(D,Cnt), Cnt > 1,
@@ -124,7 +124,7 @@ cnt_assign_carca(D,Cnt) :-
 2 {day_assign(P,D,cerdo,null,morning,null) : person(P), not vacation(P,D), not day_not_assign(P,D,cerdo)} :- task(cerdo, D).
 cnt_assign_cerdo(D,Cnt) :-
     Cnt = #count { P : day_assign(P,D,cerdo,_,morning,_) },
-    task_color(cerdo,D).
+    task(cerdo,D).
 % SemanalP_29
 #minimize { V*(Cnt-1),D :
     task(cerdo, D), cnt_assign_cerdo(D,Cnt), Cnt > 1,

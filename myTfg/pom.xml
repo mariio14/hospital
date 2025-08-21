@@ -12,8 +12,8 @@
 	<packaging>jar</packaging>
 
 	<name>My TFG App</name>
-	<description>Test project my TFG 2024</description>
-	<url>https://github.com/mariio14/myTfg</url>
+	<description>Project my TFG 2025</description>
+	<url>https://github.com/mariio14/hospital</url>
 	<inceptionYear>2023</inceptionYear>
 
 	<parent>
@@ -73,32 +73,7 @@
 	<!-- ****************** PROFILES ****************** -->
 	<!-- ********************************************** -->
 	<profiles>
-		<!-- ============================================== -->
-		<!-- ============= DATABASE PROFILES ============== -->
-		<!-- ============================================== -->
-		<profile>
-			<!-- H2 database profile -->
-			<!-- Prepares the project to make use of an H2 in-memory database -->
-			<id>h2</id>
-			<activation>
-				<!-- Active by default so it can be installed by CI -->
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<!--  Data source properties -->
-				<dataSource.url>jdbc:mariadb://localhost:3306/tfg</dataSource.url>
-				<testDataSource.url>jdbc:mariadb://localhost:3306/tfgTest</testDataSource.url>
-				<dataSource.user>admin</dataSource.user>
-				<dataSource.password>password</dataSource.password>
-			</properties>
-			<dependencies>
-				<dependency>
-					<!-- H2 database -->
-					<groupId>com.h2database</groupId>
-					<artifactId>h2</artifactId>
-				</dependency>
-			</dependencies>
-		</profile>
+		<!-- No database profiles needed -->
 	</profiles>
 
 	<!-- ********************************************** -->
@@ -107,12 +82,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
 		</dependency>
 
 		<dependency>
@@ -164,12 +139,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.mariadb.jdbc</groupId>
-			<artifactId>mariadb-java-client</artifactId>
-			<version>3.1.4</version>
-		</dependency>
-
-		<dependency>
 		    <groupId>jakarta.validation</groupId>
 		    <artifactId>jakarta.validation-api</artifactId>
 		</dependency>
@@ -182,7 +151,7 @@
 
 		<dependency>
 			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
+			<artifactId>mockito-inline</artifactId>
 			<version>3.11.2</version>
 			<scope>test</scope>
 		</dependency>
@@ -365,13 +334,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.22.0</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.maven.surefire</groupId>
-						<artifactId>surefire-junit4</artifactId>
-						<version>2.22.0</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 
 			<plugin>

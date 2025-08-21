@@ -1,24 +1,7 @@
 logging:
   level:
-    org:
-      hibernate:
-        SQL: debug
+    root: INFO
 spring:
-  sql:
-    init:
-      mode: always
-  datasource:
-    url: @dataSource.url@
-    username: @dataSource.user@
-    password: @dataSource.password@
-    driver-class-name: org.mariadb.jdbc.Driver
-    max-active: 4
-    max-idle: 2
-    max-wait: 10000
-    remove-abandoned: true
-    remove-abandoned-timeout: 60
-    log-abandoned: true
-    validation-query: SELECT 1
   devtools:
     restart:
       trigger-file: reload
@@ -26,19 +9,6 @@ spring:
       enabled: false
   jackson:
     default-property-inclusion: NON_NULL
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MariaDB103Dialect
-    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
-    defer-datasource-initialization: true
-    hibernate:
-      ddl-auto: update
-      show-sql: true
-      format-sql: true
-      use-sql-comments: true
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 server:
   servlet:
     context-path: /mytfg

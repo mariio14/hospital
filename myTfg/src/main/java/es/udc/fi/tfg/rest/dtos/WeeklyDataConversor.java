@@ -1,6 +1,7 @@
 package es.udc.fi.tfg.rest.dtos;
 
 import es.udc.fi.tfg.model.entities.Priority;
+import es.udc.fi.tfg.rest.common.ClingoUtils;
 
 import java.time.Month;
 import java.time.YearMonth;
@@ -83,7 +84,7 @@ public class WeeklyDataConversor {
         }
 
         for (WeeklyAssignationsDto weeklyAssignationsDto : weeklyDataDto.getWeeklyPlanningDtos()) {
-            String personName = weeklyAssignationsDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT);
+            String personName = ClingoUtils.sanitizeForClingo(weeklyAssignationsDto.getName());
             clingoParams.append(String.format("person(%s). ", personName));
 
             int level = Integer.parseInt(weeklyAssignationsDto.getLevel().replace("R", ""));
@@ -95,7 +96,7 @@ public class WeeklyDataConversor {
                     if (assignation != null) {
                         if (assignation.startsWith("PLANTA/QX")) {
                             String[] parts = assignation.split("_");
-                            String identifier = (parts.length > 1 && parts[1] != null) ? parts[1].toLowerCase(Locale.ROOT) : null;
+                            String identifier = (parts.length > 1 && parts[1] != null) ? ClingoUtils.sanitizeForClingo(parts[1]) : null;
                             clingoParams.append(String.format("day_assign(%s,%d,qx,yellow,morning,%s). ", personName, weeklyDataDto.getDays().get(i), identifier));
                             clingoParams.append(String.format("day_assign(%s,%d,floor,yellow,morning,null). ", personName, weeklyDataDto.getDays().get(i)));
                             continue;
@@ -103,7 +104,7 @@ public class WeeklyDataConversor {
                         String[] partes = assignation.split("_");
                         String tipo = partes[0].toLowerCase(Locale.ROOT);
                         String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
-                        String identifier = (partes.length > 2 && tipo.equals("qx")) ? partes[2].toLowerCase(Locale.ROOT) : null;
+                        String identifier = (partes.length > 2 && tipo.equals("qx")) ? ClingoUtils.sanitizeForClingo(partes[2]) : null;
                         if (identifier != null) {
                             clingoParams.append(String.format("day_assign(%s,%d,%s,%s,morning,%s). ", personName, weeklyDataDto.getDays().get(i), tipo, color, identifier));
                         } else {
@@ -120,7 +121,7 @@ public class WeeklyDataConversor {
                         String[] partes = assignation.split("_");
                         String tipo = partes[0].toLowerCase(Locale.ROOT);
                         String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
-                        String identifier = (partes.length > 2 && tipo.equals("qx")) ? partes[2].toLowerCase(Locale.ROOT) : null;
+                        String identifier = (partes.length > 2 && tipo.equals("qx")) ? ClingoUtils.sanitizeForClingo(partes[2]) : null;
                         if (identifier != null) {
                             clingoParams.append(String.format("day_assign(%s,%d,%s,%s,evening,%s). ", personName, weeklyDataDto.getDays().get(i), tipo, color, identifier));
                         } else {
@@ -160,7 +161,7 @@ public class WeeklyDataConversor {
                 change = true;
             }
             for (Map.Entry<String, Map<Integer, String>> entry : yearData.entrySet()) {
-                String personName = entry.getKey().replace(" ", "_").toLowerCase(Locale.ROOT);
+                String personName = ClingoUtils.sanitizeForClingo(entry.getKey());
                 String service = hasMonthChange ? change
                         ? entry.getValue().get(MONTH_TO_NUM.get(weeklyDataDto.getMonth().toUpperCase()))
                         : hasYearChange
@@ -177,16 +178,16 @@ public class WeeklyDataConversor {
                 if (weeklyDataDto.getDays().contains(i) || i == prevDay) {
                     if (Objects.equals(assignation, "v") || Objects.equals(assignation, "V")) {
                         clingoParams.append(String.format("vacation(%s,%d). ",
-                                monthlyPlanningDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT),
+                                ClingoUtils.sanitizeForClingo(monthlyPlanningDto.getName()),
                                 i));
                         vacation = true;
                     } else if (assignation != null) {
                         clingoParams.append(String.format("day_assign_from_month(%s,%d,%s). ",
-                                monthlyPlanningDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT),
+                                ClingoUtils.sanitizeForClingo(monthlyPlanningDto.getName()),
                                 i, assignation.toLowerCase(Locale.ROOT)));
                         if (assignation.toLowerCase(Locale.ROOT).equals("g") || assignation.toLowerCase(Locale.ROOT).equals("gp")) {
                             clingoParams.append(String.format("day_assign_guard_from_month(%s,%d). ",
-                                    monthlyPlanningDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT), i));
+                                    ClingoUtils.sanitizeForClingo(monthlyPlanningDto.getName()), i));
                         }
                     }
                 }
@@ -203,7 +204,7 @@ public class WeeklyDataConversor {
                 int slots = activityDto.getSlots();
                 String time = activityDto.getTime();
                 String identifier = activityDto.getIdentifier() == null || Objects.equals(activityDto.getIdentifier(), "")
-                        ? "null" : activityDto.getIdentifier().toLowerCase(Locale.ROOT);
+                        ? "null" : ClingoUtils.sanitizeForClingo(activityDto.getIdentifier());
                 if (Objects.equals(time, "morning")) {
                     if (type.equals("qx")) {
                         clingoParams.append(String.format("task_color(qx,%s,%d,%d,%s). ", color, day, slots, identifier));
@@ -232,14 +233,14 @@ public class WeeklyDataConversor {
         List<Map<String, Map<Integer, List<String>>>> result = new ArrayList<>();
         Map<String, Map<Integer, List<String>>> map = new HashMap<>();
         for (WeeklyAssignationsDto weeklyAssignationsDto : weeklyDataDto.getWeeklyPlanningDtos()) {
-            String personName = weeklyAssignationsDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT);
+            String personName = ClingoUtils.sanitizeForClingo(weeklyAssignationsDto.getName());
             if (weeklyAssignationsDto.getAssignations() != null) {
                 int i = 0;
                 for (String assignation : weeklyAssignationsDto.getAssignations()) {
                     if (assignation != null) {
                         if (assignation.startsWith("PLANTA/QX")) {
                             String[] parts = assignation.split("_");
-                            String identifier = (parts.length > 1 && parts[1] != null) ? parts[1].toLowerCase(Locale.ROOT) : null;
+                            String identifier = (parts.length > 1 && parts[1] != null) ? ClingoUtils.sanitizeForClingo(parts[1]) : null;
                             if (!map.containsKey(personName)) {
                                 map.put(personName, new HashMap<>());
                             }
@@ -253,7 +254,7 @@ public class WeeklyDataConversor {
                         String[] partes = assignation.split("_");
                         String tipo = partes[0].toLowerCase(Locale.ROOT);
                         String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
-                        String identifier = (partes.length > 2 && tipo.equals("qx")) ? partes[2].toLowerCase(Locale.ROOT) : null;
+                        String identifier = (partes.length > 2 && tipo.equals("qx")) ? ClingoUtils.sanitizeForClingo(partes[2]) : null;
                         if (identifier != null) {
                             if (!map.containsKey(personName)) {
                                 map.put(personName, new HashMap<>());
@@ -282,7 +283,7 @@ public class WeeklyDataConversor {
                         String[] partes = assignation.split("_");
                         String tipo = partes[0].toLowerCase(Locale.ROOT);
                         String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
-                        String identifier = (partes.length > 2 && tipo.equals("qx")) ? partes[2].toLowerCase(Locale.ROOT) : null;
+                        String identifier = (partes.length > 2 && tipo.equals("qx")) ? ClingoUtils.sanitizeForClingo(partes[2]) : null;
                         if (identifier != null) {
                             if (!map.containsKey(personName)) {
                                 map.put(personName, new HashMap<>());

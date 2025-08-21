@@ -2,42 +2,42 @@
   "2025" : {
     "Agosto" : {
       "2" : [ {
-        "laura" : {
-          "11" : [ "morningqx_yellow" ],
-          "12" : [ "morningfloor_blue" ]
-        },
-        "brais" : {
-          "13" : [ "morningfloor_blue" ],
-          "14" : [ "morningfloor_blue" ]
-        },
+        "brais" : { },
         "clara" : {
-          "11" : [ "morningfloor_blue" ]
+          "4" : [ "morningfloor_blue" ],
+          "6" : [ "morningfloor_blue" ],
+          "7" : [ "morningfloor_blue" ]
         },
         "pablo" : {
-          "11" : [ "morningfloor_blue" ],
-          "12" : [ "morningfloor_blue" ],
-          "15" : [ "morningfloor_blue" ]
+          "5" : [ "morningfloor_blue" ],
+          "8" : [ "morningfloor_blue" ]
         },
         "marta" : {
-          "11" : [ "morningfloor_red" ],
-          "12" : [ "morningfloor_red" ],
-          "13" : [ "morningfloor_red" ],
-          "14" : [ "morningfloor_red" ],
-          "15" : [ "morningfloor_red" ]
+          "5" : [ "morningfloor_red" ],
+          "8" : [ "morningfloor_red" ]
         },
         "jose" : {
-          "11" : [ "morningfloor_yellow" ],
-          "15" : [ "morningfloor_yellow" ]
+          "4" : [ "morningfloor_yellow" ],
+          "5" : [ "morningfloor_yellow" ],
+          "7" : [ "morningfloor_yellow" ]
+        },
+        "mario" : { },
+        "esther" : { },
+        "laura" : { },
+        "elena" : { },
+        "andrea" : { },
+        "sandra" : { },
+        "pedro" : { },
+        "julia" : {
+          "4" : [ "morningfloor_red" ],
+          "6" : [ "morningfloor_red" ],
+          "7" : [ "morningfloor_red" ]
         },
         "javier" : {
-          "11" : [ "morningqx_yellow_null", "morningfloor_yellow", "morningfloor_yellow" ],
-          "12" : [ "morningfloor_yellow" ],
-          "13" : [ "morningfloor_yellow" ]
+          "6" : [ "morningfloor_yellow" ],
+          "8" : [ "morningfloor_yellow" ]
         },
-        "mario" : {
-          "11" : [ "morningfloor_blue" ],
-          "12" : [ "morningfloor_blue" ]
-        }
+        "pepe" : { }
       } ],
       "1" : [ {
         "brais" : {
@@ -75,6 +75,82 @@
         "javier" : {
           "6" : [ "morningfloor_yellow" ],
           "8" : [ "morningfloor_yellow" ]
+        },
+        "pepe" : { }
+      } ],
+      "4" : [ {
+        "brais" : { },
+        "clara" : {
+          "20" : [ "morningfloor_blue" ],
+          "21" : [ "morningfloor_blue" ]
+        },
+        "pablo" : {
+          "18" : [ "morningfloor_blue" ],
+          "19" : [ "morningfloor_blue" ],
+          "22" : [ "morningfloor_blue" ]
+        },
+        "marta" : {
+          "18" : [ "morningfloor_red" ],
+          "19" : [ "morningfloor_red" ],
+          "20" : [ "morningfloor_red" ],
+          "22" : [ "morningfloor_red" ]
+        },
+        "jose" : {
+          "18" : [ "morningfloor_yellow" ],
+          "20" : [ "morningfloor_yellow" ],
+          "22" : [ "morningfloor_yellow" ]
+        },
+        "mario" : { },
+        "esther" : { },
+        "laura" : { },
+        "elena" : { },
+        "andrea" : { },
+        "sandra" : { },
+        "pedro" : { },
+        "julia" : {
+          "21" : [ "morningfloor_red" ]
+        },
+        "javier" : {
+          "19" : [ "morningfloor_yellow" ],
+          "21" : [ "morningfloor_yellow" ]
+        },
+        "pepe" : { }
+      } ],
+      "3" : [ {
+        "brais" : { },
+        "clara" : {
+          "11" : [ "morningfloor_blue" ]
+        },
+        "pablo" : {
+          "13" : [ "morningfloor_blue" ],
+          "15" : [ "morningfloor_blue" ]
+        },
+        "marta" : {
+          "11" : [ "morningfloor_red" ],
+          "12" : [ "morningfloor_red" ],
+          "13" : [ "morningfloor_red" ],
+          "14" : [ "morningfloor_red" ],
+          "15" : [ "morningfloor_red" ]
+        },
+        "jose" : {
+          "13" : [ "morningfloor_yellow" ]
+        },
+        "mario" : {
+          "12" : [ "morningfloor_blue" ],
+          "14" : [ "morningfloor_blue" ]
+        },
+        "esther" : { },
+        "laura" : { },
+        "elena" : { },
+        "andrea" : { },
+        "sandra" : { },
+        "pedro" : { },
+        "julia" : { },
+        "javier" : {
+          "11" : [ "morningfloor_yellow" ],
+          "12" : [ "morningfloor_yellow" ],
+          "14" : [ "morningfloor_yellow" ],
+          "15" : [ "morningfloor_yellow" ]
         },
         "pepe" : { }
       } ]
