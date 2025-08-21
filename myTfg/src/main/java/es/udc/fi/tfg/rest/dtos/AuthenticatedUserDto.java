@@ -10,8 +10,8 @@ public class AuthenticatedUserDto {
 	/** The service token. */
 	private String serviceToken;
 	
-	/** The user dto. */
-	private UserDto userDto;
+	/** The user info. */
+	private String userInfo; // Changed from UserDto to simple String
 
 	/**
 	 * Instantiates a new authenticated user dto.
@@ -23,12 +23,12 @@ public class AuthenticatedUserDto {
 	 * Instantiates a new authenticated user dto.
 	 *
 	 * @param serviceToken the service token
-	 * @param userDto the user dto
+	 * @param userInfo the user info
 	 */
-	public AuthenticatedUserDto(String serviceToken, UserDto userDto) {
+	public AuthenticatedUserDto(String serviceToken, String userInfo) {
 
 		setServiceToken(serviceToken);
-		setUserDto(userDto);
+		setUserInfo(userInfo);
 
 	}
 
@@ -51,22 +51,22 @@ public class AuthenticatedUserDto {
 	}
 
 	/**
-	 * Gets the user dto.
+	 * Gets the user info.
 	 *
-	 * @return the user dto
+	 * @return the user info
 	 */
 	@JsonProperty("user")
-	public UserDto getUserDto() {
-		return userDto;
+	public String getUserInfo() {
+		return userInfo;
 	}
 
 	/**
-	 * Sets the user dto.
+	 * Sets the user info.
 	 *
-	 * @param userDto the new user dto
+	 * @param userInfo the new user info
 	 */
-	public void setUserDto(UserDto userDto) {
-		this.userDto = userDto;
+	public void setUserInfo(String userInfo) {
+		this.userInfo = userInfo;
 	}
 
 }

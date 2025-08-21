@@ -114,4 +114,17 @@ public class CommonControllerAdvice {
 
 	}
 
+	/**
+	 * Handle unexpected exception.
+	 *
+	 * @param exception the exception
+	 * @return the errors dto
+	 */
+	@ExceptionHandler(Exception.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ResponseBody
+	public ErrorsDto handleUnexpectedException(Exception exception) {
+		return new ErrorsDto("Ha ocurrido un error");
+	}
+
 }
