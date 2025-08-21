@@ -1,6 +1,7 @@
 package es.udc.fi.tfg.rest.dtos;
 
 import es.udc.fi.tfg.model.entities.Priority;
+import es.udc.fi.tfg.rest.common.ClingoUtils;
 
 import java.util.*;
 
@@ -27,7 +28,7 @@ public class AnnualPlanningDataConversor {
         StringBuilder clingoParams = new StringBuilder();
 
         for (AnnualPlanningDataDto annualPlanningDto : annualPlanningList.getAssignations()) {
-            String personName = annualPlanningDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT);
+            String personName = ClingoUtils.sanitizeForClingo(annualPlanningDto.getName());
             clingoParams.append(String.format("person(%s). ", personName));
 
             int level = Integer.parseInt(annualPlanningDto.getLevel().replace("R", ""));
@@ -60,7 +61,7 @@ public class AnnualPlanningDataConversor {
         List<Map<String, Map<Integer, String>>> result = new ArrayList<>();
         Map<String, Map<Integer, String>> map = new HashMap<>();
         for (AnnualPlanningDataDto annualPlanningDataDto : params.getAssignations()) {
-            String personName = annualPlanningDataDto.getName().replace(" ", "_").toLowerCase(Locale.ROOT);
+            String personName = ClingoUtils.sanitizeForClingo(annualPlanningDataDto.getName());
             Map<Integer, String> assignationsMap = new HashMap<>();
             List<String> assignations = annualPlanningDataDto.getAssignations();
             if (assignations != null) {
