@@ -12,8 +12,8 @@
 	<packaging>jar</packaging>
 
 	<name>My TFG App</name>
-	<description>Test project my TFG 2024</description>
-	<url>https://github.com/mariio14/myTfg</url>
+	<description>Project my TFG 2025</description>
+	<url>https://github.com/mariio14/hospital</url>
 	<inceptionYear>2023</inceptionYear>
 
 	<parent>
