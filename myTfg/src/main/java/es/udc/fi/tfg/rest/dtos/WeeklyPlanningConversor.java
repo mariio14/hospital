@@ -92,7 +92,7 @@ public class WeeklyPlanningConversor {
 
             }
             changeColors(planningMap.getActivities());
-            result.add(new WeeklyResultDto(year, month, week, list, planningMap.getActivities(), true));
+            result.add(new WeeklyResultDto(year, month, week, list, planningMap.getActivities(), isComplete(list)));
         }
         return result;
     }
@@ -129,7 +129,7 @@ public class WeeklyPlanningConversor {
                 list.add(toWeeklyPlanningDto(staff.getName(), value, service, servicePrev, data.getDays()));
             }
             changeColors(data.getActivities());
-            result.add(new WeeklyResultDto(data.getYear(), data.getMonth(), data.getWeek(), list, data.getActivities(), true));
+            result.add(new WeeklyResultDto(data.getYear(), data.getMonth(), data.getWeek(), list, data.getActivities(), isComplete(list)));
         }
         return result;
     }
@@ -213,5 +213,16 @@ public class WeeklyPlanningConversor {
                 }
             }
         }
+    }
+
+    private static boolean isComplete(List<WeeklyPlanningDto> list) {
+        for (WeeklyPlanningDto dto : list) {
+            for (String assignation : dto.getAssignations()) {
+                if (assignation != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

@@ -1,94 +1,94 @@
 {
   "2025" : {
     "Agosto" : {
-      "1" : [ [ {
+      "2" : [ [ {
         "type" : "FLOOR",
         "color" : "azul",
-        "slots" : 0,
-        "time" : "morning",
-        "identifier" : null
-      }, {
-        "type" : "FLOOR",
-        "color" : "amarillo",
-        "slots" : 0,
+        "slots" : 1,
         "time" : "morning",
         "identifier" : null
       }, {
         "type" : "FLOOR",
         "color" : "rojo",
-        "slots" : 0,
+        "slots" : 1,
+        "time" : "morning",
+        "identifier" : null
+      }, {
+        "type" : "FLOOR",
+        "color" : "amarillo",
+        "slots" : 1,
         "time" : "morning",
         "identifier" : null
       } ], [ {
         "type" : "FLOOR",
         "color" : "azul",
-        "slots" : 0,
-        "time" : "morning",
-        "identifier" : null
-      }, {
-        "type" : "FLOOR",
-        "color" : "amarillo",
-        "slots" : 0,
+        "slots" : 1,
         "time" : "morning",
         "identifier" : null
       }, {
         "type" : "FLOOR",
         "color" : "rojo",
-        "slots" : 0,
+        "slots" : 1,
+        "time" : "morning",
+        "identifier" : null
+      }, {
+        "type" : "FLOOR",
+        "color" : "amarillo",
+        "slots" : 1,
         "time" : "morning",
         "identifier" : null
       } ], [ {
         "type" : "FLOOR",
         "color" : "azul",
-        "slots" : 0,
-        "time" : "morning",
-        "identifier" : null
-      }, {
-        "type" : "FLOOR",
-        "color" : "amarillo",
-        "slots" : 0,
+        "slots" : 1,
         "time" : "morning",
         "identifier" : null
       }, {
         "type" : "FLOOR",
         "color" : "rojo",
-        "slots" : 0,
+        "slots" : 1,
+        "time" : "morning",
+        "identifier" : null
+      }, {
+        "type" : "FLOOR",
+        "color" : "amarillo",
+        "slots" : 1,
         "time" : "morning",
         "identifier" : null
       } ], [ {
         "type" : "FLOOR",
         "color" : "azul",
-        "slots" : 0,
-        "time" : "morning",
-        "identifier" : null
-      }, {
-        "type" : "FLOOR",
-        "color" : "amarillo",
-        "slots" : 0,
+        "slots" : 1,
         "time" : "morning",
         "identifier" : null
       }, {
         "type" : "FLOOR",
         "color" : "rojo",
-        "slots" : 0,
+        "slots" : 1,
+        "time" : "morning",
+        "identifier" : null
+      }, {
+        "type" : "FLOOR",
+        "color" : "amarillo",
+        "slots" : 1,
         "time" : "morning",
         "identifier" : null
       } ], [ {
         "type" : "FLOOR",
         "color" : "azul",
-        "slots" : 0,
-        "time" : "morning",
-        "identifier" : null
-      }, {
-        "type" : "FLOOR",
-        "color" : "amarillo",
-        "slots" : 0,
+        "slots" : 1,
         "time" : "morning",
         "identifier" : null
       }, {
         "type" : "FLOOR",
         "color" : "rojo",
-        "slots" : 0,
+        "slots" : 1,
+        "time" : "morning",
+        "identifier" : null
+      }, {
+        "type" : "FLOOR",
+        "color" : "amarillo",
+        "slots" : 1,
         "time" : "morning",
         "identifier" : null
       } ] ]
