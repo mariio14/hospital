@@ -575,106 +575,248 @@ const WeeklyPlanning = () => {
   };
 
   return (
-    <div className="my-6">
-      <h2
-        className="cursor-pointer text-center text-lg font-bold border p-2 rounded bg-blue-50"
-      >
-        Planificación Semanal
-      </h2>
-        <div className="p-4 border rounded mt-4">
-          <div className="flex gap-4 flex-wrap justify-between items-center mb-4">
-            <div className="flex items-center gap-2">
-              <label>Año:</label>
-              <input type="number" value={year} min={2000} max={2100} onChange={(e) => setYear(Number(e.target.value))} className="border p-1 rounded" />
-              <label>Mes:</label>
-              <select value={month} onChange={(e) => setMonth(Number(e.target.value))} className="border p-1 rounded">
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div style={{ 
+          border: '1px solid #e2e8f0', 
+          padding: '24px', 
+          borderRadius: '16px',
+          background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+          marginTop: '4px'
+        }}>
+          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '12px',
+              background: '#ffffff',
+              padding: '12px 16px',
+              borderRadius: '12px',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+              border: '1px solid #e2e8f0',
+              flexWrap: 'wrap'
+            }}>
+              <label style={{ color: "#374151", fontWeight: "600", fontSize: "14px" }}>Año:</label>
+              <input 
+                type="number" 
+                value={year} 
+                min={2000} 
+                max={2100} 
+                onChange={(e) => setYear(Number(e.target.value))} 
+                style={{
+                  padding: '8px 12px',
+                  border: '2px solid #e2e8f0',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  transition: 'all 0.2s ease',
+                  outline: 'none',
+                  width: '80px',
+                  background: '#ffffff'
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+              />
+              <label style={{ color: "#374151", fontWeight: "600", fontSize: "14px" }}>Mes:</label>
+              <select 
+                value={month} 
+                onChange={(e) => setMonth(Number(e.target.value))} 
+                style={{
+                  padding: '8px 12px',
+                  border: '2px solid #e2e8f0',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  transition: 'all 0.2s ease',
+                  outline: 'none',
+                  background: '#ffffff',
+                  cursor: 'pointer'
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+              >
                 {months.map((m, i) => <option key={i} value={i}>{m}</option>)}
               </select>
-              <label>Semana:</label>
-              <select value={weekInMonth} onChange={(e) => setWeekInMonth(Number(e.target.value))} className="border p-1 rounded">
+              <label style={{ color: "#374151", fontWeight: "600", fontSize: "14px" }}>Semana:</label>
+              <select 
+                value={weekInMonth} 
+                onChange={(e) => setWeekInMonth(Number(e.target.value))} 
+                style={{
+                  padding: '8px 12px',
+                  border: '2px solid #e2e8f0',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  transition: 'all 0.2s ease',
+                  outline: 'none',
+                  background: '#ffffff',
+                  cursor: 'pointer'
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+              >
                 {validWeeks.map(i => <option key={i} value={i}>{`Semana ${i + 1}`}</option>)}
               </select>
             </div>
-            <div className="flex gap-2">
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
               <button
                   onClick={handleGeneratePlanning}
-                  style={{padding: "5px 15px",backgroundColor: "#007BFF",color: "#fff",border: "none",borderRadius: "5px",cursor: "pointer",}}
+                  style={{
+                    padding: "12px 24px",
+                    background: "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)",
+                    color: "#ffffff",
+                    border: "none",
+                    borderRadius: "12px",
+                    cursor: "pointer",
+                    fontWeight: "600",
+                    fontSize: "14px",
+                    boxShadow: "0 4px 6px -1px rgba(59, 130, 246, 0.3)",
+                    transition: "all 0.2s ease",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px"
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 8px 12px -1px rgba(59, 130, 246, 0.4)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 6px -1px rgba(59, 130, 246, 0.3)';
+                  }}
                 >
-                  Generar Planificación
+                  ⚡ Generar Planificación
                 </button>
               <button
                 onClick={exportToPDF}
                 style={{
-                padding: "5px 15px",
-                backgroundColor: "#28a745",
-                color: "#fff",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-                marginLeft: "10px",
+                  padding: "12px 24px",
+                  background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                  color: "#ffffff",
+                  border: "none",
+                  borderRadius: "12px",
+                  cursor: "pointer",
+                  fontWeight: "600",
+                  fontSize: "14px",
+                  boxShadow: "0 4px 6px -1px rgba(16, 185, 129, 0.3)",
+                  transition: "all 0.2s ease",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px"
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = '0 8px 12px -1px rgba(16, 185, 129, 0.4)';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 4px 6px -1px rgba(16, 185, 129, 0.3)';
                 }}
                 >
-                Exportar a PDF
+                📄 Exportar a PDF
                 </button>
               <button
                   onClick={handleClearPlanning}
                   style={{
-                    padding: "5px 15px",
-                    backgroundColor: "#FF5733",
-                    color: "#fff",
+                    padding: "12px 24px",
+                    background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+                    color: "#ffffff",
                     border: "none",
-                    borderRadius: "5px",
+                    borderRadius: "12px",
                     cursor: "pointer",
-                    marginLeft: "10px",
+                    fontWeight: "600",
+                    fontSize: "14px",
+                    boxShadow: "0 4px 6px -1px rgba(239, 68, 68, 0.3)",
+                    transition: "all 0.2s ease",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px"
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 8px 12px -1px rgba(239, 68, 68, 0.4)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 6px -1px rgba(239, 68, 68, 0.3)';
                   }}
                 >
-                  Vaciar Planificación
+                🗑️ Vaciar Planificación
                 </button>
             </div>
             {weeklyPlanningList.length > 1 && (
-              <div className="flex gap-2 items-center">
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
                 <button
                   onClick={goToPrevPlanning}
                   style={{
-                    padding: "5px 10px",
-                    backgroundColor: "#6c757d",
-                    color: "#fff",
+                    padding: "10px 14px",
+                    background: "linear-gradient(135deg, #6b7280 0%, #4b5563 100%)",
+                    color: "#ffffff",
                     border: "none",
-                    borderRadius: "5px",
+                    borderRadius: "10px",
                     cursor: "pointer",
+                    fontWeight: "600",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    transition: "all 0.2s ease"
                   }}
+                  onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+                  onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
                 >
                   ◀
                 </button>
-                <span style={{ fontWeight: "bold" }}>
+                <span style={{ 
+                  fontWeight: "700", 
+                  color: "#374151",
+                  background: "#f3f4f6",
+                  padding: "8px 16px",
+                  borderRadius: "8px",
+                  fontSize: "14px"
+                }}>
                   Planning {activePlanningIndex + 1} de {weeklyPlanningList.length}
                 </span>
                 <button
                   onClick={goToNextPlanning}
                   style={{
-                    padding: "5px 10px",
-                    backgroundColor: "#6c757d",
-                    color: "#fff",
+                    padding: "10px 14px",
+                    background: "linear-gradient(135deg, #6b7280 0%, #4b5563 100%)",
+                    color: "#ffffff",
                     border: "none",
-                    borderRadius: "5px",
+                    borderRadius: "10px",
                     cursor: "pointer",
+                    fontWeight: "600",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    transition: "all 0.2s ease"
                   }}
+                  onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+                  onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
                 >
                   ▶
                 </button>
                 <button
                   onClick={handleConfirmPlanning}
                   style={{
-                    padding: "5px 15px",
-                    backgroundColor: "#17a2b8",
-                    color: "#fff",
+                    padding: "10px 20px",
+                    background: "linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)",
+                    color: "#ffffff",
                     border: "none",
-                    borderRadius: "5px",
+                    borderRadius: "10px",
                     cursor: "pointer",
-                    marginLeft: "10px",
+                    fontWeight: "600",
+                    fontSize: "14px",
+                    boxShadow: "0 4px 6px -1px rgba(6, 182, 212, 0.3)",
+                    transition: "all 0.2s ease",
+                    marginLeft: "12px"
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 8px 12px -1px rgba(6, 182, 212, 0.4)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 6px -1px rgba(6, 182, 212, 0.3)';
                   }}
                 >
-                  Confirmar plan
+                  ✓ Confirmar plan
                 </button>
               </div>
             )}
@@ -935,11 +1077,18 @@ const WeeklyPlanning = () => {
                 </tr>
               </tbody>
             </table>
-            <div className="mt-4 border p-3 rounded bg-white shadow w-full max-w-xl mx-auto">
-              <h4 className="font-semibold mb-2">Crear nueva actividad</h4>
-              <div className="flex flex-wrap items-center gap-3">
+            <div style={{ 
+              marginTop: '24px', 
+              border: '1px solid #e2e8f0', 
+              padding: '20px', 
+              borderRadius: '12px', 
+              background: '#ffffff', 
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)'
+            }}>
+              <h4 style={{ fontWeight: '700', marginBottom: '16px', color: '#374151', fontSize: '16px' }}>✨ Crear nueva actividad</h4>
+              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '16px' }}>
                 {/* Día */}
-                <label className="text-sm">
+                <label style={{ fontSize: '14px', fontWeight: '600', color: '#374151', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   Día:
                   <select
                     value={newActivity.dayIndex}
@@ -949,7 +1098,20 @@ const WeeklyPlanning = () => {
                         dayIndex: Number(e.target.value),
                       }))
                     }
-                    className="ml-2 border p-1 rounded"
+                    style={{
+                      padding: '8px 12px',
+                      border: '2px solid #e2e8f0',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      transition: 'all 0.2s ease',
+                      outline: 'none',
+                      background: '#ffffff',
+                      cursor: 'pointer',
+                      minWidth: '120px'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                    onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                   >
                     {days.map((d, idx) => (
                       <option key={idx} value={idx}>
@@ -960,14 +1122,27 @@ const WeeklyPlanning = () => {
                 </label>
 
                 {/* Turno (mañana/tarde) */}
-                <label className="text-sm">
+                <label style={{ fontSize: '14px', fontWeight: '600', color: '#374151', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   Turno:
                   <select
                     value={newActivity.time}
                     onChange={(e) =>
                       setNewActivity((prev) => ({ ...prev, time: e.target.value }))
                     }
-                    className="ml-2 border p-1 rounded"
+                    style={{
+                      padding: '8px 12px',
+                      border: '2px solid #e2e8f0',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      transition: 'all 0.2s ease',
+                      outline: 'none',
+                      background: '#ffffff',
+                      cursor: 'pointer',
+                      minWidth: '100px'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                    onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                   >
                     <option value="morning">Mañana</option>
                     <option value="evening">Tarde</option>
@@ -975,7 +1150,7 @@ const WeeklyPlanning = () => {
                 </label>
 
                 {/* Tipo de actividad */}
-                <label className="text-sm">
+                <label style={{ fontSize: '14px', fontWeight: '600', color: '#374151', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   Actividad:
                   <select
                     value={newActivity.type}
@@ -984,10 +1159,23 @@ const WeeklyPlanning = () => {
                       setNewActivity((prev) => ({
                         ...prev,
                         type: selected,
-                        color: selected === "QX" ? "amarillo" : null, // default color or null
+                        color: selected === "QX" ? "amarillo" : null,
                       }));
                     }}
-                    className="ml-2 border p-1 rounded"
+                    style={{
+                      padding: '8px 12px',
+                      border: '2px solid #e2e8f0',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      transition: 'all 0.2s ease',
+                      outline: 'none',
+                      background: '#ffffff',
+                      cursor: 'pointer',
+                      minWidth: '150px'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                    onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                   >
                     <option value="">-- Seleccionar --</option>
                     <option value="QX">QX</option>
@@ -999,7 +1187,14 @@ const WeeklyPlanning = () => {
                 </label>
 
                 {/* Color solo si es QX */}
-                <label className="text-sm">
+                <label style={{ 
+                  fontSize: '14px', 
+                  fontWeight: '600', 
+                  color: newActivity.type !== "QX" ? '#9ca3af' : '#374151', 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  gap: '4px' 
+                }}>
                   Color:
                   <select
                     value={newActivity.color || ""}
@@ -1007,7 +1202,25 @@ const WeeklyPlanning = () => {
                       setNewActivity((prev) => ({ ...prev, color: e.target.value }))
                     }
                     disabled={newActivity.type !== "QX"}
-                    className="ml-2 border p-1 rounded"
+                    style={{
+                      padding: '8px 12px',
+                      border: `2px solid ${newActivity.type !== "QX" ? '#e5e7eb' : '#e2e8f0'}`,
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      transition: 'all 0.2s ease',
+                      outline: 'none',
+                      background: newActivity.type !== "QX" ? '#f9fafb' : '#ffffff',
+                      cursor: newActivity.type !== "QX" ? 'not-allowed' : 'pointer',
+                      minWidth: '100px',
+                      opacity: newActivity.type !== "QX" ? 0.6 : 1
+                    }}
+                    onFocus={(e) => {
+                      if (newActivity.type === "QX") e.target.style.borderColor = '#3b82f6';
+                    }}
+                    onBlur={(e) => {
+                      if (newActivity.type === "QX") e.target.style.borderColor = '#e2e8f0';
+                    }}
                   >
                     <option value="amarillo">Amarillo</option>
                     <option value="azul">Azul</option>
@@ -1016,7 +1229,7 @@ const WeeklyPlanning = () => {
                 </label>
 
                 {newActivity.type === "QX" && (
-                  <label className="text-sm">
+                  <label style={{ fontSize: '14px', fontWeight: '600', color: '#374151', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     Identificador:
                     <input
                       type="text"
@@ -1027,14 +1240,27 @@ const WeeklyPlanning = () => {
                           identifier: e.target.value,
                         }))
                       }
-                      className="ml-2 border p-1 rounded w-24"
+                      style={{
+                        padding: '8px 12px',
+                        border: '2px solid #e2e8f0',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        transition: 'all 0.2s ease',
+                        outline: 'none',
+                        background: '#ffffff',
+                        width: '120px'
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                      onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                      placeholder="Opcional"
                     />
                   </label>
                 )}
 
                 {/* Slots */}
                 {newActivity.type === "QX" && (
-                <label className="text-sm">
+                <label style={{ fontSize: '14px', fontWeight: '600', color: '#374151', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   Residentes:
                   <input
                     type="number"
@@ -1047,7 +1273,19 @@ const WeeklyPlanning = () => {
                         slots: Number(e.target.value),
                       }))
                     }
-                    className="ml-2 border p-1 rounded w-16"
+                    style={{
+                      padding: '8px 12px',
+                      border: '2px solid #e2e8f0',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      transition: 'all 0.2s ease',
+                      outline: 'none',
+                      background: '#ffffff',
+                      width: '80px'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                    onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                   />
                 </label>
                 )}
@@ -1055,10 +1293,36 @@ const WeeklyPlanning = () => {
                 {/* Botón crear */}
                 <button
                   onClick={handleAddCustomActivity}
-                  className="bg-blue-500 text-black px-4 py-1 rounded hover:bg-blue-600 text-sm"
                   disabled={!newActivity.type}
+                  style={{
+                    padding: "10px 20px",
+                    background: !newActivity.type 
+                      ? "linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)"
+                      : "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)",
+                    color: "#ffffff",
+                    border: "none",
+                    borderRadius: "10px",
+                    cursor: !newActivity.type ? "not-allowed" : "pointer",
+                    fontWeight: "600",
+                    fontSize: "14px",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    transition: "all 0.2s ease",
+                    opacity: !newActivity.type ? 0.7 : 1
+                  }}
+                  onMouseOver={(e) => {
+                    if (newActivity.type) {
+                      e.target.style.transform = 'translateY(-1px)';
+                      e.target.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.15)';
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (newActivity.type) {
+                      e.target.style.transform = 'translateY(0)';
+                      e.target.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+                    }
+                  }}
                 >
-                  Crear
+                  ✨ Crear
                 </button>
 
               </div>
