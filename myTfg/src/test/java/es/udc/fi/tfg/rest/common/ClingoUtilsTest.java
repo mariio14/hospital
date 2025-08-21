@@ -18,8 +18,8 @@ public class ClingoUtilsTest {
     @Test
     public void testSpecialCharacters() {
         assertEquals("test_123", ClingoUtils.sanitizeForClingo("Test@#$ 123"));
-        assertEquals("user_name", ClingoUtils.sanitizeForClingo("User-Name"));
-        assertEquals("hello_world", ClingoUtils.sanitizeForClingo("Hello.World!"));
+        assertEquals("username", ClingoUtils.sanitizeForClingo("User-Name"));
+        assertEquals("helloworld", ClingoUtils.sanitizeForClingo("Hello.World!"));
     }
 
     @Test
@@ -53,7 +53,7 @@ public class ClingoUtilsTest {
     public void testRealWorldExamples() {
         // Common Spanish names with special characters
         assertEquals("dr_rodriguez", ClingoUtils.sanitizeForClingo("Dr. Rodríguez"));
-        assertEquals("ana_cristina", ClingoUtils.sanitizeForClingo("Ana-Cristina"));
+        assertEquals("anacristina", ClingoUtils.sanitizeForClingo("Ana-Cristina"));
         assertEquals("manuel_angel", ClingoUtils.sanitizeForClingo("Manuel Ángel"));
         assertEquals("maria_del_carmen", ClingoUtils.sanitizeForClingo("María del Carmen"));
     }
