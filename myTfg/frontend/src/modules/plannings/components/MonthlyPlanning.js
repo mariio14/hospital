@@ -840,13 +840,13 @@ const MonthlyPlanning = () => {
                 >
                   <thead>
                       <tr>
-                        <th></th>
+                        <th style={{ width: "150px", minWidth: "150px" }}></th>
                         {[...Array(daysInMonth).keys()].map((day) => (
                           <th key={day + 1}>{getDayOfWeek(day + 1, month, year)}</th>
                         ))}
                       </tr>
                       <tr>
-                        <th>{getMonthName(month)}</th>
+                        <th style={{ width: "150px", minWidth: "150px" }}>{getMonthName(month)}</th>
                         {[...Array(daysInMonth).keys()].map((day) => (
                           <th key={day + 1}>{day + 1}</th>
                         ))}
@@ -865,6 +865,8 @@ const MonthlyPlanning = () => {
                             color: "#000",
                             textAlign: "center",
                             fontWeight: "bold",
+                            whiteSpace: "nowrap",
+                            textOverflow: "ellipsis",
                           }}
                         >
                           {person.name}

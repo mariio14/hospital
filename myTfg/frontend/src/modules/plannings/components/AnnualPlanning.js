@@ -544,7 +544,7 @@ const AnnualPlanning = () => {
                         <table style={{ width: '100%', tableLayout: 'fixed', fontSize: '12px' }}>
                             <thead>
                                 <tr>
-                                    <th>Personas</th>
+                                    <th>{year}</th>
                                     {months.map((month) => (
                                         <th key={month}>{month}</th>
                                     ))}
