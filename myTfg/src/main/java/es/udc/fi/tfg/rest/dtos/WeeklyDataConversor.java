@@ -91,44 +91,50 @@ public class WeeklyDataConversor {
             clingoParams.append(String.format("level(%s,%d). ", personName, level));
 
             if (weeklyAssignationsDto.getAssignations() != null) {
-                int i = 0;
-                for (String assignation : weeklyAssignationsDto.getAssignations()) {
-                    if (assignation != null) {
-                        if (assignation.startsWith("PLANTA/QX")) {
-                            String[] parts = assignation.split("_");
-                            String identifier = (parts.length > 1 && parts[1] != null) ? ClingoUtils.sanitizeForClingo(parts[1]) : null;
-                            clingoParams.append(String.format("day_assign(%s,%d,qx,yellow,morning,%s). ", personName, weeklyDataDto.getDays().get(i), identifier));
-                            clingoParams.append(String.format("day_assign(%s,%d,floor,yellow,morning,null). ", personName, weeklyDataDto.getDays().get(i)));
-                            continue;
-                        }
-                        String[] partes = assignation.split("_");
-                        String tipo = partes[0].toLowerCase(Locale.ROOT);
-                        String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
-                        String identifier = (partes.length > 2 && tipo.equals("qx")) ? ClingoUtils.sanitizeForClingo(partes[2]) : null;
-                        if (identifier != null) {
-                            clingoParams.append(String.format("day_assign(%s,%d,%s,%s,morning,%s). ", personName, weeklyDataDto.getDays().get(i), tipo, color, identifier));
-                        } else {
-                            clingoParams.append(String.format("day_assign(%s,%d,%s,%s,morning,null). ", personName, weeklyDataDto.getDays().get(i), tipo, color));
+                for (int i = 0; i < weeklyAssignationsDto.getAssignations().size(); i++) {
+                    List<String> dayAssignations = weeklyAssignationsDto.getAssignations().get(i);
+                    if (dayAssignations != null) {
+                        for (String assignation : dayAssignations) {
+                            if (assignation != null) {
+                                if (assignation.startsWith("PLANTA/QX")) {
+                                    String[] parts = assignation.split("_");
+                                    String identifier = (parts.length > 1 && parts[1] != null) ? ClingoUtils.sanitizeForClingo(parts[1]) : null;
+                                    clingoParams.append(String.format("day_assign(%s,%d,qx,yellow,morning,%s). ", personName, weeklyDataDto.getDays().get(i), identifier));
+                                    clingoParams.append(String.format("day_assign(%s,%d,floor,yellow,morning,null). ", personName, weeklyDataDto.getDays().get(i)));
+                                    continue;
+                                }
+                                String[] partes = assignation.split("_");
+                                String tipo = partes[0].toLowerCase(Locale.ROOT);
+                                String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
+                                String identifier = (partes.length > 2 && tipo.equals("qx")) ? ClingoUtils.sanitizeForClingo(partes[2]) : null;
+                                if (identifier != null) {
+                                    clingoParams.append(String.format("day_assign(%s,%d,%s,%s,morning,%s). ", personName, weeklyDataDto.getDays().get(i), tipo, color, identifier));
+                                } else {
+                                    clingoParams.append(String.format("day_assign(%s,%d,%s,%s,morning,null). ", personName, weeklyDataDto.getDays().get(i), tipo, color));
+                                }
+                            }
                         }
                     }
-                    i++;
                 }
             }
             if (weeklyAssignationsDto.getEveningAssignations() != null) {
-                int i = 0;
-                for (String assignation : weeklyAssignationsDto.getEveningAssignations()) {
-                    if (assignation != null) {
-                        String[] partes = assignation.split("_");
-                        String tipo = partes[0].toLowerCase(Locale.ROOT);
-                        String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
-                        String identifier = (partes.length > 2 && tipo.equals("qx")) ? ClingoUtils.sanitizeForClingo(partes[2]) : null;
-                        if (identifier != null) {
-                            clingoParams.append(String.format("day_assign(%s,%d,%s,%s,evening,%s). ", personName, weeklyDataDto.getDays().get(i), tipo, color, identifier));
-                        } else {
-                            clingoParams.append(String.format("day_assign(%s,%d,%s,%s,evening,null). ", personName, weeklyDataDto.getDays().get(i), tipo, color));
+                for (int i = 0; i < weeklyAssignationsDto.getEveningAssignations().size(); i++) {
+                    List<String> dayEveningAssignations = weeklyAssignationsDto.getEveningAssignations().get(i);
+                    if (dayEveningAssignations != null) {
+                        for (String assignation : dayEveningAssignations) {
+                            if (assignation != null) {
+                                String[] partes = assignation.split("_");
+                                String tipo = partes[0].toLowerCase(Locale.ROOT);
+                                String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
+                                String identifier = (partes.length > 2 && tipo.equals("qx")) ? ClingoUtils.sanitizeForClingo(partes[2]) : null;
+                                if (identifier != null) {
+                                    clingoParams.append(String.format("day_assign(%s,%d,%s,%s,evening,%s). ", personName, weeklyDataDto.getDays().get(i), tipo, color, identifier));
+                                } else {
+                                    clingoParams.append(String.format("day_assign(%s,%d,%s,%s,evening,null). ", personName, weeklyDataDto.getDays().get(i), tipo, color));
+                                }
+                            }
                         }
                     }
-                    i++;
                 }
             }
         }
@@ -235,74 +241,80 @@ public class WeeklyDataConversor {
         for (WeeklyAssignationsDto weeklyAssignationsDto : weeklyDataDto.getWeeklyPlanningDtos()) {
             String personName = ClingoUtils.sanitizeForClingo(weeklyAssignationsDto.getName());
             if (weeklyAssignationsDto.getAssignations() != null) {
-                int i = 0;
-                for (String assignation : weeklyAssignationsDto.getAssignations()) {
-                    if (assignation != null) {
-                        if (assignation.startsWith("PLANTA/QX")) {
-                            String[] parts = assignation.split("_");
-                            String identifier = (parts.length > 1 && parts[1] != null) ? ClingoUtils.sanitizeForClingo(parts[1]) : null;
-                            if (!map.containsKey(personName)) {
-                                map.put(personName, new HashMap<>());
+                for (int i = 0; i < weeklyAssignationsDto.getAssignations().size(); i++) {
+                    List<String> dayAssignations = weeklyAssignationsDto.getAssignations().get(i);
+                    if (dayAssignations != null) {
+                        for (String assignation : dayAssignations) {
+                            if (assignation != null) {
+                                if (assignation.startsWith("PLANTA/QX")) {
+                                    String[] parts = assignation.split("_");
+                                    String identifier = (parts.length > 1 && parts[1] != null) ? ClingoUtils.sanitizeForClingo(parts[1]) : null;
+                                    if (!map.containsKey(personName)) {
+                                        map.put(personName, new HashMap<>());
+                                    }
+                                    if (!map.get(personName).containsKey(weeklyDataDto.getDays().get(i))) {
+                                        map.get(personName).put(weeklyDataDto.getDays().get(i), new ArrayList<>());
+                                    }
+                                    map.get(personName).get(weeklyDataDto.getDays().get(i)).add(String.format("morningqx_yellow_%s", identifier));
+                                    map.get(personName).get(weeklyDataDto.getDays().get(i)).add("morningfloor_yellow");
+                                    continue;
+                                }
+                                String[] partes = assignation.split("_");
+                                String tipo = partes[0].toLowerCase(Locale.ROOT);
+                                String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
+                                String identifier = (partes.length > 2 && tipo.equals("qx")) ? ClingoUtils.sanitizeForClingo(partes[2]) : null;
+                                if (identifier != null) {
+                                    if (!map.containsKey(personName)) {
+                                        map.put(personName, new HashMap<>());
+                                    }
+                                    if (!map.get(personName).containsKey(weeklyDataDto.getDays().get(i))) {
+                                        map.get(personName).put(weeklyDataDto.getDays().get(i), new ArrayList<>());
+                                    }
+                                    map.get(personName).get(weeklyDataDto.getDays().get(i)).add(String.format("morning%s_%s_%s", tipo, color, identifier));
+                                } else {
+                                    if (!map.containsKey(personName)) {
+                                        map.put(personName, new HashMap<>());
+                                    }
+                                    if (!map.get(personName).containsKey(weeklyDataDto.getDays().get(i))) {
+                                        map.get(personName).put(weeklyDataDto.getDays().get(i), new ArrayList<>());
+                                    }
+                                    map.get(personName).get(weeklyDataDto.getDays().get(i)).add(String.format("morning%s_%s", tipo, color));
+                                }
                             }
-                            if (!map.get(personName).containsKey(weeklyDataDto.getDays().get(i))) {
-                                map.get(personName).put(weeklyDataDto.getDays().get(i), new ArrayList<>());
-                            }
-                            map.get(personName).get(weeklyDataDto.getDays().get(i)).add(String.format("morningqx_yellow_%s", identifier));
-                            map.get(personName).get(weeklyDataDto.getDays().get(i)).add("morningfloor_yellow");
-                            continue;
-                        }
-                        String[] partes = assignation.split("_");
-                        String tipo = partes[0].toLowerCase(Locale.ROOT);
-                        String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
-                        String identifier = (partes.length > 2 && tipo.equals("qx")) ? ClingoUtils.sanitizeForClingo(partes[2]) : null;
-                        if (identifier != null) {
-                            if (!map.containsKey(personName)) {
-                                map.put(personName, new HashMap<>());
-                            }
-                            if (!map.get(personName).containsKey(weeklyDataDto.getDays().get(i))) {
-                                map.get(personName).put(weeklyDataDto.getDays().get(i), new ArrayList<>());
-                            }
-                            map.get(personName).get(weeklyDataDto.getDays().get(i)).add(String.format("morning%s_%s_%s", tipo, color, identifier));
-                        } else {
-                            if (!map.containsKey(personName)) {
-                                map.put(personName, new HashMap<>());
-                            }
-                            if (!map.get(personName).containsKey(weeklyDataDto.getDays().get(i))) {
-                                map.get(personName).put(weeklyDataDto.getDays().get(i), new ArrayList<>());
-                            }
-                            map.get(personName).get(weeklyDataDto.getDays().get(i)).add(String.format("morning%s_%s", tipo, color));
                         }
                     }
-                    i++;
                 }
             }
             if (weeklyAssignationsDto.getEveningAssignations() != null) {
-                int i = 0;
-                for (String assignation : weeklyAssignationsDto.getEveningAssignations()) {
-                    if (assignation != null) {
-                        String[] partes = assignation.split("_");
-                        String tipo = partes[0].toLowerCase(Locale.ROOT);
-                        String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
-                        String identifier = (partes.length > 2 && tipo.equals("qx")) ? ClingoUtils.sanitizeForClingo(partes[2]) : null;
-                        if (identifier != null) {
-                            if (!map.containsKey(personName)) {
-                                map.put(personName, new HashMap<>());
+                for (int i = 0; i < weeklyAssignationsDto.getEveningAssignations().size(); i++) {
+                    List<String> dayEveningAssignations = weeklyAssignationsDto.getEveningAssignations().get(i);
+                    if (dayEveningAssignations != null) {
+                        for (String assignation : dayEveningAssignations) {
+                            if (assignation != null) {
+                                String[] partes = assignation.split("_");
+                                String tipo = partes[0].toLowerCase(Locale.ROOT);
+                                String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
+                                String identifier = (partes.length > 2 && tipo.equals("qx")) ? ClingoUtils.sanitizeForClingo(partes[2]) : null;
+                                if (identifier != null) {
+                                    if (!map.containsKey(personName)) {
+                                        map.put(personName, new HashMap<>());
+                                    }
+                                    if (!map.get(personName).containsKey(weeklyDataDto.getDays().get(i))) {
+                                        map.get(personName).put(weeklyDataDto.getDays().get(i), new ArrayList<>());
+                                    }
+                                    map.get(personName).get(weeklyDataDto.getDays().get(i)).add(String.format("evening%s_%s_%s", tipo, color, identifier));
+                                } else {
+                                    if (!map.containsKey(personName)) {
+                                        map.put(personName, new HashMap<>());
+                                    }
+                                    if (!map.get(personName).containsKey(weeklyDataDto.getDays().get(i))) {
+                                        map.get(personName).put(weeklyDataDto.getDays().get(i), new ArrayList<>());
+                                    }
+                                    map.get(personName).get(weeklyDataDto.getDays().get(i)).add(String.format("evening%s_%s", tipo, color));
+                                }
                             }
-                            if (!map.get(personName).containsKey(weeklyDataDto.getDays().get(i))) {
-                                map.get(personName).put(weeklyDataDto.getDays().get(i), new ArrayList<>());
-                            }
-                            map.get(personName).get(weeklyDataDto.getDays().get(i)).add(String.format("evening%s_%s_%s", tipo, color, identifier));
-                        } else {
-                            if (!map.containsKey(personName)) {
-                                map.put(personName, new HashMap<>());
-                            }
-                            if (!map.get(personName).containsKey(weeklyDataDto.getDays().get(i))) {
-                                map.get(personName).put(weeklyDataDto.getDays().get(i), new ArrayList<>());
-                            }
-                            map.get(personName).get(weeklyDataDto.getDays().get(i)).add(String.format("evening%s_%s", tipo, color));
                         }
                     }
-                    i++;
                 }
             }
         }
