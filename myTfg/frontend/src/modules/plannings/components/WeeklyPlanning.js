@@ -172,8 +172,8 @@ const WeeklyPlanning = () => {
       name: person.name,
       level: `R${person.level}`,
       colors: Array(5).fill(null),
-      assignations: Array(5).fill(null),
-      eveningAssignations: Array(5).fill(null),
+      assignations: Array(5).fill(null).map(() => []),
+      eveningAssignations: Array(5).fill(null).map(() => []),
       notValidAssignations: Array(5).fill([])
     })),
     activities: Array(5).fill(null).map(() => [
@@ -504,7 +504,7 @@ const WeeklyPlanning = () => {
     });
   };
 
-  const assignCreatedActivity = (personName, dayIndex, time, activityType, color, id) => {
+  const addTask = (personName, dayIndex, time, activityType, color, id) => {
     let activityWithColor;
     if (activityType === "PLANTA/QX") {
       activityWithColor = `PLANTA/QX${id ? `_${id}` : ""}`;
@@ -521,59 +521,68 @@ const WeeklyPlanning = () => {
                 ...p,
                 assignations:
                   time === "morning"
-                    ? p.assignations.map((a, i) =>
-                        i === dayIndex ? activityWithColor : a
-                      )
+                    ? p.assignations.map((dayTasks, i) => {
+                        if (i === dayIndex) {
+                          const currentTasks = Array.isArray(dayTasks) ? dayTasks : (dayTasks ? [dayTasks] : []);
+                          return [...currentTasks, activityWithColor];
+                        }
+                        return dayTasks;
+                      })
                     : p.assignations,
                 eveningAssignations:
                   time === "evening"
-                    ? (p.eveningAssignations || []).map((a, i) =>
-                        i === dayIndex ? activityWithColor : a
-                      )
+                    ? (p.eveningAssignations || []).map((dayTasks, i) => {
+                        if (i === dayIndex) {
+                          const currentTasks = Array.isArray(dayTasks) ? dayTasks : (dayTasks ? [dayTasks] : []);
+                          return [...currentTasks, activityWithColor];
+                        }
+                        return dayTasks;
+                      })
                     : p.eveningAssignations || [],
               }
             : p
         ),
       };
 
-      if (updatedData.complete) {
-        setIsLoading(true);
-        setBackendErrors(null);
-        const dataToSend = {
-          weeklyPlanningDtos: updatedData.weeklyPlanningDtos.map((p) => {
-            const staffMember = staffList.find(
-              (staff) => staff.name.toLowerCase() === p.name.toLowerCase()
-            );
-            return {
-              ...p,
-              level: staffMember ? staffMember.level : null,
-              assignations: [...p.assignations],
-            };
-          }),
-          week: weekInMonth + 1,
-          month: months[month],
-          year,
-          days: days.map((d) => d.getDate()),
-          activities: updatedData.activities,
-          complete: true,
-        };
-        dispatch(
-          actions.checkWeeklyPlanning(dataToSend,
-          () => {
-            setBackendErrors(null);
-            setIsLoading(false);
-          }, (errorPayload) => {
-            const message = errorPayload?.globalError || "Ha ocurrido un error";
-            setBackendErrors(message);
-            setIsLoading(false);
-          })
-        );
-      }
+      return updatedData;
+    });
+  };
+
+  const removeTask = (personName, dayIndex, time, taskIndex) => {
+    setPlanningData((prev) => {
+      const updatedData = {
+        ...prev,
+        weeklyPlanningDtos: prev.weeklyPlanningDtos.map((p) =>
+          p.name === personName
+            ? {
+                ...p,
+                assignations:
+                  time === "morning"
+                    ? p.assignations.map((dayTasks, i) => {
+                        if (i === dayIndex) {
+                          const currentTasks = Array.isArray(dayTasks) ? dayTasks : (dayTasks ? [dayTasks] : []);
+                          return currentTasks.filter((_, idx) => idx !== taskIndex);
+                        }
+                        return dayTasks;
+                      })
+                    : p.assignations,
+                eveningAssignations:
+                  time === "evening"
+                    ? (p.eveningAssignations || []).map((dayTasks, i) => {
+                        if (i === dayIndex) {
+                          const currentTasks = Array.isArray(dayTasks) ? dayTasks : (dayTasks ? [dayTasks] : []);
+                          return currentTasks.filter((_, idx) => idx !== taskIndex);
+                        }
+                        return dayTasks;
+                      })
+                    : p.eveningAssignations || [],
+              }
+            : p
+        ),
+      };
 
       return updatedData;
     });
-
-    setEditingSlot({ personName: null, dayIndex: null, time: null });
   };
 
   const getCombinedPlantaQxOptions = (dayActivities, time) => {
@@ -857,9 +866,11 @@ const WeeklyPlanning = () => {
                   return(
                   <tr key={person.name}>
                     <td className="font-medium" style={{ backgroundColor: nameColor }}>{person.name}</td>
-                    {person.assignations.map((_, idx) => {
-                      const morningActivity = person.assignations[idx];
-                      const eveningActivity = person.eveningAssignations?.[idx] || null;
+                    {person.assignations.map((dayTasks, idx) => {
+                      const morningActivities = Array.isArray(dayTasks) ? dayTasks : (dayTasks ? [dayTasks] : []);
+                      const eveningActivities = Array.isArray(person.eveningAssignations?.[idx]) ? 
+                        person.eveningAssignations[idx] : 
+                        (person.eveningAssignations?.[idx] ? [person.eveningAssignations[idx]] : []);
                       const dayActivities = planningData.activities[idx] || [];
                       
                       // Use day-specific color for this cell
@@ -877,98 +888,43 @@ const WeeklyPlanning = () => {
                         >
                           <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                             {/* Mañana */}
-                            <div style={{ flex: 1, borderBottom: "1px solid #ccc", padding: "2px" }}>
+                            <div style={{ flex: 1, borderBottom: "1px solid #ccc", padding: "2px", backgroundColor: dayColor }}>
+                              <div style={{ fontSize: "0.7rem", fontWeight: "bold", marginBottom: "2px" }}>Mañana</div>
+                              {morningActivities.map((activity, actIdx) => (
+                                <div key={actIdx} style={{ 
+                                  display: 'flex', 
+                                  alignItems: 'center', 
+                                  justifyContent: 'space-between',
+                                  fontSize: "0.6rem",
+                                  marginBottom: "1px",
+                                  padding: "1px 2px",
+                                  backgroundColor: "rgba(255,255,255,0.8)",
+                                  borderRadius: "2px"
+                                }}>
+                                  <span>{activity}</span>
+                                  <button
+                                    onClick={() => removeTask(person.name, idx, "morning", actIdx)}
+                                    style={{
+                                      border: "none",
+                                      background: "red",
+                                      color: "white",
+                                      fontSize: "0.5rem",
+                                      width: "12px",
+                                      height: "12px",
+                                      borderRadius: "2px",
+                                      cursor: "pointer",
+                                      padding: "0"
+                                    }}
+                                  >
+                                    ×
+                                  </button>
+                                </div>
+                              ))}
                               <select
-                                value={
-                                  (morningActivity || "").startsWith("PLANTA/QX")
-                                    ? morningActivity || ""
-                                    : (morningActivity || "").startsWith("QX_")
-                                      ? (() => {
-                                          const parts = (morningActivity || "").split("_");
-                                          return parts.length === 3 ? `${parts[0]}_${parts[2]}` : parts[0];
-                                        })()
-                                      : (morningActivity || "").split("_")[0]
-                                }
+                                value=""
                                 onChange={(e) => {
-                                  const selectedActivity = e.target.value;
-                                  const [type, id] = selectedActivity.split("_");
-                                  let selected;
-                                  let typeSelected = type;
-                                  let idSelected = id;
-
-                                  if (type === "QX" && id) {
-                                    selected = filteredMorning.find(
-                                      (a) => a.type === "QX" && a.identifier === id
-                                    );
-                                  } else if (type === "QX") {
-                                    selected = filteredMorning.find(
-                                      (a) => a.type === "QX" && !a.identifier
-                                    );
-                                  }
-                                  else if (type === "PLANTA/QX") {
-                                    selected = filteredMorning.find(
-                                      (a) => a.type === type
-                                    );
-                                  } else {
-                                    selected = filteredMorning.find((a) => a.type === type);
-                                    typeSelected = type;
-                                    idSelected = selected?.identifier;
-                                  }
-                                  assignCreatedActivity(person.name, idx, "morning", typeSelected, selected?.color, idSelected);
-                                }}
-                                style={{
-                                  backgroundColor: dayColor,
-                                  border: "none",
-                                  width: "100%",
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                  fontSize: "0.75rem",
-                                  cursor: "pointer",
-                                }}
-                              >
-                                <option value="">-</option>
-                                <>
-                                  {/* Opción combinada PLANTA/QX */}
-                                  {getCombinedPlantaQxOptions(dayActivities, "morning").map((id, idx) => {
-                                    const value = `PLANTA/QX${id ? `_${id}` : ""}`;
-                                    const label = `PLANTA/QX${id ? `_${id}` : ""}`;
-                                    return (
-                                      <option
-                                        key={idx}
-                                        value={value}
-                                        style={{
-                                          backgroundColor: qxColors["amarillo"],
-                                          color: "#000",
-                                        }}
-                                      >
-                                        {label}
-                                      </option>
-                                    );
-                                  })}
-
-                                  {/* Opciones normales */}
-                                  {filteredMorning.map((act, i) => (
-                                    <option
-                                      key={i}
-                                      value={act.identifier ? `${act.type}_${act.identifier}` : act.type}
-                                      style={{
-                                        backgroundColor: qxColors[act.color] || "#e0e0e0",
-                                        color: "#000",
-                                      }}
-                                    >
-                                      {act.identifier ? `${act.type}_${act.identifier}` : act.type}
-                                    </option>
-                                  ))}
-                                </>
-                              </select>
-                            </div>
-
-                            {/* Tarde */}
-                            <div style={{ flex: 1, padding: "2px" }}>
-                              <select
-                                value={(eveningActivity || "").split("_")[0]}
-                                onChange={(e) => {
-                                  const selectedActivity = e.target.value;
+                                  if (e.target.value) {
+                                    const selectedActivity = e.target.value;
                                     const [type, id] = selectedActivity.split("_");
                                     let selected;
                                     let typeSelected = type;
@@ -978,53 +934,138 @@ const WeeklyPlanning = () => {
                                       selected = filteredMorning.find(
                                         (a) => a.type === "QX" && a.identifier === id
                                       );
+                                    } else if (type === "QX") {
+                                      selected = filteredMorning.find(
+                                        (a) => a.type === "QX" && !a.identifier
+                                      );
+                                    } else if (type === "PLANTA/QX") {
+                                      selected = filteredMorning.find(
+                                        (a) => a.type === type
+                                      );
                                     } else {
                                       selected = filteredMorning.find((a) => a.type === type);
-                                      typeSelected = idx;
-                                      idSelected = selected?.identifier
+                                      typeSelected = type;
+                                      idSelected = selected?.identifier;
                                     }
-                                    assignCreatedActivity(person.name, idx, "evening", typeSelected, selected?.color, idSelected);
+                                    addTask(person.name, idx, "morning", typeSelected, selected?.color, idSelected);
+                                  }
                                 }}
                                 style={{
-                                  backgroundColor: dayColor,
-                                  border: "none",
+                                  backgroundColor: "transparent",
+                                  border: "1px solid #ccc",
                                   width: "100%",
-                                  textAlign: "center",
-                                  fontWeight: "bold",
-                                  fontSize: "0.75rem",
-                                  cursor: "pointer",
+                                  fontSize: "0.6rem",
+                                  padding: "1px"
                                 }}
                               >
-                                <option value="">-</option>
-                                <>
-                                  {/* Opción combinada PLANTA/QX */}
-                                  {getCombinedPlantaQxOptions(dayActivities, "morning").map((id, idx) => (
+                                <option value="">+ Añadir tarea</option>
+                                {getCombinedPlantaQxOptions(dayActivities, "morning").map((id, idx) => {
+                                  const value = `PLANTA/QX${id ? `_${id}` : ""}`;
+                                  const label = `PLANTA/QX${id ? `_${id}` : ""}`;
+                                  return (
                                     <option
                                       key={idx}
-                                      value={`PLANTA/QX${id ? `_${id}` : ""}`}
+                                      value={value}
                                       style={{
                                         backgroundColor: qxColors["amarillo"],
                                         color: "#000",
                                       }}
                                     >
-                                      {`PLANTA/QX${id ? `_${id}` : ""}`}
+                                      {label}
                                     </option>
-                                  ))}
+                                  );
+                                })}
+                                {filteredMorning.map((act, i) => (
+                                  <option
+                                    key={i}
+                                    value={act.identifier ? `${act.type}_${act.identifier}` : act.type}
+                                    style={{
+                                      backgroundColor: qxColors[act.color] || "#e0e0e0",
+                                      color: "#000",
+                                    }}
+                                  >
+                                    {act.identifier ? `${act.type}_${act.identifier}` : act.type}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
 
-                                  {/* Opciones normales */}
-                                  {filteredEvening.map((act, i) => (
-                                    <option
-                                      key={i}
-                                      value={act.identifier ? `${act.type}_${act.identifier}` : act.type}
-                                      style={{
-                                        backgroundColor: qxColors[act.color] || "#e0e0e0",
-                                        color: "#000",
-                                      }}
-                                    >
-                                      {act.identifier ? `${act.type}_${act.identifier}` : act.type}
-                                    </option>
-                                  ))}
-                                </>
+                            {/* Tarde */}
+                            <div style={{ flex: 1, padding: "2px", backgroundColor: dayColor }}>
+                              <div style={{ fontSize: "0.7rem", fontWeight: "bold", marginBottom: "2px" }}>Tarde</div>
+                              {eveningActivities.map((activity, actIdx) => (
+                                <div key={actIdx} style={{ 
+                                  display: 'flex', 
+                                  alignItems: 'center', 
+                                  justifyContent: 'space-between',
+                                  fontSize: "0.6rem",
+                                  marginBottom: "1px",
+                                  padding: "1px 2px",
+                                  backgroundColor: "rgba(255,255,255,0.8)",
+                                  borderRadius: "2px"
+                                }}>
+                                  <span>{activity}</span>
+                                  <button
+                                    onClick={() => removeTask(person.name, idx, "evening", actIdx)}
+                                    style={{
+                                      border: "none",
+                                      background: "red",
+                                      color: "white",
+                                      fontSize: "0.5rem",
+                                      width: "12px",
+                                      height: "12px",
+                                      borderRadius: "2px",
+                                      cursor: "pointer",
+                                      padding: "0"
+                                    }}
+                                  >
+                                    ×
+                                  </button>
+                                </div>
+                              ))}
+                              <select
+                                value=""
+                                onChange={(e) => {
+                                  if (e.target.value) {
+                                    const selectedActivity = e.target.value;
+                                    const [type, id] = selectedActivity.split("_");
+                                    let selected;
+                                    let typeSelected = type;
+                                    let idSelected = id;
+
+                                    if (type === "QX" && id) {
+                                      selected = filteredEvening.find(
+                                        (a) => a.type === "QX" && a.identifier === id
+                                      );
+                                    } else {
+                                      selected = filteredEvening.find((a) => a.type === type);
+                                      typeSelected = type;
+                                      idSelected = selected?.identifier;
+                                    }
+                                    addTask(person.name, idx, "evening", typeSelected, selected?.color, idSelected);
+                                  }
+                                }}
+                                style={{
+                                  backgroundColor: "transparent",
+                                  border: "1px solid #ccc",
+                                  width: "100%",
+                                  fontSize: "0.6rem",
+                                  padding: "1px"
+                                }}
+                              >
+                                <option value="">+ Añadir tarea</option>
+                                {filteredEvening.map((act, i) => (
+                                  <option
+                                    key={i}
+                                    value={act.identifier ? `${act.type}_${act.identifier}` : act.type}
+                                    style={{
+                                      backgroundColor: qxColors[act.color] || "#e0e0e0",
+                                      color: "#000",
+                                    }}
+                                  >
+                                    {act.identifier ? `${act.type}_${act.identifier}` : act.type}
+                                  </option>
+                                ))}
                               </select>
                             </div>
                           </div>
