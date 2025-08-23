@@ -568,7 +568,7 @@ const MonthlyPlanning = () => {
           <div
             style={{
               border: "1px solid #e2e8f0",
-              padding: "24px",
+              padding: "16px",
               borderRadius: "16px",
               background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
               boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
@@ -580,9 +580,9 @@ const MonthlyPlanning = () => {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                marginBottom: "24px",
+                marginBottom: "16px",
                 flexWrap: "wrap",
-                gap: "16px"
+                gap: "12px"
               }}
             >
               <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
@@ -736,7 +736,7 @@ const MonthlyPlanning = () => {
               </div>
             </div>
             {monthlyPlanningList.length > 1 && (
-              <div style={{ display: 'flex', gap: '12px', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
                 <button
                   onClick={goToPrevPlanning}
                   style={{
@@ -830,11 +830,11 @@ const MonthlyPlanning = () => {
               style={{
                 display: "flex",
                 justifyContent: "space-between",
-                marginTop: "20px",
+                marginTop: "12px",
               }}
             >
               {/* Tabla de asignaciones */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px' }}>
                 <table
                   style={{ width: "100%", tableLayout: "fixed", fontSize: "12px" }}
                 >
