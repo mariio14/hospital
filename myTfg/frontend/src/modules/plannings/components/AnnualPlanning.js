@@ -541,12 +541,12 @@ const AnnualPlanning = () => {
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
                         {/* Tabla de asignaciones */}
-                        <table style={{ width: '100%', tableLayout: 'fixed', fontSize: '12px' }}>
+                        <table style={{ width: '100%', tableLayout: 'fixed', fontSize: '12px', borderCollapse: 'collapse' }}>
                             <thead>
                                 <tr>
-                                    <th>{year}</th>
+                                    <th style={{ padding: '4px 6px' }}>{year}</th>
                                     {months.map((month) => (
-                                        <th key={month}>{month}</th>
+                                        <th key={month} style={{ padding: '4px 6px', whiteSpace: 'nowrap' }}>{month}</th>
                                     ))}
                                 </tr>
                             </thead>
@@ -559,7 +559,7 @@ const AnnualPlanning = () => {
                                             color: "#000"
                                         }}
                                     >
-                                        <td>{person.name}</td>
+                                        <td style={{ padding: '4px 6px', whiteSpace: 'nowrap' }}>{person.name}</td>
                                         {months.map((month, index) => {
                                             const activity = person.assignations[index];
                                             return (
@@ -570,7 +570,9 @@ const AnnualPlanning = () => {
                                                     color: "#000",
                                                     textAlign: "center",
                                                     fontWeight: "bold",
-                                                    cursor: "grab"
+                                                    cursor: "grab",
+                                                    padding: '8px 16px',
+                                                    height: '28px',
                                                   }}
                                                   title={activity || "Sin asignación"}
                                                   draggable // Permite arrastrar
