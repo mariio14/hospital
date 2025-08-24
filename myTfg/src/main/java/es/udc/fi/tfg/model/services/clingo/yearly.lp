@@ -7,12 +7,6 @@ turn(T) :- section(T).
 
 month(1..12).
 
-% Los siguientes datos vienen del input.lp, descomentar para ejecutar solo yearly.lp
-% person(1..15).
-% level(P,(P-1)/3 + 1) :- person(P).
-% cost(car01,20). cost(car02,10). cost(cas01,100). cost(cas02,25). cost(cas03,3). cost(cas04,10).
-% cost(cas05,3). cost(cas06,10). cost(cas07,5). cost(cas08,10).
-
 % month_assign(P,M,S): Person P at month M is assigned S
 1 {month_assign(P,M,T) : turn(T)} 1:- person(P), month(M).
 
@@ -77,18 +71,14 @@ occup_min(5,yellow,2).
 
 occup_min(L,T,N) :- occup_exact(L,T,N).
 occup_max(L,T,N) :- occup_exact(L,T,N).
-% Aplicar las restricciones anteriores (exact, min, max)
-:- level(P,L), occup_min(L,T,N), #count{X:month_assign(P,X,T)}<N.      % Actividades a las que se asigna al menos N meses
-:- level(P,L), occup_max(L,T,N), #count{X:month_assign(P,X,T)}>N.      % Actividades a las que se asigna como mucho N meses
-
-%     month_assign(P, M, T),
-%     not month_assign(P, M+1, T),
-%     month_assign(P, M', T), M' > M+1,
+% Apply previous restrictions(exact, min, max)
+:- level(P,L), occup_min(L,T,N), #count{X:month_assign(P,X,T)}<N.      % Activities assigned at least N months
+:- level(P,L), occup_max(L,T,N), #count{X:month_assign(P,X,T)}>N.      % Activities assigned at most N months
 
 nonconsecutive(P,T) :- month_assign(P, M, T), not month_assign(P, M+1, T),
                          month_assign(P, M', T), M' > M+1.
 
-% Aplicar las restricciones anteriores (consecutive)
+% Apply previous restrictions (consecutive)
 % :- level(P,L), occup_consecutive(L,T,N), month_assign(P,M,T), not month_assign(P,M-1,T), not month_assign(P,M+N-1,T).
 :- level(P, L), occup_consecutive(L,T),                % Having a Person P, with Level L
     nonconsecutive(P,T).
@@ -109,11 +99,11 @@ demmand_max(purple, 1, V) :- cost(cas06, V).      % CAS06
 demmand_max(green, 2, V) :- cost(cas07, V).       % CAS07
 demmand_max(brown, 1, V) :- cost(cas08, V).       % CAS08
 
-% Aplicar las restricciones anteriores de demanda mínima
+% Apply previous restrictions of min demmand
 :- month(M), turn(T), demmand_min(T,N), % Para cada mes, para un turno con demanda minima N
     #count{X:month_assign(X,M,T)}<N.   % Que haya N o mas personas en turno T en el mes M
 
-% Aplicar las preferencias anteriores de demanda máxima
+% Apply previous restrictions of max demmand
 cost_per_month(C,T,M) :- month(M),
     demmand_max(T, N, V),
     Count = #count { X : month_assign(X, M, T) },
@@ -154,16 +144,16 @@ exceeded(M,T,N') :- month(M), demmand_max(T,N,V), N' = #count { X : month_assign
  }.
 
 
-% CAS01  (PRIORIDAD 2)
-#minimize { V@2,M,T : person(P), person(P'),
+% CAS01
+#minimize { V,M,T : person(P), person(P'),
     level(P, 5), level(P', 5),
     turn(T),
     month_assign(P, M, T), month_assign(P', M, T), P < P', cost(cas01, V)
 }.
 
 
-% CAS02 - predicados y preparación (sin esto 0.9s, con esto mas de 11min)
-% Predicados auxiliares para verificar la presencia de niveles específicos.
+% CAS02 - predicates and preparation
+% Predicates for verifying presence of specific levels.
 has_high_level(M, T) :- month_assign(P, M, T), level(P, 4).
 has_high_level(M, T) :- month_assign(P, M, T), level(P, 5).
 
@@ -171,53 +161,44 @@ has_low_level(M, T) :- month_assign(P, M, T), level(P, 1).
 has_low_level(M, T) :- month_assign(P, M, T), level(P, 2).
 has_low_level(M, T) :- month_assign(P, M, T), level(P, 3).
 
-%unmixed_levels(M, T) :- multiple_people(M, T), not has_high_level(M, T), has_low_level(M, T).
-%unmixed_levels(M, T) :- multiple_people(M, T), has_high_level(M, T), not has_low_level(M, T).
-
-% Regla auxiliar que identifica turnos con más de una persona.
+% Rule that identifies turns with more than one person assigned to them.
 multiple_people(M, T) :- month(M), turn(T), month_assign(P, M, T), month_assign(P', M, T), P<P'.
-
-%#minimize { V,T,M : turn(T), multiple_people(M, T),
-% unmixed_levels(M, T),
-% cost(cas02, V)
-%}.
 
 #minimize { V,T,M : turn(T), multiple_people(M, T),
     not has_low_level(M, T),
     cost(cas02, V)
 }.
-#minimize { V,T,M : turn(T), multiple_people(M, T),
-    not has_high_level(M, T),
-    cost(cas02, V)
-}.
+%#minimize { V,T,M : turn(T), multiple_people(M, T),
+%    not has_high_level(M, T),
+%    cost(cas02, V)
+%}.
 
+% CAS03 - predicates and preparation
+%external_service_assign(P, M, S) :- month_assign(P, M, S), service(S).
 
-% CAS03 - predicados y preparación
-external_service_assign(P, M, S) :- month_assign(P, M, S), service(S).
-
-global_count(N) :-
-    N = #count { P,M : external_service_assign(P,M,S) }.
+%global_count(N) :-
+%    N = #count { P,M : external_service_assign(P,M,S) }.
 
 % el global count se puede obtener mediante el month_count
 
-month_count(M, N) :-
-    month(M),
-    N = #count { P : external_service_assign(P, M, S) }.
+%month_count(M, N) :-
+%    month(M),
+%    N = #count { P : external_service_assign(P, M, S) }.
 
-difference(M, D) :-
-    month(M),
-    global_count(G),
-    month_count(M, N),
-    D = G/12 - N,
-    N < G/12.
+%difference(M, D) :-
+%    month(M),
+%    global_count(G),
+%    month_count(M, N),
+%    D = G/12 - N,
+%    N < G/12.
 
-difference(M, D) :-
-    month(M),
-    global_count(G),
-    month_count(M, N),
-    D = N - G/12,
-    N >= G/12.
+%difference(M, D) :-
+%    month(M),
+%    global_count(G),
+%    month_count(M, N),
+%    D = N - G/12,
+%    N >= G/12.
 
-#minimize { V*N : difference(M,N),
-    cost(cas03, V)
-}.
+%#minimize { V*N : difference(M,N),
+%    cost(cas03, V)
+%}.

@@ -22,7 +22,7 @@ public class MonthlyPlanningConversor {
                 }
                 list.add(toMonthlyPlanningDto(staff.getName(), assignations, numDays));
             }
-            monthlyResultDtos.add(new MonthlyResultDto(month, list, true));
+            monthlyResultDtos.add(new MonthlyResultDto(month, list, isComplete(list)));
         }
         return monthlyResultDtos;
     }
@@ -39,7 +39,7 @@ public class MonthlyPlanningConversor {
                 }
                 list.add(toMonthlyPlanningDto(staff.getName(), value, numDays));
             }
-            monthlyResultDtos.add(new MonthlyResultDto(month, list, true));
+            monthlyResultDtos.add(new MonthlyResultDto(month, list, isComplete(list)));
         }
         return monthlyResultDtos;
     }
@@ -52,5 +52,16 @@ public class MonthlyPlanningConversor {
         }
 
         return new MonthlyPlanningDto(name, list, days);
+    }
+
+    private static boolean isComplete(List<MonthlyPlanningDto> list) {
+        for (MonthlyPlanningDto dto : list) {
+            for (String assignation : dto.getAssignations()) {
+                if (assignation != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

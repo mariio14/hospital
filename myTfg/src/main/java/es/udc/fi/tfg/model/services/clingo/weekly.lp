@@ -1,28 +1,5 @@
 % Planificacion semanal
 
-% Comentar estas lineas si se ejecuta con input.lp
-%day(7..11).
-%person(1..15).
-%level(P,(P-1)/3 + 1) :- person(P).
-
-%task_color(qx, yellow, 7, 1, id1).
-%task_color(qx, blue, 8, 2, id2).
-%task_color(qx, blue, 9, 2, id3).
-%task_color(qx, red, 9, 2, id4).
-%task_color(qx, red, 11, 2, id5).
-
-%task_evening_color(qx, blue, 8).
-%task_evening(consultation, 9).
-
-%task(consultation, 10).
-%task(consultation, 11).
-%task(carca, 10).
-%task(carca, 11).
-%task(cerdo, 7).
-%task(cerdo, 8).
-%task(qxrobot, 8).
-%task(qxrobot, 10).
-
 % dummys to avoid warnings
 day_not_assign(1,1,qx).
 task(dummy, dummy).
@@ -30,12 +7,6 @@ task_color(dummy, dummy, dummy, dummy, dummy).
 task_color(dummy, dummy, dummy, dummy).
 task_evening(dummy, dummy).
 task_evening_color(dummy, dummy, dummy, dummy).
-
-%cost(semanalP_03_4_5, yellow, 10).
-%cost(semanalP_03_4_5, red, 20).
-%cost(semanalP_03_4_5, blue, 50).
-%cost(semanalP_14, 15).
-%cost(semanalP_21, 25).
 
 % SemanalR_01
 N {day_assign(P,D,qx,C,morning,I) : person(P), not vacation(P,D), month_assign(P,D,C), not day_not_assign(P,D,qx)} N :- task_color(qx, C, D, N, I).

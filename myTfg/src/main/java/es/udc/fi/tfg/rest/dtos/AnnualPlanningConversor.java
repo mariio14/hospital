@@ -38,7 +38,7 @@ public class AnnualPlanningConversor {
                 }
                 list.add(new AnnualPlanningDto(staff.getName(), staff.getLevel().toString(), transformTasksMap(value)));
             }
-            result.add(new AnnualResultDto(list,true));
+            result.add(new AnnualResultDto(list,isComplete(list)));
         }
         return result;
     }
@@ -53,5 +53,16 @@ public class AnnualPlanningConversor {
             }
         }
         return result;
+    }
+
+    private static boolean isComplete(List<AnnualPlanningDto> list) {
+        for (AnnualPlanningDto dto : list) {
+            for (Map.Entry<Integer, String> assignation : dto.getAssignations().entrySet()) {
+                if (assignation.getValue() != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

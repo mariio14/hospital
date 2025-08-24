@@ -56,9 +56,22 @@ const AnnualPlanning = () => {
     }, []);
 
     useEffect(() => {
-        // Si annualPlanning cambia, actualizamos planningData con el nuevo valor
-        setPlanningData(annualPlanning ? annualPlanning : emptyPlanning);
-        setIsLoading(false);
+      if (annualPlanning) {
+        const planning = { ...annualPlanning };
+
+        planning.assignations = planning.assignations.map(person => {
+          if (!person.assignations || Object.keys(person.assignations).length === 0) {
+            return { ...person, assignations: Array(12).fill(null) };
+          }
+          return person;
+        });
+
+        setPlanningData(planning);
+      } else {
+        setPlanningData(emptyPlanning);
+      }
+
+      setIsLoading(false);
     }, [annualPlanning]);
 
     const handleGeneratePlanning = () => {
