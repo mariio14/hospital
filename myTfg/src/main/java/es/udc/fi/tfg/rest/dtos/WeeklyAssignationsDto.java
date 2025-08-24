@@ -8,14 +8,14 @@ public class WeeklyAssignationsDto {
 
     private String level;
 
-    private List<String> assignations;
+    private List<List<String>> assignations;
 
-    private List<String> eveningAssignations;
+    private List<List<String>> eveningAssignations;
 
     public WeeklyAssignationsDto() {
     }
 
-    public WeeklyAssignationsDto(String name, String level, List<String> assignations, List<String> eveningAssignations) {
+    public WeeklyAssignationsDto(String name, String level, List<List<String>> assignations, List<List<String>> eveningAssignations) {
         this.name = name;
         this.level = level;
         this.assignations = assignations;
@@ -38,19 +38,19 @@ public class WeeklyAssignationsDto {
         this.level = level;
     }
 
-    public List<String> getAssignations() {
+    public List<List<String>> getAssignations() {
         return assignations;
     }
 
-    public void setAssignations(List<String> assignations) {
+    public void setAssignations(List<List<String>> assignations) {
         this.assignations = assignations;
     }
 
-    public List<String> getEveningAssignations() {
+    public List<List<String>> getEveningAssignations() {
         return eveningAssignations;
     }
 
-    public void setEveningAssignations(List<String> eveningAssignations) {
+    public void setEveningAssignations(List<List<String>> eveningAssignations) {
         this.eveningAssignations = eveningAssignations;
     }
 }

@@ -137,8 +137,15 @@ public class WeeklyPlanningConversor {
     public static WeeklyPlanningDto toWeeklyPlanningDto(String name, Map<Integer, List<String>> asignations, String service,
                                                         String servicePrev, List<Integer> days) {
 
-        List<String> list = new ArrayList<>(Collections.nCopies(5, null));
-        List<String> eveningList = new ArrayList<>(Collections.nCopies(5, null));
+        List<List<String>> list = new ArrayList<>();
+        List<List<String>> eveningList = new ArrayList<>();
+        
+        // Initialize with empty lists for each day
+        for (int i = 0; i < 5; i++) {
+            list.add(new ArrayList<>());
+            eveningList.add(new ArrayList<>());
+        }
+        
         if (asignations != null) {
             asignations.forEach((key, value) -> {
                 int index = days.indexOf(key);
@@ -150,30 +157,48 @@ public class WeeklyPlanningConversor {
                             if (partes.length > 2 && !partes[2].isEmpty() && !partes[2].equals("null")) {
                                 st += "_" + partes[2];
                             }
-                            eveningList.set(index, st);
+                            eveningList.get(index).add(st);
                         } else if (val.startsWith("morning")) {
                             String[] partes = val.replaceFirst("morning", "").split("_");
                             String st = partes[0].toUpperCase() + "_" + COLORS.get(partes[1].toLowerCase(Locale.ROOT));
                             if (partes.length > 2 && !partes[2].isEmpty() && !partes[2].equals("null")) {
                                 st += "_" + partes[2];
                             }
-                            if (list.get(index) != null && st.startsWith("FLOOR_amarillo")) {
-                                String[] partesQx = list.get(index).split("_");
-                                if (partesQx.length > 2 && !partesQx[2].isEmpty() && !partesQx[2].equals("null")) {
-                                    st = "PLANTA/QX_" + partesQx[2];
-                                } else {
-                                    st = "PLANTA/QX";
-                                }
-                            } else if (list.get(index) != null && st.startsWith("QX_amarillo")) {
+                            
+                            // Handle special PLANTA/QX combinations 
+                            List<String> currentMorningTasks = list.get(index);
+                            boolean hasFloorAmarillo = currentMorningTasks.stream().anyMatch(task -> task != null && task.startsWith("FLOOR_amarillo"));
+                            
+                            if (hasFloorAmarillo && st.startsWith("QX_amarillo")) {
                                 if (partes.length > 2 && !partes[2].isEmpty() && !partes[2].equals("null")) {
                                     st = "PLANTA/QX_" + partes[2];
                                 } else {
                                     st = "PLANTA/QX";
                                 }
+                            } else if (st.startsWith("FLOOR_amarillo")) {
+                                // Check if we have QX_amarillo tasks to combine with
+                                boolean hasQxAmarillo = currentMorningTasks.stream().anyMatch(task -> task != null && task.startsWith("QX_amarillo"));
+                                if (hasQxAmarillo) {
+                                    // Replace QX_amarillo with PLANTA/QX combination
+                                    for (int i = 0; i < currentMorningTasks.size(); i++) {
+                                        String task = currentMorningTasks.get(i);
+                                        if (task != null && task.startsWith("QX_amarillo")) {
+                                            String[] qxPartes = task.split("_");
+                                            if (qxPartes.length > 2 && !qxPartes[2].isEmpty() && !qxPartes[2].equals("null")) {
+                                                currentMorningTasks.set(i, "PLANTA/QX_" + qxPartes[2]);
+                                            } else {
+                                                currentMorningTasks.set(i, "PLANTA/QX");
+                                            }
+                                        }
+                                    }
+                                    // Don't add the FLOOR task separately as it's now combined
+                                    continue;
+                                }
                             }
-                            list.set(index, st);
+                            
+                            list.get(index).add(st);
                         } else {
-                            list.set(index, val.toUpperCase());
+                            list.get(index).add(val.toUpperCase());
                         }
                     }
                 }
@@ -217,9 +242,13 @@ public class WeeklyPlanningConversor {
 
     private static boolean isComplete(List<WeeklyPlanningDto> list) {
         for (WeeklyPlanningDto dto : list) {
-            for (String assignation : dto.getAssignations()) {
-                if (assignation != null) {
-                    return true;
+            for (List<String> dayAssignations : dto.getAssignations()) {
+                if (dayAssignations != null && !dayAssignations.isEmpty()) {
+                    for (String assignation : dayAssignations) {
+                        if (assignation != null) {
+                            return true;
+                        }
+                    }
                 }
             }
         }

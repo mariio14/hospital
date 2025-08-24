@@ -313,64 +313,75 @@ public class PlanningServiceImpl implements PlanningService {
         for (WeeklyAssignationsDto weeklyAssignationsDto : planning) {
             String name = weeklyAssignationsDto.getName().toLowerCase(Locale.ROOT);
             Map<Integer, List<String>> assignationsMap = new HashMap<>();
-            int i = 0;
-            for (String assignation : weeklyAssignationsDto.getAssignations()) {
-                if (assignation != null) {
-                    String[] partes = assignation.split("_");
-                    String st;
-                    if (partes.length == 1 && assignation.startsWith("PLANTA/")) {
-                        if (assignationsMap.containsKey(days.get(i))) {
-                            assignationsMap.get(days.get(i)).add("morningfloor_yellow");
-                            assignationsMap.get(days.get(i)).add("morningqx_yellow");
-                        } else {
-                            assignationsMap.put(days.get(i), new ArrayList<>(List.of("morningfloor_yellow", "morningqx_yellow")));
-                        }
-                    } else if (partes.length == 2 && assignation.startsWith("PLANTA/")) {
-                        st = partes[1].toLowerCase(Locale.ROOT);
-                        if (assignationsMap.containsKey(days.get(i))) {
-                            assignationsMap.get(days.get(i)).add("morningfloor_yellow");
-                            assignationsMap.get(days.get(i)).add("morningqx_yellow_" + st);
-                        } else {
-                            assignationsMap.put(days.get(i), new ArrayList<>(List.of("morningfloor_yellow", "morningqx_yellow_" + st)));
-                        }
-                    } else if (partes.length == 2) {
-                        String color = COLORS.get(partes[1]);
-                        if (assignationsMap.containsKey(days.get(i))) {
-                            assignationsMap.get(days.get(i)).add("morning" + partes[0].toLowerCase(Locale.ROOT) + "_" + color);
-                        } else {
-                            assignationsMap.put(days.get(i), new ArrayList<>(List.of("morning" + partes[0].toLowerCase(Locale.ROOT) + "_" + color)));
-                        }
-                    } else {
-                        String a = "morning" + partes[0].toLowerCase(Locale.ROOT) + "_" + COLORS.get(partes[1]) + "_" + partes[2].toLowerCase(Locale.ROOT);
-                        if (assignationsMap.containsKey(days.get(i))) {
-                            assignationsMap.get(days.get(i)).add(a);
-                        } else {
-                            assignationsMap.put(days.get(i), new ArrayList<>(List.of(a)));
+            
+            // Process morning assignations
+            for (int i = 0; i < weeklyAssignationsDto.getAssignations().size(); i++) {
+                List<String> dayAssignations = weeklyAssignationsDto.getAssignations().get(i);
+                if (dayAssignations != null && !dayAssignations.isEmpty()) {
+                    for (String assignation : dayAssignations) {
+                        if (assignation != null) {
+                            String[] partes = assignation.split("_");
+                            String st;
+                            if (partes.length == 1 && assignation.startsWith("PLANTA/")) {
+                                if (assignationsMap.containsKey(days.get(i))) {
+                                    assignationsMap.get(days.get(i)).add("morningfloor_yellow");
+                                    assignationsMap.get(days.get(i)).add("morningqx_yellow");
+                                } else {
+                                    assignationsMap.put(days.get(i), new ArrayList<>(List.of("morningfloor_yellow", "morningqx_yellow")));
+                                }
+                            } else if (partes.length == 2 && assignation.startsWith("PLANTA/")) {
+                                st = partes[1].toLowerCase(Locale.ROOT);
+                                if (assignationsMap.containsKey(days.get(i))) {
+                                    assignationsMap.get(days.get(i)).add("morningfloor_yellow");
+                                    assignationsMap.get(days.get(i)).add("morningqx_yellow_" + st);
+                                } else {
+                                    assignationsMap.put(days.get(i), new ArrayList<>(List.of("morningfloor_yellow", "morningqx_yellow_" + st)));
+                                }
+                            } else if (partes.length == 2) {
+                                String color = COLORS.get(partes[1]);
+                                if (assignationsMap.containsKey(days.get(i))) {
+                                    assignationsMap.get(days.get(i)).add("morning" + partes[0].toLowerCase(Locale.ROOT) + "_" + color);
+                                } else {
+                                    assignationsMap.put(days.get(i), new ArrayList<>(List.of("morning" + partes[0].toLowerCase(Locale.ROOT) + "_" + color)));
+                                }
+                            } else {
+                                String a = "morning" + partes[0].toLowerCase(Locale.ROOT) + "_" + COLORS.get(partes[1]) + "_" + partes[2].toLowerCase(Locale.ROOT);
+                                if (assignationsMap.containsKey(days.get(i))) {
+                                    assignationsMap.get(days.get(i)).add(a);
+                                } else {
+                                    assignationsMap.put(days.get(i), new ArrayList<>(List.of(a)));
+                                }
+                            }
                         }
                     }
                 }
-                i++;
             }
-            for (String assignation : weeklyAssignationsDto.getEveningAssignations()) {
-                if (assignation != null) {
-                    String[] partes = assignation.split("_");
-                    if (partes.length == 2) {
-                        String color = COLORS.get(partes[1]);
-                        if (assignationsMap.containsKey(days.get(i))) {
-                            assignationsMap.get(days.get(i)).add("evening" + partes[0].toLowerCase(Locale.ROOT) + "_" + color);
-                        } else {
-                            assignationsMap.put(days.get(i), new ArrayList<>(List.of("evening" + partes[0].toLowerCase(Locale.ROOT) + "_" + color)));
-                        }
-                    } else {
-                        String a = "evening" + partes[0].toLowerCase(Locale.ROOT) + "_" + COLORS.get(partes[1]) + "_" + partes[2].toLowerCase(Locale.ROOT);
-                        if (assignationsMap.containsKey(days.get(i))) {
-                            assignationsMap.get(days.get(i)).add(a);
-                        } else {
-                            assignationsMap.put(days.get(i), new ArrayList<>(List.of(a)));
+            
+            // Process evening assignations
+            for (int i = 0; i < weeklyAssignationsDto.getEveningAssignations().size(); i++) {
+                List<String> dayEveningAssignations = weeklyAssignationsDto.getEveningAssignations().get(i);
+                if (dayEveningAssignations != null && !dayEveningAssignations.isEmpty()) {
+                    for (String assignation : dayEveningAssignations) {
+                        if (assignation != null) {
+                            String[] partes = assignation.split("_");
+                            if (partes.length == 2) {
+                                String color = COLORS.get(partes[1]);
+                                if (assignationsMap.containsKey(days.get(i))) {
+                                    assignationsMap.get(days.get(i)).add("evening" + partes[0].toLowerCase(Locale.ROOT) + "_" + color);
+                                } else {
+                                    assignationsMap.put(days.get(i), new ArrayList<>(List.of("evening" + partes[0].toLowerCase(Locale.ROOT) + "_" + color)));
+                                }
+                            } else {
+                                String a = "evening" + partes[0].toLowerCase(Locale.ROOT) + "_" + COLORS.get(partes[1]) + "_" + partes[2].toLowerCase(Locale.ROOT);
+                                if (assignationsMap.containsKey(days.get(i))) {
+                                    assignationsMap.get(days.get(i)).add(a);
+                                } else {
+                                    assignationsMap.put(days.get(i), new ArrayList<>(List.of(a)));
+                                }
+                            }
                         }
                     }
                 }
-                i++;
             }
             weekMap.put(name, assignationsMap);
         }
