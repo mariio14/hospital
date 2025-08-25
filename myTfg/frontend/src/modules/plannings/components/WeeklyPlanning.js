@@ -75,6 +75,7 @@ const WeeklyPlanning = () => {
     if (weeklyPlanningList && weeklyPlanningList.length > 0) {
       setPlanningData(weeklyPlanningList[activePlanningIndex] || emptyPlanning);
     }
+    setBackendErrors(null);
   }, [activePlanningIndex, weeklyPlanningList]);
 
   const goToNextPlanning = () => {
@@ -218,6 +219,7 @@ const WeeklyPlanning = () => {
   useEffect(() => {
     setPlanningData(weeklyPlanning || emptyPlanning);
     setIsLoading(false);
+    setBackendErrors(null);
   }, [weeklyPlanning]);
 
   useEffect(() => {
@@ -568,11 +570,12 @@ const WeeklyPlanning = () => {
             setIsLoading(false);
           })
         );
+      } else {
+        setBackendErrors(null);
       }
 
       return updatedData;
     });
-
     setEditingSlot({ personName: null, dayIndex: null, time: null });
   };
 

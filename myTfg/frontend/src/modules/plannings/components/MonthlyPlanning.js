@@ -59,6 +59,7 @@ const MonthlyPlanning = () => {
   useEffect(() => {
     if (monthlyPlanningList && monthlyPlanningList.length > 0) {
       setPlanningData(monthlyPlanningList[activePlanningIndex] || emptyPlanning);
+      setBackendErrors(null);
     }
   }, [activePlanningIndex, monthlyPlanningList]);
 
@@ -187,6 +188,8 @@ const MonthlyPlanning = () => {
               setIsLoading(false);
             })
           );
+      } else {
+        setBackendErrors(null);
       }
       return updatedData;
     });

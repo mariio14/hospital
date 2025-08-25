@@ -34,6 +34,7 @@ const AnnualPlanning = () => {
     useEffect(() => {
       if (annualPlanningList && annualPlanningList.length > 0) {
         setPlanningData(annualPlanningList[activePlanningIndex] || emptyPlanning);
+        setBackendErrors(null);
       }
     }, [activePlanningIndex, annualPlanningList]);
 
@@ -262,6 +263,8 @@ const AnnualPlanning = () => {
                   setIsLoading(false);
                 })
             );
+        } else {
+          setBackendErrors(null);
         }
 
 
