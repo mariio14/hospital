@@ -6,6 +6,7 @@ import * as actions from "../actions";
 import * as staffActions from "../../staff/actions"
 import * as selectors from "../selectors";
 import * as staffSelectors from "../../staff/selectors"
+import "../../../styles/MonthlyPlanning.css";
 
 const MonthlyPlanning = () => {
 
