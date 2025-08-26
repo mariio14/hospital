@@ -65,31 +65,55 @@ const PrioritiesList = () => {
                                 <button
                                     onClick={() => handlePutOriginal(priorityGroup.type)}
                                     style={{
-                                        padding: "5px 15px",
+                                        padding: "8px 16px",
                                         backgroundColor: "#007BFF",
                                         color: "#fff",
                                         border: "none",
-                                        borderRadius: "5px",
+                                        borderRadius: "8px",
                                         cursor: "pointer",
-                                        display: "block"
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "6px",
+                                        fontSize: "14px",
+                                        fontWeight: "500",
+                                        transition: "all 0.2s ease"
+                                    }}
+                                    onMouseOver={(e) => {
+                                        e.target.style.backgroundColor = "#0056b3";
+                                        e.target.style.transform = "translateY(-1px)";
+                                    }}
+                                    onMouseOut={(e) => {
+                                        e.target.style.backgroundColor = "#007BFF";
+                                        e.target.style.transform = "translateY(0)";
                                     }}
                                 >
-                                    Valores originales
+                                    🧹 Valores originales
                                 </button>
                             </div>
-                            <ul className="mt-2">
+                            <ul className="mt-3">
                                 {priorityGroup.priorities.map((priority, pIndex) => (
-                                    <li key={pIndex} className="grid grid-cols-[1fr_auto_auto] gap-4 items-center py-2">
-                                        <span>{priority.title}</span>
+                                    <li key={pIndex} className="grid grid-cols-[1fr_auto] gap-4 items-center py-2">
+                                        <span className="text-sm font-medium text-gray-700">{priority.title}</span>
                                         <input
-                                            type="range"
+                                            type="number"
                                             min="0"
                                             max="100"
                                             value={priority.cost}
                                             onChange={(e) => handleCostChange(priority.id, Number(e.target.value))}
-                                            className="w-40 cursor-pointer"
+                                            style={{
+                                                padding: "6px 12px",
+                                                border: "2px solid #e2e8f0",
+                                                borderRadius: "6px",
+                                                fontSize: "14px",
+                                                fontWeight: "500",
+                                                textAlign: "center",
+                                                width: "80px",
+                                                transition: "all 0.2s ease",
+                                                outline: "none"
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = "#3b82f6"}
+                                            onBlur={(e) => e.target.style.borderColor = "#e2e8f0"}
                                         />
-                                        <span className="text-sm font-medium text-gray-700 w-10 text-right">{priority.cost}</span>
                                     </li>
                                 ))}
                             </ul>

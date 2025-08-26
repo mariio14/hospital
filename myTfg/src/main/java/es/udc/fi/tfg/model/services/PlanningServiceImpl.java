@@ -46,6 +46,15 @@ public class PlanningServiceImpl implements PlanningService {
             Map.entry("nutrition", "NUTRI")
     );
 
+    private static final Map<String, String> TASKS = Map.ofEntries(
+            Map.entry("PLANTA", "floor"),
+            Map.entry("QX", "qx"),
+            Map.entry("CONSULTA", "consultation"),
+            Map.entry("CARCA", "carca"),
+            Map.entry("CERDO", "cerdo"),
+            Map.entry("QXROBOT", "qxrobot")
+    );
+
     @Override
     public List<Map<String, Map<Integer, String>>> getAnnualPlanning(String params, int year) throws NoSolutionException{
         String command = "python decode_yearly.py yearly.lp input_yearly.lp";
@@ -336,12 +345,18 @@ public class PlanningServiceImpl implements PlanningService {
                     } else if (partes.length == 2) {
                         String color = COLORS.get(partes[1]);
                         if (assignationsMap.containsKey(days.get(i))) {
-                            assignationsMap.get(days.get(i)).add("morning" + partes[0].toLowerCase(Locale.ROOT) + "_" + color);
+                            assignationsMap.get(days.get(i)).add("morning" + TASKS.get(partes[0].toUpperCase(Locale.ROOT)) + "_" + color);
                         } else {
-                            assignationsMap.put(days.get(i), new ArrayList<>(List.of("morning" + partes[0].toLowerCase(Locale.ROOT) + "_" + color)));
+                            assignationsMap.put(days.get(i), new ArrayList<>(List.of("morning" + TASKS.get(partes[0].toUpperCase(Locale.ROOT)) + "_" + color)));
+                        }
+                    } else if (partes.length == 1) {
+                        if (assignationsMap.containsKey(days.get(i))) {
+                            assignationsMap.get(days.get(i)).add("v");
+                        } else {
+                            assignationsMap.put(days.get(i), new ArrayList<>(List.of("v")));
                         }
                     } else {
-                        String a = "morning" + partes[0].toLowerCase(Locale.ROOT) + "_" + COLORS.get(partes[1]) + "_" + partes[2].toLowerCase(Locale.ROOT);
+                        String a = "morning" + TASKS.get(partes[0].toUpperCase(Locale.ROOT)) + "_" + COLORS.get(partes[1]) + "_" + partes[2].toLowerCase(Locale.ROOT);
                         if (assignationsMap.containsKey(days.get(i))) {
                             assignationsMap.get(days.get(i)).add(a);
                         } else {
@@ -357,12 +372,14 @@ public class PlanningServiceImpl implements PlanningService {
                     if (partes.length == 2) {
                         String color = COLORS.get(partes[1]);
                         if (assignationsMap.containsKey(days.get(i))) {
-                            assignationsMap.get(days.get(i)).add("evening" + partes[0].toLowerCase(Locale.ROOT) + "_" + color);
+                            assignationsMap.get(days.get(i)).add("evening" + TASKS.get(partes[0].toUpperCase(Locale.ROOT)) + "_" + color);
                         } else {
-                            assignationsMap.put(days.get(i), new ArrayList<>(List.of("evening" + partes[0].toLowerCase(Locale.ROOT) + "_" + color)));
+                            assignationsMap.put(days.get(i), new ArrayList<>(List.of("evening" + TASKS.get(partes[0].toUpperCase(Locale.ROOT)) + "_" + color)));
                         }
+                    } else if (partes.length == 1) {
+                        continue;
                     } else {
-                        String a = "evening" + partes[0].toLowerCase(Locale.ROOT) + "_" + COLORS.get(partes[1]) + "_" + partes[2].toLowerCase(Locale.ROOT);
+                        String a = "evening" + TASKS.get(partes[0].toUpperCase(Locale.ROOT)) + "_" + COLORS.get(partes[1]) + "_" + partes[2].toLowerCase(Locale.ROOT);
                         if (assignationsMap.containsKey(days.get(i))) {
                             assignationsMap.get(days.get(i)).add(a);
                         } else {
