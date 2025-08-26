@@ -60,6 +60,15 @@ public class WeeklyDataConversor {
             Map.entry("azul", "blue")
     );
 
+    private static final Map<String, String> TASKS = Map.ofEntries(
+            Map.entry("PLANTA", "floor"),
+            Map.entry("QX", "qx"),
+            Map.entry("CONSULTA", "consultation"),
+            Map.entry("CARCA", "carca"),
+            Map.entry("CERDO", "cerdo"),
+            Map.entry("QXROBOT", "qxrobot")
+    );
+
     public static String toClingoParams(WeeklyDataDto weeklyDataDto, List<Priority> costs,
                      Map<String, Map<Integer, String>> yearData, Map<String, Map<Integer, String>> prevYearData,
                                         MonthlyResultDto monthData, int year, String month) {
@@ -102,7 +111,7 @@ public class WeeklyDataConversor {
                             continue;
                         }
                         String[] partes = assignation.split("_");
-                        String tipo = partes[0].toLowerCase(Locale.ROOT);
+                        String tipo = TASKS.get(partes[0].toUpperCase(Locale.ROOT));
                         String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
                         String identifier = (partes.length > 2 && tipo.equals("qx")) ? ClingoUtils.sanitizeForClingo(partes[2]) : null;
                         if (identifier != null) {
@@ -119,7 +128,7 @@ public class WeeklyDataConversor {
                 for (String assignation : weeklyAssignationsDto.getEveningAssignations()) {
                     if (assignation != null) {
                         String[] partes = assignation.split("_");
-                        String tipo = partes[0].toLowerCase(Locale.ROOT);
+                        String tipo = TASKS.get(partes[0].toUpperCase(Locale.ROOT));
                         String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
                         String identifier = (partes.length > 2 && tipo.equals("qx")) ? ClingoUtils.sanitizeForClingo(partes[2]) : null;
                         if (identifier != null) {
@@ -199,7 +208,7 @@ public class WeeklyDataConversor {
         for (List<ActivityDto> activityDtos : weeklyDataDto.getActivities()) {
             int day = firstDayOfWeek + act;
             for (ActivityDto activityDto : activityDtos) {
-                String type = activityDto.getType().toLowerCase(Locale.ROOT);
+                String type = TASKS.get(activityDto.getType().toUpperCase(Locale.ROOT));
                 String color = activityDto.getColor() == null ? null : COLORS.get(activityDto.getColor());
                 int slots = activityDto.getSlots();
                 String time = activityDto.getTime();
@@ -252,7 +261,7 @@ public class WeeklyDataConversor {
                             continue;
                         }
                         String[] partes = assignation.split("_");
-                        String tipo = partes[0].toLowerCase(Locale.ROOT);
+                        String tipo = TASKS.get(partes[0].toUpperCase(Locale.ROOT));
                         String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
                         String identifier = (partes.length > 2 && tipo.equals("qx")) ? ClingoUtils.sanitizeForClingo(partes[2]) : null;
                         if (identifier != null) {
@@ -281,7 +290,7 @@ public class WeeklyDataConversor {
                 for (String assignation : weeklyAssignationsDto.getEveningAssignations()) {
                     if (assignation != null) {
                         String[] partes = assignation.split("_");
-                        String tipo = partes[0].toLowerCase(Locale.ROOT);
+                        String tipo = TASKS.get(partes[0].toUpperCase(Locale.ROOT));
                         String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
                         String identifier = (partes.length > 2 && tipo.equals("qx")) ? ClingoUtils.sanitizeForClingo(partes[2]) : null;
                         if (identifier != null) {

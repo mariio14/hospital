@@ -63,6 +63,15 @@ public class WeeklyPlanningConversor {
             Map.entry("nutrition", "NUTRI")
     );
 
+    private static final Map<String, String> TASKS = Map.ofEntries(
+            Map.entry("floor", "PLANTA"),
+            Map.entry("qx", "QX"),
+            Map.entry("consultation", "CONSULTA"),
+            Map.entry("carca", "CARCA"),
+            Map.entry("cerdo", "CERDO"),
+            Map.entry("qxrobot", "QXROBOT")
+    );
+
     public static List<WeeklyResultDto> toWeeklyPlanningDtos(ActivityAndPlanning planningMap,
                                                        int year, String month, String week,
                                                        List<Staff> staffList, GetWeeklyDataDto dto, boolean yearChanged) {
@@ -146,18 +155,18 @@ public class WeeklyPlanningConversor {
                     for (String val : value) {
                         if (val.startsWith("evening")) {
                             String[] partes = val.replaceFirst("evening", "").split("_");
-                            String st = partes[0].toUpperCase() + "_" + COLORS.get(partes[1].toLowerCase(Locale.ROOT));
+                            String st = TASKS.get(partes[0]) + "_" + COLORS.get(partes[1].toLowerCase(Locale.ROOT));
                             if (partes.length > 2 && !partes[2].isEmpty() && !partes[2].equals("null")) {
                                 st += "_" + partes[2];
                             }
                             eveningList.set(index, st);
                         } else if (val.startsWith("morning")) {
                             String[] partes = val.replaceFirst("morning", "").split("_");
-                            String st = partes[0].toUpperCase() + "_" + COLORS.get(partes[1].toLowerCase(Locale.ROOT));
+                            String st = TASKS.get(partes[0]) + "_" + COLORS.get(partes[1].toLowerCase(Locale.ROOT));
                             if (partes.length > 2 && !partes[2].isEmpty() && !partes[2].equals("null")) {
                                 st += "_" + partes[2];
                             }
-                            if (list.get(index) != null && st.startsWith("FLOOR_amarillo")) {
+                            if (list.get(index) != null && st.startsWith("PLANTA_amarillo")) {
                                 String[] partesQx = list.get(index).split("_");
                                 if (partesQx.length > 2 && !partesQx[2].isEmpty() && !partesQx[2].equals("null")) {
                                     st = "PLANTA/QX_" + partesQx[2];

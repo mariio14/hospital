@@ -155,7 +155,7 @@ const WeeklyPlanning = () => {
 
 
   const colorMap = {
-    QX: "#81C784", PEONAGE: "#E57373", CONSULTATION: "#FF9800", FLOOR: "#E57373", QXROBOT: "#2196F3", CERDO: "#2196F3", CARCA: "#2196F3"
+    QX: "#81C784", CONSULTA: "#FF9800", PLANTA: "#E57373", QXROBOT: "#2196F3", CERDO: "#2196F3", CARCA: "#2196F3"
   };
   const activities = Object.keys(colorMap);
   const activities_real = activities.filter((a) => a !== "GP");
@@ -178,9 +178,9 @@ const WeeklyPlanning = () => {
       notValidAssignations: Array(5).fill([])
     })),
     activities: Array(5).fill(null).map(() => [
-      { type: "FLOOR", color: "azul", slots: 0, time: "morning" },
-      { type: "FLOOR", color: "amarillo", slots: 0, time: "morning" },
-      { type: "FLOOR", color: "rojo", slots: 0, time: "morning" }
+      { type: "PLANTA", color: "azul", slots: 0, time: "morning" },
+      { type: "PLANTA", color: "amarillo", slots: 0, time: "morning" },
+      { type: "PLANTA", color: "rojo", slots: 0, time: "morning" }
     ]),
     complete: false
   };
@@ -455,7 +455,7 @@ const WeeklyPlanning = () => {
       let valuesToRemove = [];
 
       // Caso especial: PLANTA/QX (FLOOR amarillo)
-      if (removedActivity.type === "FLOOR" && removedActivity.color === "amarillo") {
+      if (removedActivity.type === "PLANTA" && removedActivity.color === "amarillo") {
         valuesToRemove.push("PLANTA/QX");
         // Si hay variantes con identificador, también se añaden
         planningData.activities[dayIndex]
@@ -581,7 +581,7 @@ const WeeklyPlanning = () => {
 
   const getCombinedPlantaQxOptions = (dayActivities, time) => {
     const floorExists = dayActivities.some(
-      a => a.type === "FLOOR" && a.color === "amarillo" && a.time === time
+      a => a.type === "PLANTA" && a.color === "amarillo" && a.time === time
     );
 
     if (!floorExists) return [];
@@ -1196,7 +1196,7 @@ const WeeklyPlanning = () => {
                   >
                     <option value="">-- Seleccionar --</option>
                     <option value="QX">QX</option>
-                    <option value="CONSULTATION">CONSULTATION</option>
+                    <option value="CONSULTA">CONSULTA</option>
                     <option value="CARCA">CARCA</option>
                     <option value="CERDO">CERDO</option>
                     <option value="QXROBOT">QXROBOT</option>

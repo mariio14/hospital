@@ -551,9 +551,9 @@ public class PlanningServiceImpl implements PlanningService {
 
     private List<ActivityDto> getFloors(){
         List<ActivityDto> floors = new ArrayList<>();
-        floors.add(new ActivityDto("FLOOR", "blue", 1, "morning", null));
-        floors.add(new ActivityDto("FLOOR", "red", 1, "morning", null));
-        floors.add(new ActivityDto("FLOOR", "yellow", 1, "morning", null));
+        floors.add(new ActivityDto("PLANTA", "blue", 1, "morning", null));
+        floors.add(new ActivityDto("PLANTA", "red", 1, "morning", null));
+        floors.add(new ActivityDto("PLANTA", "yellow", 1, "morning", null));
         return floors;
     }
 
