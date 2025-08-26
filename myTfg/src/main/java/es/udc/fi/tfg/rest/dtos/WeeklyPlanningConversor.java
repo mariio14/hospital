@@ -183,6 +183,7 @@ public class WeeklyPlanningConversor {
                             list.set(index, st);
                         } else {
                             list.set(index, val.toUpperCase());
+                            eveningList.set(index, val.toUpperCase());
                         }
                     }
                 }

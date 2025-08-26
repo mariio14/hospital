@@ -150,6 +150,5 @@ color_floor_assigned(C,D) :- day_assign(P,D,floor,C,_,_), person(P), month_assig
     cost(semanalP_21, V)
 }.
 
-%#show month_assign/3.
-%#show day_assign_from_month/3.
 #show day_assign/6.
+#show vacation/2.

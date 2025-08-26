@@ -155,7 +155,7 @@ const WeeklyPlanning = () => {
 
 
   const colorMap = {
-    QX: "#81C784", CONSULTA: "#FF9800", PLANTA: "#E57373", QXROBOT: "#2196F3", CERDO: "#2196F3", CARCA: "#2196F3"
+    QX: "#81C784", CONSULTA: "#FF9800", PLANTA: "#E57373", QXROBOT: "#2196F3", CERDO: "#2196F3", CARCA: "#2196F3", V: "#2196F3"
   };
   const activities = Object.keys(colorMap);
   const activities_real = activities.filter((a) => a !== "GP");

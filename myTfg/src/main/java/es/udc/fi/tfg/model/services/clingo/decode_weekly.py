@@ -36,8 +36,10 @@ def extract_assignments(model):
 
         elif atom.name == "vacation" and len(atom.arguments) == 2:
             person = str(atom.arguments[0])
+            if person == "dummyname":
+                continue
             day = atom.arguments[1].number
-            assignments.setdefault(person, {})[day] = "v"
+            assignments.setdefault(person, {}).setdefault(day, []).append("v")
 
     return OrderedDict(
         sorted(
