@@ -1114,8 +1114,15 @@ const WeeklyPlanning = () => {
                       // Use day-specific color for this cell
                       const dayColor = colorPersonMap[person.colors && person.colors[idx] ? person.colors[idx] : null] || "#fff";
 
-                      const filteredMorning = dayActivities.filter((a) => a.time === "morning");
-                      const filteredEvening = dayActivities.filter((a) => a.time === "evening");
+                      const filteredMorning = [
+                        ...dayActivities.filter((a) => a.time === "morning"),
+                        { type: "V", color: null, slots: 0, time: "morning" }
+                      ];
+
+                      const filteredEvening = [
+                        ...dayActivities.filter((a) => a.time === "evening"),
+                        { type: "V", color: null, slots: 0, time: "evening" }
+                      ];
 
                       return (
                         <td key={idx} className="p-0 border"
@@ -1195,8 +1202,8 @@ const WeeklyPlanning = () => {
                                     );
                                   })}
 
-                                  {/* Opciones normales - filtrar V de las opciones pero mantenerlo para mostrar */}
-                                  {filteredMorning.filter(act => act.type !== 'V').map((act, i) => (
+                                  {/* Opciones normales */}
+                                  {filteredMorning.map((act, i) => (
                                     <option
                                       key={i}
                                       value={act.identifier ? `${act.type}_${act.identifier}` : act.type}
@@ -1260,8 +1267,8 @@ const WeeklyPlanning = () => {
                                     </option>
                                   ))}
 
-                                  {/* Opciones normales - filtrar V de las opciones pero mantenerlo para mostrar */}
-                                  {filteredEvening.filter(act => act.type !== 'V').map((act, i) => (
+                                  {/* Opciones normales */}
+                                  {filteredEvening.map((act, i) => (
                                     <option
                                       key={i}
                                       value={act.identifier ? `${act.type}_${act.identifier}` : act.type}
