@@ -29,26 +29,26 @@ const WeeklyPlanning = () => {
   });
 
   const qxColors = {
-    amarillo: "#FFD700",
-    azul: "#2196F3",
-    rojo: "#E57373",
+    amarillo: "rgba(255, 215, 0, 0.6)", // Reduced opacity from solid #FFD700
+    azul: "rgba(33, 150, 243, 0.6)", // Reduced opacity from solid #2196F3
+    rojo: "rgba(229, 115, 115, 0.6)", // Reduced opacity from solid #E57373
   };
 
   const colorPersonMap = {
-      PARED: "#4CAF50",
-      AMARILLO: "#FFEB3B",
-      COLON: "#2196F3",
-      ROJOS: "#F44336",
-      URGENCIAS: "#9C27B0",
-      PROCTO: "#795548",
-      MAMA: "#F48FB1",
-      NUTRI: "#D3D3D3",
-      RAYOS: "#607D8B",
-      REA: "#3F51B5",
-      TORACICA: "#8BC34A",
-      VASCULAR: "#00BCD4",
-      VALENCIA: "#FFC107",
-      OTRAS: "#F5F5F5"
+      PARED: "rgba(76, 175, 80, 0.6)", // Reduced opacity from solid #4CAF50
+      AMARILLO: "rgba(255, 235, 59, 0.6)", // Reduced opacity from solid #FFEB3B
+      COLON: "rgba(33, 150, 243, 0.6)", // Reduced opacity from solid #2196F3
+      ROJOS: "rgba(244, 67, 54, 0.6)", // Reduced opacity from solid #F44336
+      URGENCIAS: "rgba(156, 39, 176, 0.6)", // Reduced opacity from solid #9C27B0
+      PROCTO: "rgba(121, 85, 72, 0.6)", // Reduced opacity from solid #795548
+      MAMA: "rgba(244, 143, 177, 0.6)", // Reduced opacity from solid #F48FB1
+      NUTRI: "rgba(211, 211, 211, 0.6)", // Reduced opacity from solid #D3D3D3
+      RAYOS: "rgba(96, 125, 139, 0.6)", // Reduced opacity from solid #607D8B
+      REA: "rgba(63, 81, 181, 0.6)", // Reduced opacity from solid #3F51B5
+      TORACICA: "rgba(139, 195, 74, 0.6)", // Reduced opacity from solid #8BC34A
+      VASCULAR: "rgba(0, 188, 212, 0.6)", // Reduced opacity from solid #00BCD4
+      VALENCIA: "rgba(255, 193, 7, 0.6)", // Reduced opacity from solid #FFC107
+      OTRAS: "rgba(245, 245, 245, 0.6)" // Reduced opacity from solid #F5F5F5
   };
 
   const [editingSlot, setEditingSlot] = useState({
@@ -839,6 +839,252 @@ const WeeklyPlanning = () => {
             )}
 
           </div>
+          
+          {/* Crear nueva actividad section - moved above table */}
+          <div style={{ 
+            marginTop: '24px', 
+            marginBottom: '24px',
+            border: '1px solid #e2e8f0', 
+            padding: '20px', 
+            borderRadius: '12px', 
+            background: '#ffffff', 
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)'
+          }}>
+            <h4 style={{ fontWeight: '700', marginBottom: '16px', color: '#374151', fontSize: '16px' }}>✨ Crear nueva actividad</h4>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '16px' }}>
+              {/* Día */}
+              <label style={{ fontSize: '14px', fontWeight: '600', color: '#374151', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                Día:
+                <select
+                  value={newActivity.dayIndex}
+                  onChange={(e) =>
+                    setNewActivity((prev) => ({
+                      ...prev,
+                      dayIndex: Number(e.target.value),
+                    }))
+                  }
+                  style={{
+                    padding: '8px 12px',
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    transition: 'all 0.2s ease',
+                    outline: 'none',
+                    background: '#ffffff',
+                    cursor: 'pointer',
+                    minWidth: '120px'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                >
+                  {days.map((d, i) => <option key={i} value={i}>{d.toLocaleDateString("es-ES", { weekday: "long" })}</option>)}
+                </select>
+              </label>
+
+              {/* Turno */}
+              <label style={{ fontSize: '14px', fontWeight: '600', color: '#374151', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                Turno:
+                <select
+                  value={newActivity.time}
+                  onChange={(e) =>
+                    setNewActivity((prev) => ({
+                      ...prev,
+                      time: e.target.value,
+                    }))
+                  }
+                  style={{
+                    padding: '8px 12px',
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    transition: 'all 0.2s ease',
+                    outline: 'none',
+                    background: '#ffffff',
+                    cursor: 'pointer',
+                    minWidth: '120px'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                >
+                  <option value="morning">Mañana</option>
+                  <option value="evening">Tarde</option>
+                </select>
+              </label>
+
+              {/* Tipo */}
+              <label style={{ fontSize: '14px', fontWeight: '600', color: '#374151', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                Tipo:
+                <select
+                  value={newActivity.type}
+                  onChange={(e) => {
+                    const selected = e.target.value;
+                    setNewActivity((prev) => ({
+                      ...prev,
+                      type: selected,
+                      color: selected === "QX" ? "amarillo" : null,
+                    }));
+                  }}
+                  style={{
+                    padding: '8px 12px',
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    transition: 'all 0.2s ease',
+                    outline: 'none',
+                    background: '#ffffff',
+                    cursor: 'pointer',
+                    minWidth: '150px'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                >
+                  <option value="">-- Seleccionar --</option>
+                  <option value="QX">QX</option>
+                  <option value="CONSULTA">CONSULTA</option>
+                  <option value="CARCA">CARCA</option>
+                  <option value="PLANTA">PLANTA</option>
+                  <option value="URGENCIAS">URGENCIAS</option>
+                </select>
+              </label>
+
+              {/* Color (solo para QX) */}
+              {newActivity.type === "QX" && (
+                <label style={{ fontSize: '14px', fontWeight: '600', color: '#374151', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  Color:
+                  <select
+                    value={newActivity.color}
+                    onChange={(e) =>
+                      setNewActivity((prev) => ({
+                        ...prev,
+                        color: e.target.value,
+                      }))
+                    }
+                    style={{
+                      padding: '8px 12px',
+                      border: '2px solid #e2e8f0',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      transition: 'all 0.2s ease',
+                      outline: 'none',
+                      background: '#ffffff',
+                      cursor: 'pointer',
+                      minWidth: '120px'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                    onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                  >
+                    <option value="amarillo">Amarillo</option>
+                    <option value="azul">Azul</option>
+                    <option value="rojo">Rojo</option>
+                  </select>
+                </label>
+              )}
+
+              {/* Identificador (solo para QX) */}
+              {newActivity.type === "QX" && (
+                <label style={{ fontSize: '14px', fontWeight: '600', color: '#374151', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  Identificador:
+                  <input
+                    type="text"
+                    value={newActivity.identifier}
+                    onChange={(e) =>
+                      setNewActivity((prev) => ({
+                        ...prev,
+                        identifier: e.target.value,
+                      }))
+                    }
+                    style={{
+                      padding: '8px 12px',
+                      border: '2px solid #e2e8f0',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      transition: 'all 0.2s ease',
+                      outline: 'none',
+                      background: '#ffffff',
+                      width: '120px'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                    onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                    placeholder="Opcional"
+                  />
+                </label>
+              )}
+
+              {/* Slots */}
+              {newActivity.type === "QX" && (
+              <label style={{ fontSize: '14px', fontWeight: '600', color: '#374151', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                Residentes:
+                <input
+                  type="number"
+                  value={newActivity.slots}
+                  min={1}
+                  max={10}
+                  onChange={(e) =>
+                    setNewActivity((prev) => ({
+                      ...prev,
+                      slots: Number(e.target.value),
+                    }))
+                  }
+                  style={{
+                    padding: '8px 12px',
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    transition: 'all 0.2s ease',
+                    outline: 'none',
+                    background: '#ffffff',
+                    width: '80px'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                />
+              </label>
+              )}
+
+              {/* Botón crear */}
+              <button
+                onClick={handleAddCustomActivity}
+                disabled={!newActivity.type}
+                style={{
+                  padding: "10px 20px",
+                  background: !newActivity.type 
+                    ? "linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)"
+                    : "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)",
+                  color: "#ffffff",
+                  border: "none",
+                  borderRadius: "10px",
+                  cursor: !newActivity.type ? "not-allowed" : "pointer",
+                  fontWeight: "600",
+                  fontSize: "14px",
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                  transition: "all 0.2s ease",
+                  opacity: !newActivity.type ? 0.7 : 1
+                }}
+                onMouseOver={(e) => {
+                  if (newActivity.type) {
+                    e.target.style.transform = 'translateY(-1px)';
+                    e.target.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.15)';
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (newActivity.type) {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+                  }
+                }}
+              >
+                ✨ Crear
+              </button>
+
+            </div>
+          </div>
+          
           {isLoading && <div className="loader"></div>}
           {backendErrors ? <p style={{ color: 'red', textAlign: 'center', marginTop: '30px', marginBottom: '20px' }}>{backendErrors}</p> : null}
           <div className="overflow-auto">
@@ -949,8 +1195,8 @@ const WeeklyPlanning = () => {
                                     );
                                   })}
 
-                                  {/* Opciones normales */}
-                                  {filteredMorning.map((act, i) => (
+                                  {/* Opciones normales - filtrar V de las opciones pero mantenerlo para mostrar */}
+                                  {filteredMorning.filter(act => act.type !== 'V').map((act, i) => (
                                     <option
                                       key={i}
                                       value={act.identifier ? `${act.type}_${act.identifier}` : act.type}
@@ -1014,8 +1260,8 @@ const WeeklyPlanning = () => {
                                     </option>
                                   ))}
 
-                                  {/* Opciones normales */}
-                                  {filteredEvening.map((act, i) => (
+                                  {/* Opciones normales - filtrar V de las opciones pero mantenerlo para mostrar */}
+                                  {filteredEvening.filter(act => act.type !== 'V').map((act, i) => (
                                     <option
                                       key={i}
                                       value={act.identifier ? `${act.type}_${act.identifier}` : act.type}
@@ -1094,256 +1340,6 @@ const WeeklyPlanning = () => {
                 </tr>
               </tbody>
             </table>
-            <div style={{ 
-              marginTop: '24px', 
-              border: '1px solid #e2e8f0', 
-              padding: '20px', 
-              borderRadius: '12px', 
-              background: '#ffffff', 
-              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)'
-            }}>
-              <h4 style={{ fontWeight: '700', marginBottom: '16px', color: '#374151', fontSize: '16px' }}>✨ Crear nueva actividad</h4>
-              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '16px' }}>
-                {/* Día */}
-                <label style={{ fontSize: '14px', fontWeight: '600', color: '#374151', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  Día:
-                  <select
-                    value={newActivity.dayIndex}
-                    onChange={(e) =>
-                      setNewActivity((prev) => ({
-                        ...prev,
-                        dayIndex: Number(e.target.value),
-                      }))
-                    }
-                    style={{
-                      padding: '8px 12px',
-                      border: '2px solid #e2e8f0',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      transition: 'all 0.2s ease',
-                      outline: 'none',
-                      background: '#ffffff',
-                      cursor: 'pointer',
-                      minWidth: '120px'
-                    }}
-                    onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-                    onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
-                  >
-                    {days.map((d, idx) => (
-                      <option key={idx} value={idx}>
-                        {d.toLocaleDateString("es-ES", { weekday: "long" })}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-
-                {/* Turno (mañana/tarde) */}
-                <label style={{ fontSize: '14px', fontWeight: '600', color: '#374151', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  Turno:
-                  <select
-                    value={newActivity.time}
-                    onChange={(e) =>
-                      setNewActivity((prev) => ({ ...prev, time: e.target.value }))
-                    }
-                    style={{
-                      padding: '8px 12px',
-                      border: '2px solid #e2e8f0',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      transition: 'all 0.2s ease',
-                      outline: 'none',
-                      background: '#ffffff',
-                      cursor: 'pointer',
-                      minWidth: '100px'
-                    }}
-                    onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-                    onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
-                  >
-                    <option value="morning">Mañana</option>
-                    <option value="evening">Tarde</option>
-                  </select>
-                </label>
-
-                {/* Tipo de actividad */}
-                <label style={{ fontSize: '14px', fontWeight: '600', color: '#374151', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  Actividad:
-                  <select
-                    value={newActivity.type}
-                    onChange={(e) => {
-                      const selected = e.target.value;
-                      setNewActivity((prev) => ({
-                        ...prev,
-                        type: selected,
-                        color: selected === "QX" ? "amarillo" : null,
-                      }));
-                    }}
-                    style={{
-                      padding: '8px 12px',
-                      border: '2px solid #e2e8f0',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      transition: 'all 0.2s ease',
-                      outline: 'none',
-                      background: '#ffffff',
-                      cursor: 'pointer',
-                      minWidth: '150px'
-                    }}
-                    onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-                    onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
-                  >
-                    <option value="">-- Seleccionar --</option>
-                    <option value="QX">QX</option>
-                    <option value="CONSULTA">CONSULTA</option>
-                    <option value="CARCA">CARCA</option>
-                    <option value="CERDO">CERDO</option>
-                    <option value="QXROBOT">QXROBOT</option>
-                  </select>
-                </label>
-
-                {/* Color solo si es QX */}
-                <label style={{ 
-                  fontSize: '14px', 
-                  fontWeight: '600', 
-                  color: newActivity.type !== "QX" ? '#9ca3af' : '#374151', 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  gap: '4px' 
-                }}>
-                  Color:
-                  <select
-                    value={newActivity.color || ""}
-                    onChange={(e) =>
-                      setNewActivity((prev) => ({ ...prev, color: e.target.value }))
-                    }
-                    disabled={newActivity.type !== "QX"}
-                    style={{
-                      padding: '8px 12px',
-                      border: `2px solid ${newActivity.type !== "QX" ? '#e5e7eb' : '#e2e8f0'}`,
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      transition: 'all 0.2s ease',
-                      outline: 'none',
-                      background: newActivity.type !== "QX" ? '#f9fafb' : '#ffffff',
-                      cursor: newActivity.type !== "QX" ? 'not-allowed' : 'pointer',
-                      minWidth: '100px',
-                      opacity: newActivity.type !== "QX" ? 0.6 : 1
-                    }}
-                    onFocus={(e) => {
-                      if (newActivity.type === "QX") e.target.style.borderColor = '#3b82f6';
-                    }}
-                    onBlur={(e) => {
-                      if (newActivity.type === "QX") e.target.style.borderColor = '#e2e8f0';
-                    }}
-                  >
-                    <option value="amarillo">Amarillo</option>
-                    <option value="azul">Azul</option>
-                    <option value="rojo">Rojo</option>
-                  </select>
-                </label>
-
-                {newActivity.type === "QX" && (
-                  <label style={{ fontSize: '14px', fontWeight: '600', color: '#374151', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    Identificador:
-                    <input
-                      type="text"
-                      value={newActivity.identifier}
-                      onChange={(e) =>
-                        setNewActivity((prev) => ({
-                          ...prev,
-                          identifier: e.target.value,
-                        }))
-                      }
-                      style={{
-                        padding: '8px 12px',
-                        border: '2px solid #e2e8f0',
-                        borderRadius: '8px',
-                        fontSize: '14px',
-                        fontWeight: '500',
-                        transition: 'all 0.2s ease',
-                        outline: 'none',
-                        background: '#ffffff',
-                        width: '120px'
-                      }}
-                      onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-                      onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
-                      placeholder="Opcional"
-                    />
-                  </label>
-                )}
-
-                {/* Slots */}
-                {newActivity.type === "QX" && (
-                <label style={{ fontSize: '14px', fontWeight: '600', color: '#374151', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  Residentes:
-                  <input
-                    type="number"
-                    value={newActivity.slots}
-                    min={1}
-                    max={10}
-                    onChange={(e) =>
-                      setNewActivity((prev) => ({
-                        ...prev,
-                        slots: Number(e.target.value),
-                      }))
-                    }
-                    style={{
-                      padding: '8px 12px',
-                      border: '2px solid #e2e8f0',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      transition: 'all 0.2s ease',
-                      outline: 'none',
-                      background: '#ffffff',
-                      width: '80px'
-                    }}
-                    onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-                    onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
-                  />
-                </label>
-                )}
-
-                {/* Botón crear */}
-                <button
-                  onClick={handleAddCustomActivity}
-                  disabled={!newActivity.type}
-                  style={{
-                    padding: "10px 20px",
-                    background: !newActivity.type 
-                      ? "linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)"
-                      : "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)",
-                    color: "#ffffff",
-                    border: "none",
-                    borderRadius: "10px",
-                    cursor: !newActivity.type ? "not-allowed" : "pointer",
-                    fontWeight: "600",
-                    fontSize: "14px",
-                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                    transition: "all 0.2s ease",
-                    opacity: !newActivity.type ? 0.7 : 1
-                  }}
-                  onMouseOver={(e) => {
-                    if (newActivity.type) {
-                      e.target.style.transform = 'translateY(-1px)';
-                      e.target.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.15)';
-                    }
-                  }}
-                  onMouseOut={(e) => {
-                    if (newActivity.type) {
-                      e.target.style.transform = 'translateY(0)';
-                      e.target.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
-                    }
-                  }}
-                >
-                  ✨ Crear
-                </button>
-
-              </div>
-            </div>
           </div>
         </div>
     </div>
