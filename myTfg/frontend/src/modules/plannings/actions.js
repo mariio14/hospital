@@ -91,14 +91,39 @@ export const saveYearlyPlanning = (planningData, year, onErrors) => dispatch =>
     backend.planningService.saveYearlyPlanning(planningData, year,
     () => dispatch(getYearlyConfirmCompleted(planningData)), onErrors);
 
+const getYearlyCheckCompleted = annualPlanning => ({
+    type: actionTypes.YEARLY_CONFIRM_COMPLETED,
+    annualPlanning
+});
+
 export const checkAnnualPlanning = (planningData, year, onSuccess, onErrors) => dispatch =>
     backend.planningService.checkAnnualPlanning(planningData, year,
-    onSuccess, onErrors);
+    () => {
+        if (onSuccess) onSuccess();
+        dispatch(getYearlyCheckCompleted(planningData))
+    }, onErrors);
+
+
+const getMonthlyCheckCompleted = monthlyPlanning => ({
+    type: actionTypes.MONTHLY_CONFIRM_COMPLETED,
+    monthlyPlanning
+});
 
 export const checkMonthlyPlanning = (planningData, onSuccess, onErrors) => dispatch =>
     backend.planningService.checkMonthlyPlanning(planningData,
-    onSuccess, onErrors);
+    () => {
+        if (onSuccess) onSuccess();
+        dispatch(getMonthlyCheckCompleted(planningData))
+    }, onErrors);
+
+const getWeeklyCheckCompleted = weeklyPlanning => ({
+    type: actionTypes.WEEKLY_CONFIRM_COMPLETED,
+    weeklyPlanning
+});
 
 export const checkWeeklyPlanning = (planningData, onSuccess, onErrors) => dispatch =>
     backend.planningService.checkWeeklyPlanning(planningData,
-    onSuccess, onErrors);
+    () => {
+        if (onSuccess) onSuccess();
+        dispatch(getWeeklyCheckCompleted(planningData))
+    }, onErrors);

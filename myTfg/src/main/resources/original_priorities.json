@@ -30,11 +30,6 @@
     "cost": 35
   },
   {
-    "id": "mensualP_G13",
-    "title": "Coste de un mal balance de tareas durante el mes.",
-    "cost": 4
-  },
-  {
     "id": "mensualP_L03",
     "title": "Coste de no equilibrar extracciones e implantes entre residentes.",
     "cost": 1

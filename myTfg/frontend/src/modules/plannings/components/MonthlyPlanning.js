@@ -60,6 +60,7 @@ const MonthlyPlanning = () => {
     if (monthlyPlanningList && monthlyPlanningList.length > 0) {
       setPlanningData(monthlyPlanningList[activePlanningIndex] || emptyPlanning);
       setBackendErrors(null);
+      setIsLoading(false);
     }
   }, [activePlanningIndex, monthlyPlanningList]);
 
@@ -178,7 +179,7 @@ const MonthlyPlanning = () => {
             complete: true
         }
 
-        dispatch(actions.checkMonthlyPlanning(updatedData,
+        dispatch(actions.checkMonthlyPlanning(convertedPlanningData,
             () => {
               setBackendErrors(null);
               setIsLoading(false);
@@ -537,6 +538,7 @@ const MonthlyPlanning = () => {
 
   const handleClearPlanning = () => {
     setBackendErrors(null);
+    setIsLoading(false);
     setPlanningData(emptyPlanning);
     dispatch(actions.getMonthlyClear(emptyPlanning));
   };

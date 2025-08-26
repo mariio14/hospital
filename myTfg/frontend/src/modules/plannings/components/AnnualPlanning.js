@@ -35,6 +35,7 @@ const AnnualPlanning = () => {
       if (annualPlanningList && annualPlanningList.length > 0) {
         setPlanningData(annualPlanningList[activePlanningIndex] || emptyPlanning);
         setBackendErrors(null);
+        setIsLoading(false);
       }
     }, [activePlanningIndex, annualPlanningList]);
 

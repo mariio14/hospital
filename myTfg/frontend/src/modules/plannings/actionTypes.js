@@ -7,3 +7,6 @@ export const CLEAR_WEEKLY_LIST = "project/plannings/clearWeeklyList";
 export const MONTHLY_CONFIRM_COMPLETED = "project/plannings/monthlyConfirmCompleted";
 export const CLEAR_MONTHLY_LIST = "project/plannings/clearMonthlyList";
 export const YEARLY_CONFIRM_COMPLETED = "project/plannings/yearlyConfirmCompleted";
+export const YEARLY_CHECK_COMPLETED = "project/plannings/yearlyCheckCompleted";
+export const MONTHLY_CHECK_COMPLETED = "project/plannings/monthlyCheckCompleted";
+export const WEEKLY_CHECK_COMPLETED = "project/plannings/weeklyCheckCompleted";
