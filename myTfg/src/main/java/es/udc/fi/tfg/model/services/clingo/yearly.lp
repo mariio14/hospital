@@ -145,7 +145,7 @@ exceeded(M,T,N') :- month(M), demmand_max(T,N,V), N' = #count { X : month_assign
 
 
 % CAS01
-#minimize { V,M,T : person(P), person(P'),
+#minimize { V@1,M,T : person(P), person(P'),
     level(P, 5), level(P', 5),
     turn(T),
     month_assign(P, M, T), month_assign(P', M, T), P < P', cost(cas01, V)
