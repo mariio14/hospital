@@ -149,7 +149,6 @@ const MonthlyPlanning = () => {
         ),
       };
 
-      if (updatedData.complete) {
         setIsLoading(true);
         setBackendErrors(null);
         let firstFriday = 1;
@@ -189,9 +188,6 @@ const MonthlyPlanning = () => {
               setIsLoading(false);
             })
           );
-      } else {
-        setBackendErrors(null);
-      }
       return updatedData;
     });
   };
@@ -226,47 +222,45 @@ const MonthlyPlanning = () => {
       updated.monthlyPlanningDtos[sourcePersonIndex].assignations[draggedCell.monthIndex] = targetValue;
       updated.monthlyPlanningDtos[targetPersonIndex].assignations[targetMonthIndex] = sourceValue;
 
-      if (updated.complete) {
-          setIsLoading(true);
-          setBackendErrors(null);
-          let firstFriday = 1;
-          while (new Date(year, month - 1, firstFriday).getDay() !== 5) {
-              firstFriday++;
-          }
+      setIsLoading(true);
+      setBackendErrors(null);
+      let firstFriday = 1;
+      while (new Date(year, month - 1, firstFriday).getDay() !== 5) {
+          firstFriday++;
+      }
 
-          const convertedPlanningData = {
-              monthlyPlanningDtos: updated.monthlyPlanningDtos.map(person => {
-                  const staffMember = staffList.find(staff => staff.name.toLowerCase() === person.name.toLowerCase());
+      const convertedPlanningData = {
+          monthlyPlanningDtos: updated.monthlyPlanningDtos.map(person => {
+              const staffMember = staffList.find(staff => staff.name.toLowerCase() === person.name.toLowerCase());
 
-                  return {
-                      ...person,
-                      assignations: Object.values(person.assignations),
-                      notValidAssignations: Object.values(person.notValidAssignations),
-                      level: staffMember ? staffMember.level : null
-                  };
-              }),
-              numberOfDays: daysInMonth,
-              numberOfDaysPrevMonth: daysInPrevMonth,
-              month: getMonthName(month),
-              year: year,
-              firstDay: getDayOfWeek(1,month,year),
-              firstFriday: firstFriday,
-              weekends: [],
-              festivos: [],
-              complete: true
-          }
+              return {
+                  ...person,
+                  assignations: Object.values(person.assignations),
+                  notValidAssignations: Object.values(person.notValidAssignations),
+                  level: staffMember ? staffMember.level : null
+              };
+          }),
+          numberOfDays: daysInMonth,
+          numberOfDaysPrevMonth: daysInPrevMonth,
+          month: getMonthName(month),
+          year: year,
+          firstDay: getDayOfWeek(1,month,year),
+          firstFriday: firstFriday,
+          weekends: [],
+          festivos: [],
+          complete: true
+      }
 
-          dispatch(actions.checkMonthlyPlanning(convertedPlanningData,
-              () => {
-                setBackendErrors(null);
-                setIsLoading(false);
-              }, (errorPayload) => {
-                const message = errorPayload?.globalError || "Ha ocurrido un error";
-                setBackendErrors(message);
-                setIsLoading(false);
-              })
-            );
-        }
+      dispatch(actions.checkMonthlyPlanning(convertedPlanningData,
+          () => {
+            setBackendErrors(null);
+            setIsLoading(false);
+          }, (errorPayload) => {
+            const message = errorPayload?.globalError || "Ha ocurrido un error";
+            setBackendErrors(message);
+            setIsLoading(false);
+          })
+        );
 
       return updated;
     });

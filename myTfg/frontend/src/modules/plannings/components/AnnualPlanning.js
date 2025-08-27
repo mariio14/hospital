@@ -142,7 +142,6 @@ const AnnualPlanning = () => {
         updated.assignations[sourcePersonIndex].assignations[draggedCell.monthIndex] = targetValue;
         updated.assignations[targetPersonIndex].assignations[targetMonthIndex] = sourceValue;
 
-        if (updated.complete) {
           setIsLoading(true);
           setBackendErrors(null);
           const convertedPlanningData = {
@@ -168,7 +167,6 @@ const AnnualPlanning = () => {
               }
             )
           );
-        }
 
         return updated;
       });
@@ -241,33 +239,28 @@ const AnnualPlanning = () => {
           }),
         };
 
-        if (updatedPlanning.complete) {
-            setIsLoading(true);
-            setBackendErrors(null);
-            const convertedPlanningData = {
-                assignations : updatedPlanning.assignations.map(person => ({
-                    ...person,
-                    assignations: Object.values(person.assignations)
-                })),
-                complete: true
-            }
-
-            dispatch(actions.checkAnnualPlanning(
-                convertedPlanningData,
-                year,
-                () => {
-                  setBackendErrors(null);
-                  setIsLoading(false);
-                }, (errorPayload) => {
-                  const message = errorPayload?.globalError || "Ha ocurrido un error";
-                  setBackendErrors(message);
-                  setIsLoading(false);
-                })
-            );
-        } else {
-          setBackendErrors(null);
+        setIsLoading(true);
+        setBackendErrors(null);
+        const convertedPlanningData = {
+            assignations : updatedPlanning.assignations.map(person => ({
+                ...person,
+                assignations: Object.values(person.assignations)
+            })),
+            complete: true
         }
 
+        dispatch(actions.checkAnnualPlanning(
+            convertedPlanningData,
+            year,
+            () => {
+              setBackendErrors(null);
+              setIsLoading(false);
+            }, (errorPayload) => {
+              const message = errorPayload?.globalError || "Ha ocurrido un error";
+              setBackendErrors(message);
+              setIsLoading(false);
+            })
+        );
 
         return updatedPlanning;
       });

@@ -8,7 +8,7 @@ task_color(dummy, dummy, dummy, dummy).
 task_evening(dummy, dummy).
 task_evening_color(dummy, dummy, dummy, dummy).
 
-cost(semanalP_22, 1).
+cost(semanalP_22, 2).
 cost(semanalP_23, 2).
 cost(semanalP_24, 1).
 cost(semanalP_25, 2).
@@ -111,12 +111,18 @@ cnt_assign_cerdo(D,Cnt) :-
 % SemanalR_19, SemanalR_20
 1 {day_assign(P,D,qxrobot,null,morning,null) : person(P), level(P,L), L>2, not vacation(P,D), not day_not_assign(P,D,qxrobot)} 1 :- task(qxrobot, D).
 
-% SemanalR_02 %%%% SemanalR_02 CAMBIAR
-{day_assign(P,D,floor,C,morning,null) : person(P), not vacation(P,D), month_assign(P,D,C), not day_not_assign(P,D,floor)} :- task_color(floor,C,D,_).
+% SemanalR_02
+{day_assign(P,D,floor,C,morning,null) : person(P), not vacation(P,D), not day_not_assign(P,D,floor)} :- task_color(floor,C,D,_).
 % SemanalP_22
 #minimize { V,D :
     task_color(floor,yellow,D,_), day_assign(P,D,qx,yellow,_,_), month_assign(P,D,yellow),
     not day_assign(P,D,floor,yellow,_,_),
+    cost(semanalP_22, V)
+}.
+#minimize { V,D,P :
+    task_color(floor,C,D,_),
+    day_assign(P,D,floor,C,_,_),
+    not month_assign(P,D,C),
     cost(semanalP_22, V)
 }.
 

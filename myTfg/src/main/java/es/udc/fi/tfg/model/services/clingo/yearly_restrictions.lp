@@ -6,9 +6,10 @@ turn(T) :- service(T).
 turn(T) :- section(T).
 
 month(1..12).
+month_assign(dummy,0,null).
 
 % month_assign(P,M,S): Person P at month M is assigned S
-:- person(P), month(M), not month_assign(P,M,T).
+:- person(P), month(M), not month_assign(P,M,_).
 
 % occup_min(L,T,N) = persons of level L must have activity T at least N months
 % occup_exact(L,T,N) = persons of level L must have activity T exactly N months

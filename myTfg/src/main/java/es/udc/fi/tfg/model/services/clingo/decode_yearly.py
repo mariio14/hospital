@@ -21,6 +21,8 @@ with ctl.solve(yield_=True) as handle:
         for atom in model.symbols(atoms=True):
             if atom.name == "month_assign" and len(atom.arguments) == 3:
                 person = str(atom.arguments[0])
+                if person == "dummy":
+                    continue
                 month = atom.arguments[1].number
                 turn = str(atom.arguments[2])
 

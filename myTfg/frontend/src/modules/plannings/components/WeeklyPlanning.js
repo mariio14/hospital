@@ -261,7 +261,6 @@ const WeeklyPlanning = () => {
       updated.weeklyPlanningDtos[sourcePersonIndex].assignations[draggedCell.monthIndex] = targetValue;
       updated.weeklyPlanningDtos[targetPersonIndex].assignations[targetMonthIndex] = sourceValue;
 
-      if (updated.complete) {
         setIsLoading(true);
         setBackendErrors(null);
         const dataToSend = {
@@ -295,7 +294,6 @@ const WeeklyPlanning = () => {
             }
           )
         );
-      }
       return updated;
     });
 
@@ -538,7 +536,6 @@ const WeeklyPlanning = () => {
         ),
       };
 
-      if (updatedData.complete) {
         setIsLoading(true);
         setBackendErrors(null);
         const dataToSend = {
@@ -570,9 +567,6 @@ const WeeklyPlanning = () => {
             setIsLoading(false);
           })
         );
-      } else {
-        setBackendErrors(null);
-      }
 
       return updatedData;
     });

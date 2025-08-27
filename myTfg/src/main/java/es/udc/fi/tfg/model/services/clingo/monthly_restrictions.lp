@@ -7,7 +7,7 @@ task_real(g,2). task_real(e,1). task_real(i,1).
 guard(g;gp).
 
 % MensualR_C01, MensualR_G01
-:- day(D), task(T,N), #count{P: day_assign(P,D,T)}!=N. %% ver si esta bien
+:- day(D), task(T,N), Cnt = #count{P: day_assign(P,D,T)}, Cnt!=N.
 :- day_assign(P,D,T), vacation(P,D).
 :- day_assign(P,D,T), day_not_assign(P,D,T).
 

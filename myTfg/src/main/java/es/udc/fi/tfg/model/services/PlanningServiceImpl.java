@@ -445,7 +445,7 @@ public class PlanningServiceImpl implements PlanningService {
 
     @Override
     public void checkAnnualPlanning(String params, int year, List<Map<String, Map<Integer, String>>> map) throws NoSolutionException {
-        String command = "python decode_yearly.py yearly.lp input_yearly.lp";
+        String command = "python decode_yearly.py yearly_restrictions.lp input_yearly.lp";
 
         try {
             writeInputFile(params, pathname + "/input_yearly.lp");
@@ -486,7 +486,7 @@ public class PlanningServiceImpl implements PlanningService {
 
     @Override
     public void checkMonthlyPlanning(String params, String month, int year, List<Map<String, Map<Integer, String>>> map) throws NoSolutionException {
-        String command = "python decode_monthly.py monthly.lp input_monthly.lp";
+        String command = "python decode_monthly.py monthly_restrictions.lp input_monthly.lp";
         try {
             writeInputFile(params, pathname + "/input_monthly.lp");
 
@@ -527,7 +527,7 @@ public class PlanningServiceImpl implements PlanningService {
 
     @Override
     public void checkWeeklyPlanning(String params, int year, String month, String week, List<List<ActivityDto>> activities, List<Map<String, Map<Integer, List<String>>>> map) throws NoSolutionException {
-        String command = "python decode_weekly.py weekly_open.lp input_weekly.lp";
+        String command = "python decode_weekly.py weekly_restrictions.lp input_weekly.lp";
         try {
             writeInputFile(params, pathname + "/input_weekly.lp");
 
