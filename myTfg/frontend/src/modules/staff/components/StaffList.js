@@ -67,20 +67,31 @@ const StaffList = () => {
                     marginBottom: '2rem'
                 }}
             >
-                <h1 
-                    style={{
-                        fontSize: '2.5rem',
-                        fontWeight: '800',
-                        background: 'var(--primary-gradient)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
-                        marginBottom: '0.5rem',
-                        letterSpacing: '-0.025em'
-                    }}
+                <h1
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center', // centra horizontalmente
+                    fontSize: '2.5rem',
+                    fontWeight: '800',
+                    marginBottom: '0.5rem',
+                    gap: '0.5rem', // espacio entre emoji y texto
+                    letterSpacing: '-0.025em'
+                  }}
                 >
-                    📋 Gestión de Personal
+                  <span>📋</span>
+                  <span
+                    style={{
+                      background: 'var(--primary-gradient)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text'
+                    }}
+                  >
+                    Gestión de Personal
+                  </span>
                 </h1>
+
                 <p 
                     style={{
                         fontSize: '1.125rem',
