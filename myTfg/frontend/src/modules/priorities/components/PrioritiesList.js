@@ -44,6 +44,19 @@ const PrioritiesList = () => {
         );
     };
 
+    const handleCostIncrement = (priorityId, change) => {
+        setPriorities(prevPriorities =>
+            prevPriorities.map(group => ({
+                ...group,
+                priorities: group.priorities.map(priority =>
+                    priority.id === priorityId 
+                        ? { ...priority, cost: Math.min(100, Math.max(0, priority.cost + change)) }
+                        : priority
+                )
+            }))
+        );
+    };
+
     const handlePutOriginal = (groupType) => {
         console.log("Enviando al backend:", groupType);
         dispatch(actions.originalPriorities(
@@ -197,35 +210,109 @@ const PrioritiesList = () => {
                                         >
                                             {priority.title}
                                         </span>
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            max="100"
-                                            value={priority.cost}
-                                            onChange={(e) => handleCostChange(priority.id, Number(e.target.value))}
+                                        <div 
                                             style={{
-                                                padding: "8px 12px",
-                                                border: "2px solid #e2e8f0",
-                                                borderRadius: "8px",
-                                                fontSize: "14px",
-                                                fontWeight: "600",
-                                                textAlign: "center",
-                                                width: "90px",
-                                                transition: "all 0.2s ease",
-                                                outline: "none",
-                                                background: '#f8fafc'
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '0.5rem'
                                             }}
-                                            onFocus={(e) => {
-                                                e.target.style.borderColor = "#3b82f6";
-                                                e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
-                                                e.target.style.background = 'white';
-                                            }}
-                                            onBlur={(e) => {
-                                                e.target.style.borderColor = "#e2e8f0";
-                                                e.target.style.boxShadow = 'none';
-                                                e.target.style.background = '#f8fafc';
-                                            }}
-                                        />
+                                        >
+                                            <button
+                                                onClick={() => handleCostIncrement(priority.id, -1)}
+                                                disabled={priority.cost === 0}
+                                                style={{
+                                                    width: '2rem',
+                                                    height: '2rem',
+                                                    border: '2px solid #e2e8f0',
+                                                    borderRadius: '6px',
+                                                    background: priority.cost === 0 ? '#f3f4f6' : '#f8fafc',
+                                                    cursor: priority.cost === 0 ? 'not-allowed' : 'pointer',
+                                                    fontSize: '1rem',
+                                                    fontWeight: '600',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    color: priority.cost === 0 ? '#9ca3af' : '#374151',
+                                                    transition: "all 0.2s ease"
+                                                }}
+                                                onMouseOver={(e) => {
+                                                    if (priority.cost > 0) {
+                                                        e.target.style.borderColor = "#3b82f6";
+                                                        e.target.style.background = 'white';
+                                                        e.target.style.transform = "scale(1.05)";
+                                                    }
+                                                }}
+                                                onMouseOut={(e) => {
+                                                    e.target.style.borderColor = "#e2e8f0";
+                                                    e.target.style.background = priority.cost === 0 ? '#f3f4f6' : '#f8fafc';
+                                                    e.target.style.transform = "scale(1)";
+                                                }}
+                                            >
+                                                −
+                                            </button>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                max="100"
+                                                value={priority.cost}
+                                                onChange={(e) => handleCostChange(priority.id, Number(e.target.value))}
+                                                style={{
+                                                    padding: "8px 12px",
+                                                    border: "2px solid #e2e8f0",
+                                                    borderRadius: "8px",
+                                                    fontSize: "14px",
+                                                    fontWeight: "600",
+                                                    textAlign: "center",
+                                                    width: "90px",
+                                                    transition: "all 0.2s ease",
+                                                    outline: "none",
+                                                    background: '#f8fafc'
+                                                }}
+                                                onFocus={(e) => {
+                                                    e.target.style.borderColor = "#3b82f6";
+                                                    e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+                                                    e.target.style.background = 'white';
+                                                }}
+                                                onBlur={(e) => {
+                                                    e.target.style.borderColor = "#e2e8f0";
+                                                    e.target.style.boxShadow = 'none';
+                                                    e.target.style.background = '#f8fafc';
+                                                }}
+                                            />
+                                            <button
+                                                onClick={() => handleCostIncrement(priority.id, 1)}
+                                                disabled={priority.cost === 100}
+                                                style={{
+                                                    width: '2rem',
+                                                    height: '2rem',
+                                                    border: '2px solid #e2e8f0',
+                                                    borderRadius: '6px',
+                                                    background: priority.cost === 100 ? '#f3f4f6' : '#f8fafc',
+                                                    cursor: priority.cost === 100 ? 'not-allowed' : 'pointer',
+                                                    fontSize: '1rem',
+                                                    fontWeight: '600',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    color: priority.cost === 100 ? '#9ca3af' : '#374151',
+                                                    transition: "all 0.2s ease"
+                                                }}
+                                                onMouseOver={(e) => {
+                                                    if (priority.cost < 100) {
+                                                        e.target.style.borderColor = "#3b82f6";
+                                                        e.target.style.background = 'white';
+                                                        e.target.style.transform = "scale(1.05)";
+                                                    }
+                                                }}
+                                                onMouseOut={(e) => {
+                                                    e.target.style.borderColor = "#e2e8f0";
+                                                    e.target.style.background = priority.cost === 100 ? '#f3f4f6' : '#f8fafc';
+                                                    e.target.style.transform = "scale(1)";
+                                                }}
+                                            >
+                                                +
+                                            </button>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
