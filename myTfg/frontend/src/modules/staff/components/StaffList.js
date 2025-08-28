@@ -53,81 +53,392 @@ const StaffList = () => {
     };
 
     return (
-         <div className="p-6">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800">Lista de Personal</h2>
+        <div 
+            style={{
+                padding: '2rem',
+                minHeight: '100vh',
+                background: 'var(--background-gradient)'
+            }}
+        >
+            {/* Modern Header */}
+            <div 
+                style={{
+                    textAlign: 'center',
+                    marginBottom: '3rem'
+                }}
+            >
+                <h1 
+                    style={{
+                        fontSize: '2.5rem',
+                        fontWeight: '800',
+                        background: 'var(--primary-gradient)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                        marginBottom: '0.5rem',
+                        letterSpacing: '-0.025em'
+                    }}
+                >
+                    📋 Gestión de Personal
+                </h1>
+                <p 
+                    style={{
+                        fontSize: '1.125rem',
+                        color: 'var(--text-secondary)',
+                        fontWeight: '500'
+                    }}
+                >
+                    Administra los niveles del personal sanitario
+                </p>
+            </div>
+
             {users && users.length > 0 ? (
-                <div className="space-y-3">
+                <div 
+                    style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+                        gap: '1.5rem',
+                        maxWidth: '1200px',
+                        margin: '0 auto'
+                    }}
+                >
                     {users.map((user, index) => (
                         <div 
-                            key={index} 
-                            className="p-4 rounded-lg shadow-md border border-gray-200 bg-white hover:shadow-lg transition-shadow duration-200"
+                            key={index}
+                            className="card-modern"
                             style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                gap: '16px',
-                                background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)'
+                                padding: '2rem',
+                                position: 'relative',
+                                overflow: 'hidden'
                             }}
                         >
-                            {/* Name input */}
-                            <div className="flex-1 min-w-0">
+                            {/* Decorative gradient bar */}
+                            <div 
+                                style={{
+                                    position: 'absolute',
+                                    top: '0',
+                                    left: '0',
+                                    right: '0',
+                                    height: '4px',
+                                    background: 'var(--primary-gradient)'
+                                }}
+                            />
+                            
+                            {/* Staff member icon and basic info */}
+                            <div 
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    marginBottom: '1.5rem',
+                                    gap: '1rem'
+                                }}
+                            >
+                                <div 
+                                    style={{
+                                        width: '60px',
+                                        height: '60px',
+                                        borderRadius: '50%',
+                                        background: 'var(--primary-gradient)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: '1.5rem',
+                                        color: 'white',
+                                        fontWeight: 'bold',
+                                        boxShadow: 'var(--shadow-md)'
+                                    }}
+                                >
+                                    👨‍⚕️
+                                </div>
+                                <div style={{ flex: '1' }}>
+                                    <h3 
+                                        style={{
+                                            fontSize: '1.125rem',
+                                            fontWeight: '600',
+                                            color: 'var(--text-primary)',
+                                            marginBottom: '0.25rem'
+                                        }}
+                                    >
+                                        Personal Sanitario
+                                    </h3>
+                                    <p 
+                                        style={{
+                                            fontSize: '0.875rem',
+                                            color: 'var(--text-secondary)',
+                                            margin: '0'
+                                        }}
+                                    >
+                                        ID: {user.id}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Name input with modern styling */}
+                            <div className="form-modern">
                                 <input
                                     type="text"
                                     value={user.name}
                                     onChange={(e) => handleNameChange(user.id, e.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                    placeholder="Introduce el nombre completo..."
                                     style={{
-                                        fontSize: '16px',
+                                        width: '100%',
+                                        padding: '1rem',
+                                        border: '2px solid var(--border-color)',
+                                        borderRadius: 'var(--radius-md)',
+                                        fontSize: '1rem',
                                         fontWeight: '500',
-                                        color: '#374151'
+                                        color: 'var(--text-primary)',
+                                        background: 'var(--surface-color)',
+                                        transition: 'var(--transition)'
                                     }}
-                                    placeholder="Nombre del residente"
+                                    onFocus={(e) => {
+                                        e.target.style.borderColor = 'var(--primary-color)';
+                                        e.target.style.boxShadow = '0 0 0 3px rgb(59 130 246 / 0.1)';
+                                    }}
+                                    onBlur={(e) => {
+                                        e.target.style.borderColor = 'var(--border-color)';
+                                        e.target.style.boxShadow = 'none';
+                                    }}
                                 />
                             </div>
                             
-                            {/* Level controls */}
-                            <div className="flex items-center gap-2 flex-shrink-0">
-                                <button
-                                    onClick={() => handleLevelChange(user.id, -1)}
-                                    disabled={user.level === 1}
-                                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-200 ${
-                                        user.level === 1 
-                                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
-                                            : 'bg-blue-500 text-white hover:bg-blue-600 active:scale-95 shadow-sm'
-                                    }`}
-                                >
-                                    ◀
-                                </button>
-                                
-                                <div 
-                                    className="px-3 py-1 rounded-full text-sm font-bold text-white min-w-20 text-center"
+                            {/* Level controls with modern design */}
+                            <div 
+                                style={{
+                                    marginTop: '1.5rem'
+                                }}
+                            >
+                                <label 
                                     style={{
-                                        background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-                                        boxShadow: '0 2px 4px rgba(59, 130, 246, 0.3)'
+                                        display: 'block',
+                                        fontSize: '0.875rem',
+                                        fontWeight: '600',
+                                        color: 'var(--text-primary)',
+                                        marginBottom: '0.75rem',
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.05em'
                                     }}
                                 >
-                                    Nivel {user.level}
+                                    Nivel de Experiencia
+                                </label>
+                                
+                                <div 
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '1rem',
+                                        padding: '1rem',
+                                        background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                                        borderRadius: 'var(--radius-lg)',
+                                        border: '1px solid var(--border-color)'
+                                    }}
+                                >
+                                    {/* Decrease button */}
+                                    <button
+                                        onClick={() => handleLevelChange(user.id, -1)}
+                                        disabled={user.level === 1}
+                                        className="btn-modern"
+                                        style={{
+                                            width: '3rem',
+                                            height: '3rem',
+                                            borderRadius: '50%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '1.25rem',
+                                            fontWeight: 'bold',
+                                            border: 'none',
+                                            cursor: user.level === 1 ? 'not-allowed' : 'pointer',
+                                            background: user.level === 1 
+                                                ? 'linear-gradient(135deg, #e2e8f0, #cbd5e1)' 
+                                                : 'linear-gradient(135deg, #ef4444, #dc2626)',
+                                            color: user.level === 1 ? 'var(--text-secondary)' : 'white',
+                                            boxShadow: user.level === 1 ? 'none' : 'var(--shadow-sm)',
+                                            transition: 'var(--transition)',
+                                            opacity: user.level === 1 ? '0.6' : '1'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            if (user.level !== 1) {
+                                                e.target.style.transform = 'translateY(-2px) scale(1.05)';
+                                                e.target.style.boxShadow = 'var(--shadow-lg)';
+                                            }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            if (user.level !== 1) {
+                                                e.target.style.transform = 'translateY(0) scale(1)';
+                                                e.target.style.boxShadow = 'var(--shadow-sm)';
+                                            }
+                                        }}
+                                    >
+                                        −
+                                    </button>
+                                    
+                                    {/* Level indicator */}
+                                    <div 
+                                        style={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
+                                            gap: '0.5rem'
+                                        }}
+                                    >
+                                        <div 
+                                            style={{
+                                                background: 'var(--primary-gradient)',
+                                                color: 'white',
+                                                padding: '0.75rem 1.5rem',
+                                                borderRadius: 'var(--radius-xl)',
+                                                fontSize: '1.25rem',
+                                                fontWeight: '700',
+                                                boxShadow: 'var(--shadow-md)',
+                                                minWidth: '5rem',
+                                                textAlign: 'center'
+                                            }}
+                                        >
+                                            {user.level}
+                                        </div>
+                                        <div 
+                                            style={{
+                                                fontSize: '0.75rem',
+                                                fontWeight: '500',
+                                                color: 'var(--text-secondary)',
+                                                textAlign: 'center'
+                                            }}
+                                        >
+                                            {user.level === 1 && 'Interno'}
+                                            {user.level === 2 && 'R1'}
+                                            {user.level === 3 && 'R2'}
+                                            {user.level === 4 && 'R3'}
+                                            {user.level === 5 && 'Especialista'}
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Increase button */}
+                                    <button
+                                        onClick={() => handleLevelChange(user.id, 1)}
+                                        disabled={user.level === 5}
+                                        className="btn-modern"
+                                        style={{
+                                            width: '3rem',
+                                            height: '3rem',
+                                            borderRadius: '50%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '1.25rem',
+                                            fontWeight: 'bold',
+                                            border: 'none',
+                                            cursor: user.level === 5 ? 'not-allowed' : 'pointer',
+                                            background: user.level === 5 
+                                                ? 'linear-gradient(135deg, #e2e8f0, #cbd5e1)' 
+                                                : 'linear-gradient(135deg, var(--accent-color), #059669)',
+                                            color: user.level === 5 ? 'var(--text-secondary)' : 'white',
+                                            boxShadow: user.level === 5 ? 'none' : 'var(--shadow-sm)',
+                                            transition: 'var(--transition)',
+                                            opacity: user.level === 5 ? '0.6' : '1'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            if (user.level !== 5) {
+                                                e.target.style.transform = 'translateY(-2px) scale(1.05)';
+                                                e.target.style.boxShadow = 'var(--shadow-lg)';
+                                            }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            if (user.level !== 5) {
+                                                e.target.style.transform = 'translateY(0) scale(1)';
+                                                e.target.style.boxShadow = 'var(--shadow-sm)';
+                                            }
+                                        }}
+                                    >
+                                        +
+                                    </button>
                                 </div>
                                 
-                                <button
-                                    onClick={() => handleLevelChange(user.id, 1)}
-                                    disabled={user.level === 5}
-                                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-200 ${
-                                        user.level === 5 
-                                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
-                                            : 'bg-blue-500 text-white hover:bg-blue-600 active:scale-95 shadow-sm'
-                                    }`}
+                                {/* Progress bar showing level */}
+                                <div 
+                                    style={{
+                                        marginTop: '1rem',
+                                        height: '8px',
+                                        background: 'var(--border-color)',
+                                        borderRadius: 'var(--radius-sm)',
+                                        overflow: 'hidden'
+                                    }}
                                 >
-                                    ▶
-                                </button>
+                                    <div 
+                                        style={{
+                                            height: '100%',
+                                            width: `${(user.level / 5) * 100}%`,
+                                            background: 'var(--primary-gradient)',
+                                            transition: 'var(--transition)',
+                                            borderRadius: 'var(--radius-sm)'
+                                        }}
+                                    />
+                                </div>
                             </div>
                         </div>
                     ))}
                 </div>
             ) : (
-                <p className="text-gray-500 text-center py-8">No hay usuarios disponibles.</p>
+                <div 
+                    style={{
+                        textAlign: 'center',
+                        padding: '4rem 2rem',
+                        background: 'var(--surface-color)',
+                        borderRadius: 'var(--radius-xl)',
+                        maxWidth: '600px',
+                        margin: '0 auto',
+                        boxShadow: 'var(--shadow-md)'
+                    }}
+                >
+                    <div 
+                        style={{
+                            fontSize: '4rem',
+                            marginBottom: '1rem'
+                        }}
+                    >
+                        👥
+                    </div>
+                    <h3 
+                        style={{
+                            fontSize: '1.5rem',
+                            fontWeight: '600',
+                            color: 'var(--text-primary)',
+                            marginBottom: '0.5rem'
+                        }}
+                    >
+                        No hay personal disponible
+                    </h3>
+                    <p 
+                        style={{
+                            color: 'var(--text-secondary)',
+                            fontSize: '1rem'
+                        }}
+                    >
+                        Actualmente no existen registros de personal en el sistema.
+                    </p>
+                </div>
             )}
-            {backendErrors ? <p style={{ color: 'red', textAlign: 'center', marginTop: '30px', marginBottom: '20px' }}>{backendErrors}</p> : null}
+            
+            {backendErrors && (
+                <div 
+                    style={{
+                        marginTop: '2rem',
+                        padding: '1rem',
+                        background: 'linear-gradient(135deg, #fef2f2, #fee2e2)',
+                        border: '1px solid #fecaca',
+                        borderRadius: 'var(--radius-md)',
+                        color: '#dc2626',
+                        textAlign: 'center',
+                        fontSize: '0.875rem',
+                        fontWeight: '500',
+                        maxWidth: '600px',
+                        margin: '2rem auto 0'
+                    }}
+                >
+                    ⚠️ {backendErrors}
+                </div>
+            )}
         </div>
     );
 };
