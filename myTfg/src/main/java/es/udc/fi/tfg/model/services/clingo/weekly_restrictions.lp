@@ -24,19 +24,19 @@ cost(semanalP_29, 1).
 
 % SemanalR_13,
 :- task_color(qx, C, D, N, I), day_assign(P,D,qx,C,evening,I), level(P,L), L<2.
-:- task_color(qx, C, D, N, I), not day_assign(P,D,qx,C,evening,I).
+:- task_color(qx, C, D, N, I), not day_assign(_,D,qx,C,evening,I).
 
 % SemanalR_06, SemanalR_07
 :- task(consultation, D), day_assign(P,D,consultation,null,morning,null), level(P,L), L<3.
-:- task(consultation, D), not day_assign(P,D,consultation,null,morning,null).
+:- task(consultation, D), not day_assign(_,D,consultation,null,morning,null).
 
 % SemanalR_08
 :- task_evening(consultation, D), day_assign(P,D,consultation,null,evening,null), level(P,L), L<4.
-:- task_evening(consultation, D), not day_assign(P,D,consultation,null,evening,null).
+:- task_evening(consultation, D), not day_assign(_,D,consultation,null,evening,null).
 
 % SemanalR_09, SemanalR_10
 :- task(carca, D), day_assign(P,D,carca,null,morning,null), level(P,L), L<3.
-:- task(carca, D), not day_assign(P,D,carca,null,morning,null).
+:- task(carca, D), not day_assign(_,D,carca,null,morning,null).
 
 % SemanalR_11
 :- task(cerdo, D), Cnt = #count { P : day_assign(P,D,cerdo,null,morning,null) }, Cnt < 2.
@@ -47,7 +47,7 @@ cost(semanalP_29, 1).
 
 % SemanalR_19, SemanalR_20
 :- task(qxrobot, D), day_assign(P,D,qxrobot,null,morning,null), level(P,L), L<3.
-:- task(qxrobot, D), not day_assign(P,D,qxrobot,null,morning,null).
+:- task(qxrobot, D), not day_assign(_,D,qxrobot,null,morning,null).
 
 % SemanalR_15, SemanalR_16
 :- day_assign(P,D,T,C,DM,I), day_assign(P,D,T',C',DM,I'),

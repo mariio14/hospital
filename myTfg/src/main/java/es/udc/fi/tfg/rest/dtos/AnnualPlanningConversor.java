@@ -43,13 +43,18 @@ public class AnnualPlanningConversor {
         return result;
     }
 
-    private static Map<Integer, String> transformTasksMap(Map<Integer, String> value) {
-        Map<Integer, String> result = new HashMap<>();
+    private static List<String> transformTasksMap(Map<Integer, String> value) {
+        List<String> result = new ArrayList<>();
+
+        for (int i = 0; i <= 11; i++) {
+            result.add(i, null);
+        }
+
         if (value != null) {
             for (Map.Entry<Integer, String> e : value.entrySet()) {
                 String val = e.getValue();
                 String transformed = val == null ? null : CONSTANTS_MAP.getOrDefault(val, val);
-                result.put(e.getKey()-1, transformed);
+                result.add(e.getKey()-1, transformed);
             }
         }
         return result;
@@ -57,8 +62,8 @@ public class AnnualPlanningConversor {
 
     private static boolean isComplete(List<AnnualPlanningDto> list) {
         for (AnnualPlanningDto dto : list) {
-            for (Map.Entry<Integer, String> assignation : dto.getAssignations().entrySet()) {
-                if (assignation.getValue() != null) {
+            for (String assignation : dto.getAssignations()) {
+                if (assignation != null) {
                     return true;
                 }
             }
