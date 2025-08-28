@@ -44,6 +44,19 @@ const PrioritiesList = () => {
         );
     };
 
+    const handleCostIncrement = (priorityId, change) => {
+        setPriorities(prevPriorities =>
+            prevPriorities.map(group => ({
+                ...group,
+                priorities: group.priorities.map(priority =>
+                    priority.id === priorityId 
+                        ? { ...priority, cost: Math.min(100, Math.max(0, priority.cost + change)) }
+                        : priority
+                )
+            }))
+        );
+    };
+
     const handlePutOriginal = (groupType) => {
         console.log("Enviando al backend:", groupType);
         dispatch(actions.originalPriorities(
@@ -54,76 +67,292 @@ const PrioritiesList = () => {
     };
 
     return (
-        <div className="p-4">
-            <h2 className="text-xl font-bold mb-4">Costes y preferencias</h2>
+        <div 
+            style={{
+                padding: '2rem',
+                minHeight: '100vh',
+                backgroundColor: '#f8fafc'
+            }}
+        >
+            {/* Header */}
+            <div 
+                style={{
+                    textAlign: 'center',
+                    marginBottom: '2rem'
+                }}
+            >
+                <h1
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center', // centra horizontalmente
+                    fontSize: '2.5rem',
+                    fontWeight: '800',
+                    marginBottom: '0.5rem',
+                    gap: '0.5rem', // espacio entre emoji y texto
+                    letterSpacing: '-0.025em'
+                  }}
+                >
+                  <span>⚖️</span>
+                  <span
+                    style={{
+                      background: 'var(--primary-gradient)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text'
+                    }}
+                  >
+                    Costes y Preferencias
+                  </span>
+                </h1>
+
+                <p 
+                    style={{
+                        fontSize: '1.125rem',
+                        color: '#6b7280',
+                        fontWeight: '500'
+                    }}
+                >
+                    Gestiona los costes de prioridades del sistema hospitalario
+                </p>
+            </div>
+
             {priorities && priorities.length > 0 ? (
-                <div className="space-y-4">
+                <div 
+                    style={{
+                        maxWidth: '800px',
+                        margin: '0 auto',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '1.5rem'
+                    }}
+                >
                     {priorities.map((priorityGroup, index) => (
-                        <div key={index} className="p-4 rounded-xl shadow-lg border bg-gray-100">
-                            <div className="flex justify-between items-center">
-                                <h3 className="text-lg font-semibold">{priorityGroup.type.toUpperCase()}</h3>
+                        <div 
+                            key={index} 
+                            style={{
+                                background: 'white',
+                                borderRadius: '12px',
+                                boxShadow: '0 4px 15px rgba(0, 0, 0, 0.08)',
+                                border: '1px solid #e2e8f0',
+                                overflow: 'hidden'
+                            }}
+                        >
+                            <div 
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    padding: '1.5rem',
+                                    borderBottom: '1px solid #e5e7eb',
+                                    background: '#f8fafc'
+                                }}
+                            >
+                                <h3 
+                                    style={{
+                                        fontSize: '1.25rem',
+                                        fontWeight: '600',
+                                        color: '#1e293b',
+                                        margin: '0'
+                                    }}
+                                >
+                                    {priorityGroup.type.toUpperCase()}
+                                </h3>
                                 <button
                                     onClick={() => handlePutOriginal(priorityGroup.type)}
                                     style={{
-                                        padding: "8px 16px",
-                                        backgroundColor: "#007BFF",
+                                        padding: "10px 20px",
+                                        background: 'var(--primary-gradient)',
                                         color: "#fff",
                                         border: "none",
                                         borderRadius: "8px",
                                         cursor: "pointer",
                                         display: "flex",
                                         alignItems: "center",
-                                        gap: "6px",
+                                        gap: "8px",
                                         fontSize: "14px",
-                                        fontWeight: "500",
-                                        transition: "all 0.2s ease"
+                                        fontWeight: "600",
+                                        transition: "all 0.2s ease",
+                                        boxShadow: '0 2px 4px rgba(59, 130, 246, 0.2)'
                                     }}
                                     onMouseOver={(e) => {
-                                        e.target.style.backgroundColor = "#0056b3";
-                                        e.target.style.transform = "translateY(-1px)";
+                                        e.target.style.transform = "translateY(-2px)";
+                                        e.target.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
                                     }}
                                     onMouseOut={(e) => {
-                                        e.target.style.backgroundColor = "#007BFF";
                                         e.target.style.transform = "translateY(0)";
+                                        e.target.style.boxShadow = '0 2px 4px rgba(59, 130, 246, 0.2)';
                                     }}
                                 >
                                     🧹 Valores originales
                                 </button>
                             </div>
-                            <ul className="mt-3">
+                            
+                            <div style={{ padding: '1.5rem' }}>
                                 {priorityGroup.priorities.map((priority, pIndex) => (
-                                    <li key={pIndex} className="grid grid-cols-[1fr_auto] gap-4 items-center py-2">
-                                        <span className="text-sm font-medium text-gray-700">{priority.title}</span>
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            max="100"
-                                            value={priority.cost}
-                                            onChange={(e) => handleCostChange(priority.id, Number(e.target.value))}
+                                    <div 
+                                        key={pIndex} 
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            padding: '0.75rem 0',
+                                            borderBottom: pIndex < priorityGroup.priorities.length - 1 ? '1px solid #f1f5f9' : 'none'
+                                        }}
+                                    >
+                                        <span 
                                             style={{
-                                                padding: "6px 12px",
-                                                border: "2px solid #e2e8f0",
-                                                borderRadius: "6px",
-                                                fontSize: "14px",
-                                                fontWeight: "500",
-                                                textAlign: "center",
-                                                width: "80px",
-                                                transition: "all 0.2s ease",
-                                                outline: "none"
+                                                fontSize: '1rem',
+                                                fontWeight: '500',
+                                                color: '#374151',
+                                                flex: 1
                                             }}
-                                            onFocus={(e) => e.target.style.borderColor = "#3b82f6"}
-                                            onBlur={(e) => e.target.style.borderColor = "#e2e8f0"}
-                                        />
-                                    </li>
+                                        >
+                                            {priority.title}
+                                        </span>
+                                        <div 
+                                            style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '0.5rem'
+                                            }}
+                                        >
+                                            <button
+                                                onClick={() => handleCostIncrement(priority.id, -1)}
+                                                disabled={priority.cost === 0}
+                                                style={{
+                                                    width: '2rem',
+                                                    height: '2rem',
+                                                    border: '2px solid #e2e8f0',
+                                                    borderRadius: '6px',
+                                                    background: priority.cost === 0 ? '#f3f4f6' : '#f8fafc',
+                                                    cursor: priority.cost === 0 ? 'not-allowed' : 'pointer',
+                                                    fontSize: '1rem',
+                                                    fontWeight: '600',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    color: priority.cost === 0 ? '#9ca3af' : '#374151',
+                                                    transition: "all 0.2s ease"
+                                                }}
+                                                onMouseOver={(e) => {
+                                                    if (priority.cost > 0) {
+                                                        e.target.style.borderColor = "#3b82f6";
+                                                        e.target.style.background = 'white';
+                                                        e.target.style.transform = "scale(1.05)";
+                                                    }
+                                                }}
+                                                onMouseOut={(e) => {
+                                                    e.target.style.borderColor = "#e2e8f0";
+                                                    e.target.style.background = priority.cost === 0 ? '#f3f4f6' : '#f8fafc';
+                                                    e.target.style.transform = "scale(1)";
+                                                }}
+                                            >
+                                                −
+                                            </button>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                max="100"
+                                                value={priority.cost}
+                                                onChange={(e) => handleCostChange(priority.id, Number(e.target.value))}
+                                                style={{
+                                                    padding: "8px 12px",
+                                                    border: "2px solid #e2e8f0",
+                                                    borderRadius: "8px",
+                                                    fontSize: "14px",
+                                                    fontWeight: "600",
+                                                    textAlign: "center",
+                                                    width: "90px",
+                                                    transition: "all 0.2s ease",
+                                                    outline: "none",
+                                                    background: '#f8fafc'
+                                                }}
+                                                onFocus={(e) => {
+                                                    e.target.style.borderColor = "#3b82f6";
+                                                    e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+                                                    e.target.style.background = 'white';
+                                                }}
+                                                onBlur={(e) => {
+                                                    e.target.style.borderColor = "#e2e8f0";
+                                                    e.target.style.boxShadow = 'none';
+                                                    e.target.style.background = '#f8fafc';
+                                                }}
+                                            />
+                                            <button
+                                                onClick={() => handleCostIncrement(priority.id, 1)}
+                                                disabled={priority.cost === 100}
+                                                style={{
+                                                    width: '2rem',
+                                                    height: '2rem',
+                                                    border: '2px solid #e2e8f0',
+                                                    borderRadius: '6px',
+                                                    background: priority.cost === 100 ? '#f3f4f6' : '#f8fafc',
+                                                    cursor: priority.cost === 100 ? 'not-allowed' : 'pointer',
+                                                    fontSize: '1rem',
+                                                    fontWeight: '600',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    color: priority.cost === 100 ? '#9ca3af' : '#374151',
+                                                    transition: "all 0.2s ease"
+                                                }}
+                                                onMouseOver={(e) => {
+                                                    if (priority.cost < 100) {
+                                                        e.target.style.borderColor = "#3b82f6";
+                                                        e.target.style.background = 'white';
+                                                        e.target.style.transform = "scale(1.05)";
+                                                    }
+                                                }}
+                                                onMouseOut={(e) => {
+                                                    e.target.style.borderColor = "#e2e8f0";
+                                                    e.target.style.background = priority.cost === 100 ? '#f3f4f6' : '#f8fafc';
+                                                    e.target.style.transform = "scale(1)";
+                                                }}
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+                                    </div>
                                 ))}
-                            </ul>
+                            </div>
                         </div>
                     ))}
                 </div>
             ) : (
-                <p className="text-gray-500">No priorities available.</p>
+                <div 
+                    style={{
+                        textAlign: 'center',
+                        padding: '2rem',
+                        background: 'white',
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.08)',
+                        maxWidth: '800px',
+                        margin: '0 auto',
+                        color: '#6b7280'
+                    }}
+                >
+                    No hay prioridades disponibles
+                </div>
             )}
-            {backendErrors ? <p style={{ color: 'red', textAlign: 'center', marginTop: '30px', marginBottom: '20px' }}>{backendErrors}</p> : null}
+            
+            {backendErrors && (
+                <div 
+                    style={{
+                        marginTop: '1rem',
+                        padding: '1rem',
+                        background: '#fee2e2',
+                        border: '1px solid #fecaca',
+                        borderRadius: '8px',
+                        color: '#dc2626',
+                        textAlign: 'center',
+                        maxWidth: '800px',
+                        margin: '1rem auto 0'
+                    }}
+                >
+                    {backendErrors}
+                </div>
+            )}
         </div>
     );
 };
