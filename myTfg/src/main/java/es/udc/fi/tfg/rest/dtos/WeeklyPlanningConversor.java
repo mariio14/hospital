@@ -7,232 +7,264 @@ import java.util.*;
 
 public class WeeklyPlanningConversor {
 
-    private WeeklyPlanningConversor() {
-    }
+	private WeeklyPlanningConversor() {
+	}
 
-    private static final Map<String, Integer> MONTH_TO_NUM = Map.ofEntries(
-            Map.entry("ENERO", 1),
-            Map.entry("FEBRERO", 2),
-            Map.entry("MARZO", 3),
-            Map.entry("ABRIL", 4),
-            Map.entry("MAYO", 5),
-            Map.entry("JUNIO", 6),
-            Map.entry("JULIO", 7),
-            Map.entry("AGOSTO", 8),
-            Map.entry("SEPTIEMBRE", 9),
-            Map.entry("OCTUBRE", 10),
-            Map.entry("NOVIEMBRE", 11),
-            Map.entry("DICIEMBRE", 12)
-    );
+	private static final Map<String, Integer> MONTH_TO_NUM = Map.ofEntries(Map.entry("ENERO", 1),
+			Map.entry("FEBRERO", 2), Map.entry("MARZO", 3), Map.entry("ABRIL", 4), Map.entry("MAYO", 5),
+			Map.entry("JUNIO", 6), Map.entry("JULIO", 7), Map.entry("AGOSTO", 8), Map.entry("SEPTIEMBRE", 9),
+			Map.entry("OCTUBRE", 10), Map.entry("NOVIEMBRE", 11), Map.entry("DICIEMBRE", 12));
 
-    private static final Map<String, String> PREVIOUS_MONTH = Map.ofEntries(
-            Map.entry("ENERO", "DICIEMBRE"),
-            Map.entry("FEBRERO", "ENERO"),
-            Map.entry("MARZO", "FEBRERO"),
-            Map.entry("ABRIL", "MARZO"),
-            Map.entry("MAYO", "ABRIL"),
-            Map.entry("JUNIO", "MAYO"),
-            Map.entry("JULIO", "JUNIO"),
-            Map.entry("AGOSTO", "JULIO"),
-            Map.entry("SEPTIEMBRE", "AGOSTO"),
-            Map.entry("OCTUBRE", "SEPTIEMBRE"),
-            Map.entry("NOVIEMBRE", "OCTUBRE"),
-            Map.entry("DICIEMBRE", "NOVIEMBRE")
-    );
+	private static final Map<String, String> PREVIOUS_MONTH = Map.ofEntries(Map.entry("ENERO", "DICIEMBRE"),
+			Map.entry("FEBRERO", "ENERO"), Map.entry("MARZO", "FEBRERO"), Map.entry("ABRIL", "MARZO"),
+			Map.entry("MAYO", "ABRIL"), Map.entry("JUNIO", "MAYO"), Map.entry("JULIO", "JUNIO"),
+			Map.entry("AGOSTO", "JULIO"), Map.entry("SEPTIEMBRE", "AGOSTO"), Map.entry("OCTUBRE", "SEPTIEMBRE"),
+			Map.entry("NOVIEMBRE", "OCTUBRE"), Map.entry("DICIEMBRE", "NOVIEMBRE"));
 
-    private static final Map<String, String> COLORS = Map.ofEntries(
-            Map.entry("red", "rojo"),
-            Map.entry("yellow", "amarillo"),
-            Map.entry("blue", "azul")
-    );
+	private static final Map<String, String> COLORS = Map.ofEntries(Map.entry("red", "rojo"),
+			Map.entry("yellow", "amarillo"), Map.entry("blue", "azul"));
 
-    private static final Map<String, String> CONSTANTS_MAP = Map.ofEntries(
-            Map.entry("red", "ROJOS"),
-            Map.entry("yellow", "AMARILLO"),
-            Map.entry("blue", "COLON"),
-            Map.entry("pink", "MAMA"),
-            Map.entry("purple", "URGENCIAS"),
-            Map.entry("green", "PARED"),
-            Map.entry("brown", "PROCTO"),
-            Map.entry("other", "OTRAS"),
-            Map.entry("xray", "RAYOS"),
-            Map.entry("rea", "REA"),
-            Map.entry("thoracic", "TORACICA"),
-            Map.entry("valencia", "VALENCIA"),
-            Map.entry("vascular", "VASCULAR"),
-            Map.entry("nutrition", "NUTRI")
-    );
+	private static final Map<String, String> CONSTANTS_MAP = Map.ofEntries(Map.entry("red", "ROJOS"),
+			Map.entry("yellow", "AMARILLO"), Map.entry("blue", "COLON"), Map.entry("pink", "MAMA"),
+			Map.entry("purple", "URGENCIAS"), Map.entry("green", "PARED"), Map.entry("brown", "PROCTO"),
+			Map.entry("other", "OTRAS"), Map.entry("xray", "RAYOS"), Map.entry("rea", "REA"),
+			Map.entry("thoracic", "TORACICA"), Map.entry("valencia", "VALENCIA"), Map.entry("vascular", "VASCULAR"),
+			Map.entry("nutrition", "NUTRI"));
 
-    private static final Map<String, String> TASKS = Map.ofEntries(
-            Map.entry("floor", "PLANTA"),
-            Map.entry("qx", "QX"),
-            Map.entry("consultation", "CONSULTA"),
-            Map.entry("carca", "CARCA"),
-            Map.entry("cerdo", "CERDO"),
-            Map.entry("qxrobot", "QXROBOT")
-    );
+	private static final Map<String, String> TASKS = Map.ofEntries(Map.entry("floor", "PLANTA"), Map.entry("qx", "QX"),
+			Map.entry("consultation", "CONSULTA"), Map.entry("carca", "CARCA"), Map.entry("cerdo", "CERDO"),
+			Map.entry("qxrobot", "QXROBOT"));
 
-    public static List<WeeklyResultDto> toWeeklyPlanningDtos(ActivityAndPlanning planningMap,
-                                                       int year, String month, String week,
-                                                       List<Staff> staffList, GetWeeklyDataDto dto, boolean yearChanged) {
-        List<Map<String, Map<Integer, List<String>>>> planning = planningMap.getPlanning();
-        List<WeeklyResultDto> result = new ArrayList<>();
-        for (Map<String, Map<Integer, List<String>>> map : planning) {
-            List<WeeklyPlanningDto> list = new ArrayList<>();
-            for (Staff staff : staffList) {
-                Map<Integer, List<String>> assignations = map.get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
-                if (assignations == null) {
-                    assignations = map.get(staff.getName());
-                }
-                Map<Integer, String> staffYearData = planningMap.getAnnualData().get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
-                String service = staffYearData != null ? staffYearData.get(MONTH_TO_NUM.get(month.toUpperCase(Locale.ROOT))) : null;
-                String servicePrev;
-                if (yearChanged) {
-                    if (planningMap.getPrevAnnualData() == null || planningMap.getPrevAnnualData().isEmpty()) {
-                        servicePrev = null;
-                    } else {
-                        Map<Integer, String> staffPrevYearData = planningMap.getPrevAnnualData().get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
-                        servicePrev = staffPrevYearData != null ? staffPrevYearData.get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(month.toUpperCase(Locale.ROOT)))) : null;
-                    }
-                } else {
-                    servicePrev = staffYearData != null ? staffYearData.get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(month.toUpperCase(Locale.ROOT)))) : null;
-                }
-                list.add(toWeeklyPlanningDto(staff.getName(), assignations, service,servicePrev, dto.getDays()));
+	public static List<WeeklyResultDto> toWeeklyPlanningDtos(ActivityAndPlanning planningMap, int year, String month,
+			String week, List<Staff> staffList, GetWeeklyDataDto dto, boolean yearChanged) {
+		final List<Map<String, Map<Integer, List<String>>>> planning = planningMap.getPlanning();
+		final List<WeeklyResultDto> result = new ArrayList<>();
+		for (final Map<String, Map<Integer, List<String>>> map : planning) {
+			final boolean empty = isEmpty(map);
+			final List<WeeklyPlanningDto> list = new ArrayList<>();
+			for (final Staff staff : staffList) {
+				Map<Integer, List<String>> assignations = map
+						.get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+				if (assignations == null) {
+					assignations = map.get(staff.getName());
+				}
+				final Map<Integer, String> staffYearData = planningMap.getAnnualData()
+						.get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+				final String service = staffYearData != null
+						? staffYearData.get(MONTH_TO_NUM.get(month.toUpperCase(Locale.ROOT)))
+						: null;
+				final String servicePrev;
+				if (yearChanged) {
+					if (planningMap.getPrevAnnualData() == null || planningMap.getPrevAnnualData().isEmpty()) {
+						servicePrev = null;
+					} else {
+						final Map<Integer, String> staffPrevYearData = planningMap.getPrevAnnualData()
+								.get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+						servicePrev = staffPrevYearData != null
+								? staffPrevYearData
+										.get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(month.toUpperCase(Locale.ROOT))))
+								: null;
+					}
+				} else {
+					servicePrev = staffYearData != null
+							? staffYearData.get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(month.toUpperCase(Locale.ROOT))))
+							: null;
+				}
+				list.add(toWeeklyPlanningDto(staff.getName(), assignations, service, servicePrev, dto.getDays(),
+						planningMap.getMonthData().get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT)),
+						empty));
 
-            }
-            changeColors(planningMap.getActivities());
-            result.add(new WeeklyResultDto(year, month, week, list, planningMap.getActivities(), isComplete(list)));
-        }
-        return result;
-    }
+			}
+			changeColors(planningMap.getActivities());
+			result.add(new WeeklyResultDto(year, month, week, list, planningMap.getActivities(), isComplete(list)));
+		}
+		return result;
+	}
 
-    public static List<WeeklyResultDto> toWeeklyPlanningDtosFromData(List<Map<String, Map<Integer, List<String>>>> planningMap,
-                                                               WeeklyDataDto data, Map<String, Map<Integer, String>> yearData,
-                                                               Map<String, Map<Integer, String>> prevYearData, boolean yearChanged, List<Staff> staffList) {
-        List<WeeklyResultDto> result = new ArrayList<>();
-        for (Map<String, Map<Integer, List<String>>> map : planningMap) {
-            List<WeeklyPlanningDto> list = new ArrayList<>();
-            for (Staff staff : staffList) {
-                Map<Integer, List<String>> value = map.get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
-                if (value == null) {
-                    value = map.get(staff.getName());
-                }
-                
-                Map<Integer, String> staffYearData = yearData.get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
-                if (staffYearData == null) {
-                    staffYearData = yearData.get(staff.getName());
-                }
-                String service = staffYearData != null ? staffYearData.get(MONTH_TO_NUM.get(data.getMonth().toUpperCase())) : null;
+	public static List<WeeklyResultDto> toWeeklyPlanningDtosFromData(
+			List<Map<String, Map<Integer, List<String>>>> planningMap, WeeklyDataDto data,
+			Map<String, Map<Integer, String>> yearData, Map<String, Map<Integer, String>> prevYearData,
+			boolean yearChanged, List<Staff> staffList, MonthlyResultDto monthData) {
+		final List<WeeklyResultDto> result = new ArrayList<>();
+		for (final Map<String, Map<Integer, List<String>>> map : planningMap) {
+			final boolean empty = isEmpty(map);
+			final List<WeeklyPlanningDto> list = new ArrayList<>();
+			for (final Staff staff : staffList) {
+				Map<Integer, List<String>> value = map.get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+				if (value == null) {
+					value = map.get(staff.getName());
+				}
 
-                String servicePrev;
-                if (yearChanged && prevYearData != null) {
-                    Map<Integer, String> staffPrevYearData = prevYearData.get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
-                    if (staffPrevYearData == null) {
-                        staffPrevYearData = prevYearData.get(staff.getName());
-                    }
-                    servicePrev = staffPrevYearData != null ? staffPrevYearData.get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(data.getMonth().toUpperCase()))) : null;
-                } else {
-                    servicePrev = staffYearData != null ? staffYearData.get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(data.getMonth().toUpperCase()))) : null;
-                }
-                
-                list.add(toWeeklyPlanningDto(staff.getName(), value, service, servicePrev, data.getDays()));
-            }
-            changeColors(data.getActivities());
-            result.add(new WeeklyResultDto(data.getYear(), data.getMonth(), data.getWeek(), list, data.getActivities(), isComplete(list)));
-        }
-        return result;
-    }
+				Map<Integer, String> staffYearData = yearData
+						.get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+				if (staffYearData == null) {
+					staffYearData = yearData.get(staff.getName());
+				}
+				final String service = staffYearData != null
+						? staffYearData.get(MONTH_TO_NUM.get(data.getMonth().toUpperCase()))
+						: null;
 
-    public static WeeklyPlanningDto toWeeklyPlanningDto(String name, Map<Integer, List<String>> asignations, String service,
-                                                        String servicePrev, List<Integer> days) {
+				final String servicePrev;
+				if (yearChanged && prevYearData != null) {
+					Map<Integer, String> staffPrevYearData = prevYearData
+							.get(staff.getName().replace(" ", "_").toLowerCase(Locale.ROOT));
+					if (staffPrevYearData == null) {
+						staffPrevYearData = prevYearData.get(staff.getName());
+					}
+					servicePrev = staffPrevYearData != null
+							? staffPrevYearData.get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(data.getMonth().toUpperCase())))
+							: null;
+				} else {
+					servicePrev = staffYearData != null
+							? staffYearData.get(MONTH_TO_NUM.get(PREVIOUS_MONTH.get(data.getMonth().toUpperCase())))
+							: null;
+				}
 
-        List<String> list = new ArrayList<>(Collections.nCopies(5, null));
-        List<String> eveningList = new ArrayList<>(Collections.nCopies(5, null));
-        if (asignations != null) {
-            asignations.forEach((key, value) -> {
-                int index = days.indexOf(key);
-                if (index != -1) {
-                    for (String val : value) {
-                        if (val.startsWith("evening")) {
-                            String[] partes = val.replaceFirst("evening", "").split("_");
-                            String st = TASKS.get(partes[0]) + "_" + COLORS.get(partes[1].toLowerCase(Locale.ROOT));
-                            if (partes.length > 2 && !partes[2].isEmpty() && !partes[2].equals("null")) {
-                                st += "_" + partes[2];
-                            }
-                            eveningList.set(index, st);
-                        } else if (val.startsWith("morning")) {
-                            String[] partes = val.replaceFirst("morning", "").split("_");
-                            String st = TASKS.get(partes[0]) + "_" + COLORS.get(partes[1].toLowerCase(Locale.ROOT));
-                            if (partes.length > 2 && !partes[2].isEmpty() && !partes[2].equals("null")) {
-                                st += "_" + partes[2];
-                            }
-                            if (list.get(index) != null && st.startsWith("PLANTA_amarillo")) {
-                                String[] partesQx = list.get(index).split("_");
-                                if (partesQx.length > 2 && !partesQx[2].isEmpty() && !partesQx[2].equals("null")) {
-                                    st = "PLANTA/QX_" + partesQx[2];
-                                } else {
-                                    st = "PLANTA/QX";
-                                }
-                            } else if (list.get(index) != null && st.startsWith("QX_amarillo")) {
-                                if (partes.length > 2 && !partes[2].isEmpty() && !partes[2].equals("null")) {
-                                    st = "PLANTA/QX_" + partes[2];
-                                } else {
-                                    st = "PLANTA/QX";
-                                }
-                            }
-                            list.set(index, st);
-                        } else {
-                            list.set(index, val.toUpperCase());
-                            eveningList.set(index, val.toUpperCase());
-                        }
-                    }
-                }
-            });
-        }
+				list.add(toWeeklyPlanningDto(staff.getName(), value, service, servicePrev, data.getDays(),
+						getMonthDataForStaff(monthData, staff.getName()), empty));
+			}
+			changeColors(data.getActivities());
+			result.add(new WeeklyResultDto(data.getYear(), data.getMonth(), data.getWeek(), list, data.getActivities(),
+					isComplete(list)));
+		}
+		return result;
+	}
 
-        List<String> colors = new ArrayList<>(Collections.nCopies(5, null));
-        Integer prevDay = 0;
-        boolean monthChanged = false;
-        for (Integer day : days) {
-            if (day < prevDay){
-                monthChanged = true;
-            }
-            prevDay = day;
-        }
-        String currentColor = monthChanged ? servicePrev : service;
-        prevDay = 0;
-        int index = 0;
-        for(Integer day : days) {
-            if (day < prevDay){
-                currentColor = service;
-            }
-            prevDay = day;
-            colors.add(index, currentColor == null ? null : CONSTANTS_MAP.get(currentColor));
-            index ++;
-        }
-        return new WeeklyPlanningDto(name, colors, list, eveningList);
-    }
+	public static WeeklyPlanningDto toWeeklyPlanningDto(String name, Map<Integer, List<String>> asignations,
+			String service, String servicePrev, List<Integer> days, Map<Integer, String> monthData, boolean empty) {
 
-    public static void changeColors(List<List<ActivityDto>> activities) {
-        for (List<ActivityDto> activityList : activities) {
-            for (ActivityDto activity : activityList) {
-                String colorToConvert = activity.getColor() == null ? "null" : activity.getColor().toLowerCase(Locale.ROOT);
-                String color = COLORS.get(colorToConvert);
-                if (color != null) {
-                    activity.setColor(color);
-                }
-            }
-        }
-    }
+		final List<String> list = new ArrayList<>(Collections.nCopies(5, null));
+		final List<String> eveningList = new ArrayList<>(Collections.nCopies(5, null));
+		if (asignations != null) {
+			asignations.forEach((key, value) -> {
+				final int index = days.indexOf(key);
+				if (index != -1) {
+					for (final String val : value) {
+						if (val.startsWith("evening")) {
+							final String[] partes = val.replaceFirst("evening", "").split("_");
+							String st = TASKS.get(partes[0]) + "_" + COLORS.get(partes[1].toLowerCase(Locale.ROOT));
+							if (partes.length > 2 && !partes[2].isEmpty() && !partes[2].equals("null")) {
+								st += "_" + partes[2];
+							}
+							eveningList.set(index, st);
+						} else if (val.startsWith("morning")) {
+							final String[] partes = val.replaceFirst("morning", "").split("_");
+							String st = TASKS.get(partes[0]) + "_" + COLORS.get(partes[1].toLowerCase(Locale.ROOT));
+							if (partes.length > 2 && !partes[2].isEmpty() && !partes[2].equals("null")) {
+								st += "_" + partes[2];
+							}
+							if (list.get(index) != null && st.startsWith("PLANTA_amarillo")) {
+								final String[] partesQx = list.get(index).split("_");
+								if (partesQx.length > 2 && !partesQx[2].isEmpty() && !partesQx[2].equals("null")) {
+									st = "PLANTA/QX_" + partesQx[2];
+								} else {
+									st = "PLANTA/QX";
+								}
+							} else if (list.get(index) != null && st.startsWith("QX_amarillo")) {
+								if (partes.length > 2 && !partes[2].isEmpty() && !partes[2].equals("null")) {
+									st = "PLANTA/QX_" + partes[2];
+								} else {
+									st = "PLANTA/QX";
+								}
+							}
+							list.set(index, st);
+						} else {
+							list.set(index, val.toUpperCase());
+							eveningList.set(index, val.toUpperCase());
+						}
+					}
+				}
+			});
+		}
 
-    private static boolean isComplete(List<WeeklyPlanningDto> list) {
-        for (WeeklyPlanningDto dto : list) {
-            for (String assignation : dto.getAssignations()) {
-                if (assignation != null) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+		final List<String> colors = new ArrayList<>(Collections.nCopies(5, null));
+		Integer prevDay = 0;
+		boolean monthChanged = false;
+		for (final Integer day : days) {
+			if (day < prevDay) {
+				monthChanged = true;
+			}
+			prevDay = day;
+		}
+		String currentColor = monthChanged ? servicePrev : service;
+		prevDay = 0;
+		int index = 0;
+		for (final Integer day : days) {
+			if (day < prevDay) {
+				currentColor = service;
+			}
+			prevDay = day;
+			colors.add(index, currentColor == null ? null : CONSTANTS_MAP.get(currentColor));
+			index++;
+		}
+		if (empty) {
+			insertVacations(list, monthData, days);
+		}
+		return new WeeklyPlanningDto(name, colors, list, eveningList);
+	}
+
+	public static void changeColors(List<List<ActivityDto>> activities) {
+		for (final List<ActivityDto> activityList : activities) {
+			for (final ActivityDto activity : activityList) {
+				final String colorToConvert = activity.getColor() == null
+						? "null"
+						: activity.getColor().toLowerCase(Locale.ROOT);
+				final String color = COLORS.get(colorToConvert);
+				if (color != null) {
+					activity.setColor(color);
+				}
+			}
+		}
+	}
+
+	private static boolean isComplete(List<WeeklyPlanningDto> list) {
+		for (final WeeklyPlanningDto dto : list) {
+			for (final String assignation : dto.getAssignations()) {
+				if (assignation != null) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private static Map<Integer, String> getMonthDataForStaff(MonthlyResultDto monthData, String staffName) {
+		if (monthData == null || monthData.getMonthlyPlanningDtos() == null) {
+			return Collections.emptyMap();
+		}
+		final Map<Integer, String> dayToAssignation = new HashMap<>();
+		for (final MonthlyPlanningDto dto : monthData.getMonthlyPlanningDtos()) {
+			if (dto.getName().equalsIgnoreCase(staffName.replace(" ", "_"))) {
+				final List<String> assignations = dto.getAssignations();
+				for (int i = 0; i < assignations.size(); i++) {
+					dayToAssignation.put(i + 1, assignations.get(i));
+				}
+			}
+		}
+		return dayToAssignation;
+	}
+
+	private static boolean isEmpty(Map<String, Map<Integer, List<String>>> map) {
+		for (final Map<Integer, List<String>> value : map.values()) {
+			for (final List<String> list : value.values()) {
+				if (list != null && !list.isEmpty()) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	private static void insertVacations(List<String> list, Map<Integer, String> monthData, List<Integer> days) {
+		if (monthData == null || monthData.isEmpty()) {
+			return;
+		}
+		for (int i = 0; i < days.size(); i++) {
+			final Integer day = days.get(i);
+			final String assignation = monthData.get(day);
+			if (assignation != null && assignation.equalsIgnoreCase("v")) {
+				list.set(i, "V");
+			}
+		}
+	}
 }

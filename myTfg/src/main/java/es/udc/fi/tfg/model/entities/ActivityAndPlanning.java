@@ -7,51 +7,63 @@ import java.util.Map;
 
 public class ActivityAndPlanning {
 
-    private List<List<ActivityDto>> activities;
+	private List<List<ActivityDto>> activities;
 
-    private List<Map<String, Map<Integer, List<String>>>> planning;
+	private List<Map<String, Map<Integer, List<String>>>> planning;
 
-    private Map<String, Map<Integer, String>> annualData;
+	private Map<String, Map<Integer, String>> annualData;
 
-    private Map<String, Map<Integer, String>> prevAnnualData;
+	private Map<String, Map<Integer, String>> prevAnnualData;
 
-    public ActivityAndPlanning(List<List<ActivityDto>> activities, List<Map<String, Map<Integer, List<String>>>> planning,
-                               Map<String, Map<Integer, String>> annualData, Map<String, Map<Integer, String>> prevAnnualData) {
-        this.activities = activities;
-        this.planning = planning;
-        this.annualData = annualData;
-        this.prevAnnualData = prevAnnualData;
-    }
+	private Map<String, Map<Integer, String>> monthData;
 
-    public List<List<ActivityDto>> getActivities() {
-        return activities;
-    }
+	public ActivityAndPlanning(List<List<ActivityDto>> activities,
+			List<Map<String, Map<Integer, List<String>>>> planning, Map<String, Map<Integer, String>> annualData,
+			Map<String, Map<Integer, String>> prevAnnualData, Map<String, Map<Integer, String>> monthData) {
+		this.activities = activities;
+		this.planning = planning;
+		this.annualData = annualData;
+		this.prevAnnualData = prevAnnualData;
+		this.monthData = monthData;
+	}
 
-    public void setActivities(List<List<ActivityDto>> activities) {
-        this.activities = activities;
-    }
+	public List<List<ActivityDto>> getActivities() {
+		return this.activities;
+	}
 
-    public List<Map<String, Map<Integer, List<String>>>> getPlanning() {
-        return planning;
-    }
+	public void setActivities(List<List<ActivityDto>> activities) {
+		this.activities = activities;
+	}
 
-    public void setPlanning(List<Map<String, Map<Integer, List<String>>>> planning) {
-        this.planning = planning;
-    }
+	public List<Map<String, Map<Integer, List<String>>>> getPlanning() {
+		return this.planning;
+	}
 
-    public Map<String, Map<Integer, String>> getAnnualData() {
-        return annualData;
-    }
+	public void setPlanning(List<Map<String, Map<Integer, List<String>>>> planning) {
+		this.planning = planning;
+	}
 
-    public void setAnnualData(Map<String, Map<Integer, String>> annualData) {
-        this.annualData = annualData;
-    }
+	public Map<String, Map<Integer, String>> getAnnualData() {
+		return this.annualData;
+	}
 
-    public Map<String, Map<Integer, String>> getPrevAnnualData() {
-        return prevAnnualData;
-    }
+	public void setAnnualData(Map<String, Map<Integer, String>> annualData) {
+		this.annualData = annualData;
+	}
 
-    public void setPrevAnnualData(Map<String, Map<Integer, String>> prevAnnualData) {
-        this.prevAnnualData = prevAnnualData;
-    }
+	public Map<String, Map<Integer, String>> getPrevAnnualData() {
+		return this.prevAnnualData;
+	}
+
+	public void setPrevAnnualData(Map<String, Map<Integer, String>> prevAnnualData) {
+		this.prevAnnualData = prevAnnualData;
+	}
+
+	public Map<String, Map<Integer, String>> getMonthData() {
+		return this.monthData;
+	}
+
+	public void setMonthData(Map<String, Map<Integer, String>> monthData) {
+		this.monthData = monthData;
+	}
 }
