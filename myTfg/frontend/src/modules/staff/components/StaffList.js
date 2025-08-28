@@ -53,81 +53,188 @@ const StaffList = () => {
     };
 
     return (
-         <div className="p-6">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800">Lista de Personal</h2>
+        <div 
+            style={{
+                padding: '2rem',
+                minHeight: '100vh',
+                backgroundColor: '#f8fafc'
+            }}
+        >
+            {/* Header */}
+            <div 
+                style={{
+                    textAlign: 'center',
+                    marginBottom: '2rem'
+                }}
+            >
+                <h1 
+                    style={{
+                        fontSize: '2.5rem',
+                        fontWeight: '800',
+                        background: 'var(--primary-gradient)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                        marginBottom: '0.5rem',
+                        letterSpacing: '-0.025em'
+                    }}
+                >
+                    📋 Gestión de Personal
+                </h1>
+                <p 
+                    style={{
+                        fontSize: '1.125rem',
+                        color: '#6b7280',
+                        fontWeight: '500'
+                    }}
+                >
+                    Administra los niveles del personal sanitario
+                </p>
+            </div>
+
             {users && users.length > 0 ? (
-                <div className="space-y-3">
+                <div 
+                    style={{
+                        maxWidth: '800px',
+                        margin: '0 auto',
+                        background: 'white',
+                        borderRadius: '8px',
+                        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+                        overflow: 'hidden'
+                    }}
+                >
                     {users.map((user, index) => (
                         <div 
-                            key={index} 
-                            className="p-4 rounded-lg shadow-md border border-gray-200 bg-white hover:shadow-lg transition-shadow duration-200"
+                            key={index}
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
-                                justifyContent: 'space-between',
-                                gap: '16px',
-                                background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)'
+                                padding: '1rem 1.5rem',
+                                borderBottom: index < users.length - 1 ? '1px solid #e5e7eb' : 'none',
+                                gap: '1rem'
                             }}
                         >
                             {/* Name input */}
-                            <div className="flex-1 min-w-0">
+                            <div style={{ flex: '1' }}>
                                 <input
                                     type="text"
                                     value={user.name}
                                     onChange={(e) => handleNameChange(user.id, e.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                    placeholder="Nombre completo"
                                     style={{
-                                        fontSize: '16px',
-                                        fontWeight: '500',
-                                        color: '#374151'
+                                        width: '100%',
+                                        padding: '0.5rem 0.75rem',
+                                        border: '1px solid #d1d5db',
+                                        borderRadius: '6px',
+                                        fontSize: '1rem',
+                                        outline: 'none'
                                     }}
-                                    placeholder="Nombre del residente"
+                                    onFocus={(e) => {
+                                        e.target.style.borderColor = '#3b82f6';
+                                        e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+                                    }}
+                                    onBlur={(e) => {
+                                        e.target.style.borderColor = '#d1d5db';
+                                        e.target.style.boxShadow = 'none';
+                                    }}
                                 />
                             </div>
                             
                             {/* Level controls */}
-                            <div className="flex items-center gap-2 flex-shrink-0">
+                            <div 
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem'
+                                }}
+                            >
                                 <button
                                     onClick={() => handleLevelChange(user.id, -1)}
                                     disabled={user.level === 1}
-                                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-200 ${
-                                        user.level === 1 
-                                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
-                                            : 'bg-blue-500 text-white hover:bg-blue-600 active:scale-95 shadow-sm'
-                                    }`}
-                                >
-                                    ◀
-                                </button>
-                                
-                                <div 
-                                    className="px-3 py-1 rounded-full text-sm font-bold text-white min-w-20 text-center"
                                     style={{
-                                        background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-                                        boxShadow: '0 2px 4px rgba(59, 130, 246, 0.3)'
+                                        width: '2rem',
+                                        height: '2rem',
+                                        border: '1px solid #d1d5db',
+                                        borderRadius: '4px',
+                                        background: user.level === 1 ? '#f3f4f6' : 'white',
+                                        cursor: user.level === 1 ? 'not-allowed' : 'pointer',
+                                        fontSize: '1rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
                                     }}
                                 >
-                                    Nivel {user.level}
-                                </div>
+                                    −
+                                </button>
+                                
+                                <span 
+                                    style={{
+                                        fontSize: '1rem',
+                                        fontWeight: '600',
+                                        minWidth: '2rem',
+                                        textAlign: 'center',
+                                        color: '#374151'
+                                    }}
+                                >
+                                    {user.level}
+                                </span>
                                 
                                 <button
                                     onClick={() => handleLevelChange(user.id, 1)}
                                     disabled={user.level === 5}
-                                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-200 ${
-                                        user.level === 5 
-                                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
-                                            : 'bg-blue-500 text-white hover:bg-blue-600 active:scale-95 shadow-sm'
-                                    }`}
+                                    style={{
+                                        width: '2rem',
+                                        height: '2rem',
+                                        border: '1px solid #d1d5db',
+                                        borderRadius: '4px',
+                                        background: user.level === 5 ? '#f3f4f6' : 'white',
+                                        cursor: user.level === 5 ? 'not-allowed' : 'pointer',
+                                        fontSize: '1rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                    }}
                                 >
-                                    ▶
+                                    +
                                 </button>
                             </div>
                         </div>
                     ))}
                 </div>
             ) : (
-                <p className="text-gray-500 text-center py-8">No hay usuarios disponibles.</p>
+                <div 
+                    style={{
+                        textAlign: 'center',
+                        padding: '2rem',
+                        background: 'white',
+                        borderRadius: '8px',
+                        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+                        maxWidth: '800px',
+                        margin: '0 auto',
+                        color: '#6b7280'
+                    }}
+                >
+                    No hay personal disponible
+                </div>
             )}
-            {backendErrors ? <p style={{ color: 'red', textAlign: 'center', marginTop: '30px', marginBottom: '20px' }}>{backendErrors}</p> : null}
+            
+            {backendErrors && (
+                <div 
+                    style={{
+                        marginTop: '1rem',
+                        padding: '1rem',
+                        background: '#fee2e2',
+                        border: '1px solid #fecaca',
+                        borderRadius: '6px',
+                        color: '#dc2626',
+                        textAlign: 'center',
+                        maxWidth: '800px',
+                        margin: '1rem auto 0'
+                    }}
+                >
+                    {backendErrors}
+                </div>
+            )}
         </div>
     );
 };
