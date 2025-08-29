@@ -936,7 +936,8 @@ const WeeklyPlanning = () => {
                   <option value="CONSULTA">CONSULTA</option>
                   <option value="CARCA">CARCA</option>
                   <option value="PLANTA">PLANTA</option>
-                  <option value="URGENCIAS">URGENCIAS</option>
+                  <option value="CERDO">CERDO</option>
+                  <option value="QXROBOT">QXROBOT</option>
                 </select>
               </label>
 
@@ -1243,20 +1244,6 @@ const WeeklyPlanning = () => {
                               >
                                 <option value="">-</option>
                                 <>
-                                  {/* Opción combinada PLANTA/QX */}
-                                  {getCombinedPlantaQxOptions(dayActivities, "morning").map((id, idx) => (
-                                    <option
-                                      key={idx}
-                                      value={`PLANTA/QX${id ? `_${id}` : ""}`}
-                                      style={{
-                                        backgroundColor: qxColors["amarillo"],
-                                        color: "#000",
-                                      }}
-                                    >
-                                      {`PLANTA/QX${id ? `_${id}` : ""}`}
-                                    </option>
-                                  ))}
-
                                   {/* Opciones normales */}
                                   {filteredEvening.map((act, i) => (
                                     <option

@@ -41,14 +41,14 @@ cnt_assign_qx_not_color(D,C,I,Cnt) :-
 1 {day_assign(P,D,qx,C,evening,I) : person(P), level(P,L), L>1, not vacation(P,D), not day_not_assign(P,D,qx)} :- task_evening_color(qx, C, D, I).
 % SemanalP_24
 cnt_assign_qx_e(D,C,I,Cnt) :-
-    Cnt = #count { P : day_assign(P,D,qx,C,morning,I) },
+    Cnt = #count { P : day_assign(P,D,qx,C,evening,I) },
     task_color(qx,C,D,N,I).
 #minimize { V*(Cnt-1),D,I :
     task_evening_color(qx, C, D, I), cnt_assign_qx_e(D,C,I,Cnt), Cnt > 1,
     cost(semanalP_24, V)
 }.
 cnt_assign_qx_e_not_color(D,C,I,Cnt) :-
-    Cnt = #count { P : day_assign(P,D,qx,C,morning,I), not month_assign(P,D,C) },
+    Cnt = #count { P : day_assign(P,D,qx,C,evening,I), not month_assign(P,D,C) },
     task_color(qx,C,D,N,I).
 % SemanalP_25
 #minimize { V*Cnt,D,I :

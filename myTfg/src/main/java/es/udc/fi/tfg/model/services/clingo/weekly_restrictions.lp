@@ -23,8 +23,8 @@ cost(semanalP_29, 1).
 :- task_color(qx, C, D, N, I), Cnt = #count { P : day_assign(P,D,qx,C,morning,I) }, Cnt < N.
 
 % SemanalR_13,
-:- task_color(qx, C, D, N, I), day_assign(P,D,qx,C,evening,I), level(P,L), L<2.
-:- task_color(qx, C, D, N, I), not day_assign(_,D,qx,C,evening,I).
+:- task_evening_color(qx, C, D, I), day_assign(P,D,qx,C,evening,I), level(P,L), L<2.
+:- task_evening_color(qx, C, D, I), not day_assign(_,D,qx,C,evening,I).
 
 % SemanalR_06, SemanalR_07
 :- task(consultation, D), day_assign(P,D,consultation,null,morning,null), level(P,L), L<3.
