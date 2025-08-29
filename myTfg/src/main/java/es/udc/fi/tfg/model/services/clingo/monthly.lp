@@ -63,7 +63,7 @@ day_assign_guard(P,D,G) :- guard(G), day_assign(P,D,G).
 % MensualP_G07
 #minimize { V,P,D :
     day_assign_guard(P,D,_), day_assign(P,D+1,_),
-    cost(MensualP_G07,V)
+    cost(mensualP_G07,V)
 }.
 
 % MensualR_G08
@@ -74,7 +74,7 @@ veteran_in_guard(D) :- day_assign_guard(P,D,_), level(P,L), L>=3.
 % MensualP_G09
 #minimize { V,D :
     day(D), D>0, not veteran_in_guard(D),
-    cost(MensualP_G09,V)
+    cost(mensualP_G09,V)
 }.
 
 % Predicate for MensualP_G10    people_in_task_in_weekend(N,T,D) -> there is N people assigned to task T on weekend D
@@ -84,12 +84,12 @@ people_in_task_in_weekend(N,T,D) :- task_real(T, _), weekend(D),
 % MensualP_G10
 #minimize { V*(P-4),D,T : weekend(D), task_real(g, _),
     people_in_task_in_weekend(P,T,D), P>4,
-    cost(MensualP_G10, V)
+    cost(mensualP_G10, V)
 }.
 % MensualP_G11
 #minimize { V*(P-1),D,T : weekend(D), task_real(T, _), T!=g,
     people_in_task_in_weekend(P,T,D), P>1,
-    cost(MensualP_G11, V)
+    cost(mensualP_G11, V)
 }.
 
 % Predicates for MensualP_G12
@@ -102,7 +102,7 @@ working_weekends(P,N) :- person(P), N = #count{D: person_working_in_weekend(P,D)
 #minimize { V*(N-2),P :
     person(P),
     working_weekends(P,N), N>2,
-    cost(MensualP_G12,V)
+    cost(mensualP_G12,V)
 }.
 
 % MensualR_G14
@@ -115,7 +115,7 @@ working_weekends(P,N) :- person(P), N = #count{D: person_working_in_weekend(P,D)
 % MensualP_L04
 #minimize { V,P,D : day_assign(P,D,i),
     day_assign_guard(P,D+1,_),
-    cost(MensualP_L04, V)
+    cost(mensualP_L04, V)
 }.
 
 % MensualP_G03
@@ -124,7 +124,7 @@ numGuards(P,N) :- person(P), N=#count{D: day_assign_guard(P,D,_),D>0}.
 #minimize { V*(N-5)@2,P :
     numGuards(P,N),
     N>5,
-    cost(MensualP_G03,V)
+    cost(mensualP_G03,V)
 }.
 
 % MensualP_L03 (de 0.1 a 1.625 con 30 dias; con 31 dias se va de tiempo)
@@ -136,7 +136,16 @@ numLocation_per_person(P,N) :- person(P), N = #count{D : day_assign_location(P,D
     numLocation_per_person(P,N),
     numLocations(N'),
     N<N'/15,
-    cost(MensualP_L03,V)
+    cost(mensualP_L03,V)
+}.
+
+numComodin_per_person(P,N) :- person(P), N = #count{D : day_assign(P,D,c)}.
+
+#minimize { V*(N'/15-N),P :
+    numComodin_per_person(P,N),
+    numDays(N'),
+    N<N'/15,
+    cost(mensualP_L03,V)
 }.
 
 % MensualP_G13
