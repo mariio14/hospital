@@ -132,16 +132,35 @@ const WeeklyPlanning = () => {
     }
   }, [month, year, weekInMonth, validWeeks]);
 
+  const getWeekStartDate7 = (y, m, weekIndex) => {
+    const firstDay = new Date(y, m, 1);
+    let mondayDate = new Date(y, m, 1);
+    const dayOfWeek = firstDay.getDay();
+    const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    mondayDate.setDate(1 - daysToSubtract);
+    mondayDate.setDate(mondayDate.getDate() + weekIndex * 7);
+
+    return [...Array(7)].map((_, i) => {
+      const d = new Date(mondayDate);
+      d.setDate(d.getDate() + i);
+      return d;
+    });
+  };
+
   useEffect(() => {
     const today = new Date();
     if (today.getFullYear() === year && today.getMonth() === month) {
       for (let i = 0; i < validWeeks.length; i++) {
-        const weekDays = getWeekStartDate(year, month, validWeeks[i]);
+        const weekDays = getWeekStartDate7(year, month, validWeeks[i]);
+        console.log('week days:', weekDays);
+        console.log('today:', today);
+        console.log('valid weeks: ', validWeeks);
         if (weekDays.some(d =>
           d.getDate() === today.getDate() &&
           d.getMonth() === today.getMonth() &&
           d.getFullYear() === today.getFullYear()
         )) {
+          console.log('setting week in month to ', validWeeks[i]);
           setWeekInMonth(validWeeks[i]);
           break;
         }
