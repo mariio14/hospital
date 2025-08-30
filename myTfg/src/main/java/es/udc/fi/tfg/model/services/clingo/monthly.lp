@@ -7,37 +7,6 @@ task_real(g,2). task_real(e,1). task_real(i,1).
 guard(g;gp).
 
 % Comentar estas lineas si se ejecuta con input.lp
-%day(1..31).
-%numDays(30).
-%numLocations(60).
-%weekend(-1;6;13;20;27). % Marcado por los viernes
-%weekend_day(-1,-1). weekend_day(-1,0). weekend_day(-1,1).
-%weekend_day(6,6). weekend_day(6,7). weekend_day(6,8).
-%weekend_day(13,13). weekend_day(13,14). weekend_day(13,15).
-%weekend_day(20,20). weekend_day(20,21). weekend_day(20,22).
-%weekend_day(27,27). weekend_day(27,28). weekend_day(27,29).
-
-%holiday(7;28).
-%person(1..15).
-%vacation(1,5). % Person P on vacation
-%vacation(13,29).
-%vacation(13,30).
-%level(P,(P-1)/3 + 1) :- person(P).
-%day_assign(1,4,gp).
-%day_assign(1,13,gp). % MensualR_G04
-%day_assign(1,24,gp).
-%day_assign(2,7,gp).
-%day_assign(2,11,gp).
-%day_assign(2,22,gp).
-
-%cost(mensualP_G03, 2).
-%cost(mensualP_G07, 10).
-%cost(mensualP_G09, 50).
-%cost(mensualP_G10, 70).
-%cost(mensualP_G11, 40).
-%cost(mensualP_G12, 35).
-%cost(mensualP_L03, 3).
-%cost(mensualP_L04, 20).
 cost(mensualP_G13, 4).
 
 
