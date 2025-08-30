@@ -152,15 +152,11 @@ const WeeklyPlanning = () => {
     if (today.getFullYear() === year && today.getMonth() === month) {
       for (let i = 0; i < validWeeks.length; i++) {
         const weekDays = getWeekStartDate7(year, month, validWeeks[i]);
-        console.log('week days:', weekDays);
-        console.log('today:', today);
-        console.log('valid weeks: ', validWeeks);
         if (weekDays.some(d =>
           d.getDate() === today.getDate() &&
           d.getMonth() === today.getMonth() &&
           d.getFullYear() === today.getFullYear()
         )) {
-          console.log('setting week in month to ', validWeeks[i]);
           setWeekInMonth(validWeeks[i]);
           break;
         }
@@ -1133,6 +1129,8 @@ const WeeklyPlanning = () => {
                         ...dayActivities.filter((a) => a.time === "evening"),
                         { type: "V", color: null, slots: 0, time: "evening" }
                       ];
+
+                      console.log(filteredMorning);
 
                       return (
                         <td key={idx} className="p-0 border"

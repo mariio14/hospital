@@ -144,25 +144,25 @@ public class WeeklyPlanningConversor {
 							final String[] partes = val.replaceFirst("evening", "").split("_");
 							String st = TASKS.get(partes[0]) + "_" + COLORS.get(partes[1].toLowerCase(Locale.ROOT));
 							if (partes.length > 2 && !partes[2].isEmpty() && !partes[2].equals("null")) {
-								st += "_" + partes[2];
+								st += "_" + partes[2].toUpperCase();
 							}
 							eveningList.set(index, st);
 						} else if (val.startsWith("morning")) {
 							final String[] partes = val.replaceFirst("morning", "").split("_");
 							String st = TASKS.get(partes[0]) + "_" + COLORS.get(partes[1].toLowerCase(Locale.ROOT));
 							if (partes.length > 2 && !partes[2].isEmpty() && !partes[2].equals("null")) {
-								st += "_" + partes[2];
+								st += "_" + partes[2].toUpperCase();
 							}
 							if (list.get(index) != null && st.startsWith("PLANTA_amarillo")) {
 								final String[] partesQx = list.get(index).split("_");
 								if (partesQx.length > 2 && !partesQx[2].isEmpty() && !partesQx[2].equals("null")) {
-									st = "PLANTA/QX_" + partesQx[2];
+									st = "PLANTA/QX_" + partesQx[2].toUpperCase();
 								} else {
 									st = "PLANTA/QX";
 								}
 							} else if (list.get(index) != null && st.startsWith("QX_amarillo")) {
 								if (partes.length > 2 && !partes[2].isEmpty() && !partes[2].equals("null")) {
-									st = "PLANTA/QX_" + partes[2];
+									st = "PLANTA/QX_" + partes[2].toUpperCase();
 								} else {
 									st = "PLANTA/QX";
 								}
@@ -212,6 +212,9 @@ public class WeeklyPlanningConversor {
 				final String color = COLORS.get(colorToConvert);
 				if (color != null) {
 					activity.setColor(color);
+				}
+				if (activity.getIdentifier() != null) {
+					activity.setIdentifier(activity.getIdentifier().toUpperCase());
 				}
 			}
 		}
