@@ -366,9 +366,14 @@ public class PlanningServiceImpl implements PlanningService {
 				}
 				i++;
 			}
+			i = 0;
 			for (final String assignation : weeklyAssignationsDto.getEveningAssignations()) {
 				if (assignation != null) {
 					final String[] partes = assignation.split("_");
+					if (partes.length > 1 && partes[0] == null || partes[0].isEmpty() || partes[0].equals("null")) {
+						i++;
+						continue;
+					}
 					if (partes.length == 2) {
 						final String color = COLORS.get(partes[1]);
 						if (assignationsMap.containsKey(days.get(i))) {
@@ -379,6 +384,7 @@ public class PlanningServiceImpl implements PlanningService {
 									List.of("evening" + TASKS.get(partes[0].toUpperCase(Locale.ROOT)) + "_" + color)));
 						}
 					} else if (partes.length == 1) {
+						i++;
 						continue;
 					} else {
 						final String a = "evening" + TASKS.get(partes[0].toUpperCase(Locale.ROOT)) + "_"

@@ -289,22 +289,23 @@ public class PlanningController {
 			final MonthlyResultDto monthData = this
 					.getMonthlyPlanning(params.getMonth(), params.getYear(), daysInMonth, true).get(0);
 
-			if (params.getDays().contains(1)) {
-				final Month monthEnum2 = MONTH_TRANSLATION.get(NEXT_MONTH.get(params.getMonth().toUpperCase()));
-				final int daysInMonth2 = monthEnum2.equals(Month.JANUARY)
-						? YearMonth.of(params.getYear() + 1, monthEnum2).lengthOfMonth()
+			boolean cambio = params.getDays().contains(1) && (params.getDays().contains(28) || params.getDays().contains(29)
+					|| params.getDays().contains(30) || params.getDays().contains(31));
+			if (cambio) {
+				final Month monthEnum2 = MONTH_TRANSLATION.get(PREVIOUS_MONTH.get(params.getMonth().toUpperCase()));
+				final int daysInMonth2 = monthEnum2.equals(Month.DECEMBER)
+						? YearMonth.of(params.getYear() - 1, monthEnum2).lengthOfMonth()
 						: YearMonth.of(params.getYear(), monthEnum2).lengthOfMonth();
-				final String nextMonth = NEXT_MONTH.get(params.getMonth().toUpperCase());
-				final String capitalized = nextMonth.substring(0, 1).toUpperCase()
-						+ nextMonth.substring(1).toLowerCase();
-				final MonthlyResultDto monthDataNext = this
+				final String previousMonth = PREVIOUS_MONTH.get(params.getMonth().toUpperCase());
+				final String capitalized = previousMonth.substring(0, 1).toUpperCase() + previousMonth.substring(1).toLowerCase();
+				final MonthlyResultDto monthDataPrev = this
 						.getMonthlyPlanning(capitalized, params.getYear(), daysInMonth2, true).get(0);
 				for (final MonthlyPlanningDto monthlyPlanningDto : monthData.getMonthlyPlanningDtos()) {
 					final String worker = monthlyPlanningDto.getName();
-					for (final MonthlyPlanningDto dtoNextMonth : monthDataNext.getMonthlyPlanningDtos()) {
+					for (final MonthlyPlanningDto dtoNextMonth : monthDataPrev.getMonthlyPlanningDtos()) {
 						if (dtoNextMonth.getName().equals(worker)) {
 							for (int i = 0; i < 8; i++) {
-								monthlyPlanningDto.getAssignations().set(i, dtoNextMonth.getAssignations().get(i));
+								monthlyPlanningDto.getAssignations().set(daysInMonth-1-i, dtoNextMonth.getAssignations().get(daysInMonth-1-i));
 							}
 						}
 					}

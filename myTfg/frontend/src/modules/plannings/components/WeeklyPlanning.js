@@ -516,6 +516,7 @@ const WeeklyPlanning = () => {
   };
 
   const assignCreatedActivity = (personName, dayIndex, time, activityType, color, id) => {
+    console.log("Asignando actividad:", { personName, dayIndex, time, activityType, color, id });
     let activityWithColor;
     if (activityType === "PLANTA/QX") {
       activityWithColor = `PLANTA/QX${id ? `_${id}` : ""}`;
@@ -1130,8 +1131,6 @@ const WeeklyPlanning = () => {
                         { type: "V", color: null, slots: 0, time: "evening" }
                       ];
 
-                      console.log(filteredMorning);
-
                       return (
                         <td key={idx} className="p-0 border"
                           draggable
@@ -1244,7 +1243,7 @@ const WeeklyPlanning = () => {
                                       );
                                     } else {
                                       selected = filteredMorning.find((a) => a.type === type);
-                                      typeSelected = idx;
+                                      typeSelected = type;
                                       idSelected = selected?.identifier
                                     }
                                     assignCreatedActivity(person.name, idx, "evening", typeSelected, selected?.color, idSelected);
