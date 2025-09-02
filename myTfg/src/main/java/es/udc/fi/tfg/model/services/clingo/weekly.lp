@@ -43,6 +43,8 @@ N {day_assign(P,D,qx,C,morning,I) : person(P), not vacation(P,D), month_assign(P
 % SemanalR_15, SemanalR_16
 :- day_assign(P,D,T,C,DM,I), day_assign(P,D,T',C',DM,I'),
     (T,C,I) < (T',C',I'), (T,C)!=(floor,yellow), (T',C')!=(floor,yellow).
+:- day_assign(P,D,T,C,DM,I), day_assign(P,D,T',C',DM,I'),
+    (T,C,I) < (T',C',I'), (T,C)!=(qx,yellow), (T',C')!=(qx,yellow).
 
 % SemanalP_03, SemanalP_04, SemanalP_05
 color_floor_assigned(C,D) :- day_assign(P,D,floor,C,_,_), person(P), month_assign(P,D,C).

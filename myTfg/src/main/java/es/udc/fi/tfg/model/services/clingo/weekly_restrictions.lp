@@ -8,6 +8,8 @@ task_color(dummy, dummy, dummy, dummy).
 task_evening(dummy, dummy).
 task_evening_color(dummy, dummy, dummy, dummy).
 
+day_assign(dummyname, dummy, dummy, dummy, dummy, dummy).
+
 cost(semanalP_22, 1).
 cost(semanalP_23, 2).
 cost(semanalP_24, 1).
@@ -52,6 +54,8 @@ cost(semanalP_29, 1).
 % SemanalR_15, SemanalR_16
 :- day_assign(P,D,T,C,DM,I), day_assign(P,D,T',C',DM,I'),
     (T,C,I) < (T',C',I'), (T,C)!=(floor,yellow), (T',C')!=(floor,yellow).
+:- day_assign(P,D,T,C,DM,I), day_assign(P,D,T',C',DM,I'),
+    (T,C,I) < (T',C',I'), (T,C)!=(qx,yellow), (T',C')!=(qx,yellow).
 
 % SemanalR_17
 :- day_assign(P,D,_,_,evening,_), day_assign_guard_from_month(P,D).

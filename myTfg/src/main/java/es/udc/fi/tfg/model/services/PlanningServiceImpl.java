@@ -339,6 +339,12 @@ public class PlanningServiceImpl implements PlanningService {
 							assignationsMap.put(days.get(i),
 									new ArrayList<>(List.of("morningfloor_yellow", "morningqx_yellow_" + st)));
 						}
+					} else if (partes.length == 2 && partes[0].equals("V")) {
+						if (assignationsMap.containsKey(days.get(i))) {
+							assignationsMap.get(days.get(i)).add("v");
+						} else {
+							assignationsMap.put(days.get(i), new ArrayList<>(List.of("v")));
+						}
 					} else if (partes.length == 2) {
 						final String color = COLORS.get(partes[1]);
 						if (assignationsMap.containsKey(days.get(i))) {
@@ -347,12 +353,6 @@ public class PlanningServiceImpl implements PlanningService {
 						} else {
 							assignationsMap.put(days.get(i), new ArrayList<>(
 									List.of("morning" + TASKS.get(partes[0].toUpperCase(Locale.ROOT)) + "_" + color)));
-						}
-					} else if (partes.length == 1) {
-						if (assignationsMap.containsKey(days.get(i))) {
-							assignationsMap.get(days.get(i)).add("v");
-						} else {
-							assignationsMap.put(days.get(i), new ArrayList<>(List.of("v")));
 						}
 					} else {
 						final String a = "morning" + TASKS.get(partes[0].toUpperCase(Locale.ROOT)) + "_"

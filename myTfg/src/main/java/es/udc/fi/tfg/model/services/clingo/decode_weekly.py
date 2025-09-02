@@ -22,6 +22,8 @@ def extract_assignments(model):
     for atom in model.symbols(shown=True):
         if atom.name == "day_assign" and len(atom.arguments) == 6:
             person = str(atom.arguments[0])
+            if person == "dummyname":
+                continue
             day = atom.arguments[1].number
             activity_part1 = str(atom.arguments[4])
             activity_part2 = str(atom.arguments[2])
