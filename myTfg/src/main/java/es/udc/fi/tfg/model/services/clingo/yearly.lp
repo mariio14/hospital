@@ -154,8 +154,8 @@ exceeded(M,T,N') :- month(M), demmand_max(T,N,V), N' = #count { X : month_assign
 
 % CAS02 - predicates and preparation
 % Predicates for verifying presence of specific levels.
-has_high_level(M, T) :- month_assign(P, M, T), level(P, 4).
-has_high_level(M, T) :- month_assign(P, M, T), level(P, 5).
+has_high_level(M, T) :- month_assign(P, M, T), level(P,L), L>3.
+%has_high_level(M, T) :- month_assign(P, M, T), level(P, 5).
 
 has_low_level(M, T) :- month_assign(P, M, T), level(P, 1).
 has_low_level(M, T) :- month_assign(P, M, T), level(P, 2).
@@ -179,18 +179,23 @@ multiple_people(M, T) :- month(M), turn(T), month_assign(P, M, T), month_assign(
 %global_count(N) :-
 %    N = #count { P,M : external_service_assign(P,M,S) }.
 
-% el global count se puede obtener mediante el month_count
-
 %month_count(M, N) :-
 %    month(M),
 %    N = #count { P : external_service_assign(P, M, S) }.
 
 %difference(M, D) :-
 %    month(M),
-%    global_count(G),
+%    N = #count { P : external_service_assign(P, M, S) },
+%    G = #count { P, M2, S : external_service_assign(P, M2, S) },
+%    N < G/12,
+%    D = G/12 - N.
+
+%difference(M, D) :-
+%    month(M),
 %    month_count(M, N),
-%    D = G/12 - N,
-%    N < G/12.
+%    G = #count { P, M2, S : external_service_assign(P, M2, S) },
+%    N >= G/12,
+%    D = N - G/12.
 
 %difference(M, D) :-
 %    month(M),
