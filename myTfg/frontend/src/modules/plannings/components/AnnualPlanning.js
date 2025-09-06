@@ -295,7 +295,7 @@ const AnnualPlanning = () => {
         doc.autoTable({
             head: [["Personas", ...months]],
             body: tableData,
-            styles: { fontSize: 8, cellPadding: 1 },
+            styles: { fontSize: 10, cellPadding: 1 },
             startY: 20,
             didDrawCell: (data) => {
                 if (data.section === 'body' && data.column.index > 0) {
@@ -368,7 +368,7 @@ const AnnualPlanning = () => {
                         <label style={{ 
                           color: "#374151", 
                           fontWeight: "600", 
-                          fontSize: "14px",
+                          fontSize: "16px",
                           minWidth: "40px"
                         }}>Año:</label>
                         <input 
@@ -403,7 +403,7 @@ const AnnualPlanning = () => {
                                     borderRadius: "12px",
                                     cursor: "pointer",
                                     fontWeight: "600",
-                                    fontSize: "14px",
+                                    fontSize: "16px",
                                     boxShadow: "0 4px 6px -1px rgba(59, 130, 246, 0.3)",
                                     transition: "all 0.2s ease",
                                     display: "flex",
@@ -431,7 +431,7 @@ const AnnualPlanning = () => {
                                     borderRadius: "12px",
                                     cursor: "pointer",
                                     fontWeight: "600",
-                                    fontSize: "14px",
+                                    fontSize: "16px",
                                     boxShadow: "0 4px 6px -1px rgba(16, 185, 129, 0.3)",
                                     transition: "all 0.2s ease",
                                     display: "flex",
@@ -459,7 +459,7 @@ const AnnualPlanning = () => {
                                     borderRadius: "12px",
                                     cursor: "pointer",
                                     fontWeight: "600",
-                                    fontSize: "14px",
+                                    fontSize: "16px",
                                     boxShadow: "0 4px 6px -1px rgba(239, 68, 68, 0.3)",
                                     transition: "all 0.2s ease",
                                     display: "flex",
@@ -505,7 +505,7 @@ const AnnualPlanning = () => {
                           background: "#f3f4f6",
                           padding: "8px 16px",
                           borderRadius: "8px",
-                          fontSize: "14px"
+                          fontSize: "16px"
                         }}>
                           Planning {activePlanningIndex + 1} de {annualPlanningList.length}
                         </span>
@@ -537,7 +537,7 @@ const AnnualPlanning = () => {
                             borderRadius: "10px",
                             cursor: "pointer",
                             fontWeight: "600",
-                            fontSize: "14px",
+                            fontSize: "16px",
                             boxShadow: "0 4px 6px -1px rgba(6, 182, 212, 0.3)",
                             transition: "all 0.2s ease",
                             marginLeft: "12px"
@@ -583,7 +583,7 @@ const AnnualPlanning = () => {
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
                         {/* Tabla de asignaciones */}
-                        <table style={{ width: '100%', tableLayout: 'fixed', fontSize: '12px', borderCollapse: 'collapse' }}>
+                        <table style={{ width: '100%', tableLayout: 'fixed', fontSize: '14px', borderCollapse: 'collapse' }}>
                             <thead>
                                 <tr>
                                     <th style={{ padding: '4px 6px' }}>{year}</th>
