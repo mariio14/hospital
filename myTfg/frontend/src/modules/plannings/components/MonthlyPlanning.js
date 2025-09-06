@@ -15,8 +15,8 @@ const MonthlyPlanning = () => {
   const monthlyPlanning = useSelector(selectors.getMonthlyPlanning);
   const monthlyPlanningList = useSelector(selectors.getMonthlyPlanningList);
 
-  const [backendErrors, setBackendErrors] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [planningStatus, setPlanningStatus] = useState(null); // 'valid', 'invalid', or null
 
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [year, setYear] = useState(new Date().getFullYear());
@@ -59,10 +59,18 @@ const MonthlyPlanning = () => {
   useEffect(() => {
     if (monthlyPlanningList && monthlyPlanningList.length > 0) {
       setPlanningData(monthlyPlanningList[activePlanningIndex] || emptyPlanning);
-      setBackendErrors(null);
+      
       setIsLoading(false);
+      setPlanningStatus(null); // Reset status when changing planning
     }
   }, [activePlanningIndex, monthlyPlanningList]);
+
+  // Watch for successful generation
+  useEffect(() => {
+    if (monthlyPlanning && !isLoading) {
+      setIsLoading(false);
+    }
+  }, [monthlyPlanning, isLoading]);
 
   const goToNextPlanning = () => {
       setActivePlanningIndex((prev) =>
@@ -79,9 +87,9 @@ const MonthlyPlanning = () => {
   const [planningData, setPlanningData] = useState(emptyPlanning);
 
   useEffect(() => {
-      dispatch(staffActions.getStaff(
-          () => setBackendErrors('No se ha podido obtener la lista de usuarios')
-      ));
+      dispatch(staffActions.getStaff(() => {
+        // Staff loading error - could show this in UI later if needed
+      }));
   }, []);
 
   useEffect(() => {
@@ -92,7 +100,9 @@ const MonthlyPlanning = () => {
         getMonthName(month),
         year,
         numDays,
-        () => setBackendErrors("No se ha podido cargar la planificación guardada.")
+        () => {
+          // Loading error - could show this in UI later if needed
+        }
     ));
   }, [month, year]);
 
@@ -150,7 +160,7 @@ const MonthlyPlanning = () => {
       };
 
         setIsLoading(true);
-        setBackendErrors(null);
+        
         let firstFriday = 1;
         while (new Date(year, month - 1, firstFriday).getDay() !== 5) {
             firstFriday++;
@@ -180,11 +190,10 @@ const MonthlyPlanning = () => {
 
         dispatch(actions.checkMonthlyPlanning(convertedPlanningData,
             () => {
-              setBackendErrors(null);
+              setPlanningStatus('valid');
               setIsLoading(false);
             }, (errorPayload) => {
-              const message = errorPayload?.globalError || "Ha ocurrido un error";
-              setBackendErrors(message);
+              setPlanningStatus('invalid');
               setIsLoading(false);
             })
           );
@@ -223,7 +232,7 @@ const MonthlyPlanning = () => {
       updated.monthlyPlanningDtos[targetPersonIndex].assignations[targetMonthIndex] = sourceValue;
 
       setIsLoading(true);
-      setBackendErrors(null);
+      
       let firstFriday = 1;
       while (new Date(year, month - 1, firstFriday).getDay() !== 5) {
           firstFriday++;
@@ -253,11 +262,10 @@ const MonthlyPlanning = () => {
 
       dispatch(actions.checkMonthlyPlanning(convertedPlanningData,
           () => {
-            setBackendErrors(null);
+            setPlanningStatus('valid');
             setIsLoading(false);
           }, (errorPayload) => {
-            const message = errorPayload?.globalError || "Ha ocurrido un error";
-            setBackendErrors(message);
+            setPlanningStatus('invalid');
             setIsLoading(false);
           })
         );
@@ -403,7 +411,8 @@ const MonthlyPlanning = () => {
     };
 
   const handleGeneratePlanning = () => {
-    setBackendErrors(null);
+    
+    setPlanningStatus(null);
     setIsLoading(true);
 
     let firstFriday = 1;
@@ -435,7 +444,7 @@ const MonthlyPlanning = () => {
     dispatch(actions.getMonthlyPlanning(
         convertedPlanningData,
         () => {
-            setBackendErrors('Sin solución');
+            setPlanningStatus('invalid');
             setIsLoading(false);
         }
     ));
@@ -443,7 +452,8 @@ const MonthlyPlanning = () => {
   };
 
   const handleConfirmPlanning = () => {
-    setBackendErrors(null);
+    
+    setPlanningStatus(null);
     let firstFriday = 1;
     while (new Date(year, month - 1, firstFriday).getDay() !== 5) {
         firstFriday++;
@@ -471,8 +481,7 @@ const MonthlyPlanning = () => {
         complete: true
     }
     dispatch(actions.saveMonthlyPlanning(convertedPlanningData, (errorPayload) => {
-      const message = errorPayload?.globalError || "Ha ocurrido un error";
-      setBackendErrors(message);
+      // Save error - could show this in UI later if needed
       setIsLoading(false);
     }));
   };
@@ -531,7 +540,7 @@ const MonthlyPlanning = () => {
   };
 
   const handleClearPlanning = () => {
-    setBackendErrors(null);
+    
     setIsLoading(false);
     setPlanningData(emptyPlanning);
     dispatch(actions.getMonthlyClear(emptyPlanning));
@@ -812,19 +821,30 @@ const MonthlyPlanning = () => {
               </div>
             )}
 
-            {isLoading && <div className="loader"></div>}
-            {backendErrors && (
-              <p
-                style={{
-                  color: "red",
-                  textAlign: "center",
-                  marginTop: "30px",
-                  marginBottom: "20px",
-                }}
-              >
-                {backendErrors}
-              </p>
+            {/* Status Icon */}
+            {planningStatus && (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                background: planningStatus === 'valid' ? '#10b981' : '#ef4444',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                marginLeft: 'auto'
+              }}>
+                <span style={{
+                  color: '#ffffff',
+                  fontSize: '18px',
+                  fontWeight: 'bold'
+                }}>
+                  {planningStatus === 'valid' ? '✓' : '✗'}
+                </span>
+              </div>
             )}
+
+            {isLoading && <div className="loader"></div>}
 
             <div
               style={{

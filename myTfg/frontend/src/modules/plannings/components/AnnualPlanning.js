@@ -24,8 +24,8 @@ const AnnualPlanning = () => {
     }
 
     const [planningData, setPlanningData] = useState(emptyPlanning);
-    const [backendErrors, setBackendErrors] = useState(null);
      const [isLoading, setIsLoading] = useState(false);
+     const [planningStatus, setPlanningStatus] = useState(null); // 'valid', 'invalid', or null
      const currentYear = new Date().getFullYear();
      const [year, setYear] = useState(currentYear);
      const [activePlanningIndex, setActivePlanningIndex] = useState(0);
@@ -34,10 +34,18 @@ const AnnualPlanning = () => {
     useEffect(() => {
       if (annualPlanningList && annualPlanningList.length > 0) {
         setPlanningData(annualPlanningList[activePlanningIndex] || emptyPlanning);
-        setBackendErrors(null);
+        
         setIsLoading(false);
+        setPlanningStatus(null); // Reset status when changing planning
       }
     }, [activePlanningIndex, annualPlanningList]);
+
+    // Watch for successful generation
+    useEffect(() => {
+      if (annualPlanning && !isLoading) {
+        setIsLoading(false);
+      }
+    }, [annualPlanning, isLoading]);
 
     const goToNextPlanning = () => {
       setActivePlanningIndex((prev) =>
@@ -52,9 +60,9 @@ const AnnualPlanning = () => {
     };
 
     useEffect(() => {
-        dispatch(staffActions.getStaff(
-            () => setBackendErrors('No se ha podido obtener la lista de usuarios')
-        ));
+        dispatch(staffActions.getStaff(() => {
+          // Staff loading error - could show this in UI later if needed
+        }));
     }, []);
 
     useEffect(() => {
@@ -77,7 +85,8 @@ const AnnualPlanning = () => {
     }, [annualPlanning]);
 
     const handleGeneratePlanning = () => {
-        setBackendErrors(null);
+        
+        setPlanningStatus(null);
         setIsLoading(true);
         const convertedPlanningData = {
             assignations : planningData.assignations.map(person => ({
@@ -90,14 +99,15 @@ const AnnualPlanning = () => {
             convertedPlanningData,
             year,
             () => {
-                setBackendErrors('Sin solución');
+                setPlanningStatus('invalid');
                 setIsLoading(false);
             }
         ));
     };
 
     const handleConfirmPlanning = () => {
-      setBackendErrors(null);
+      
+      setPlanningStatus(null);
       const convertedPlanningData = {
         assignations: planningData.assignations.map(person => ({
           ...person,
@@ -107,8 +117,7 @@ const AnnualPlanning = () => {
       }
       dispatch(actions.saveYearlyPlanning(convertedPlanningData, year,
         (errorPayload) => {
-        const message = errorPayload?.globalError || "Ha ocurrido un error";
-        setBackendErrors(message);
+        // Save error - could show this in UI later if needed
         setIsLoading(false);
       }));
     };
@@ -143,7 +152,7 @@ const AnnualPlanning = () => {
         updated.assignations[targetPersonIndex].assignations[targetMonthIndex] = sourceValue;
 
           setIsLoading(true);
-          setBackendErrors(null);
+          
           const convertedPlanningData = {
             assignations: updated.assignations.map((person) => ({
               ...person,
@@ -157,12 +166,11 @@ const AnnualPlanning = () => {
               convertedPlanningData,
               year,
               () => {
-                setBackendErrors(null);
+                setPlanningStatus('valid');
                 setIsLoading(false);
               },
               (errorPayload) => {
-                const message = errorPayload?.globalError || "Ha ocurrido un error";
-                setBackendErrors(message);
+                setPlanningStatus('invalid');
                 setIsLoading(false);
               }
             )
@@ -188,7 +196,9 @@ const AnnualPlanning = () => {
         dispatch(actions.getSavedAnnualPlanning(
             convertedPlanningData,
             year,
-            () => setBackendErrors("No se ha podido cargar la planificación guardada."),
+            () => {
+              // Loading error - could show this in UI later if needed
+            },
             emptyPlanning
         ));
     }, [year]);
@@ -240,7 +250,7 @@ const AnnualPlanning = () => {
         };
 
         setIsLoading(true);
-        setBackendErrors(null);
+        
         const convertedPlanningData = {
             assignations : updatedPlanning.assignations.map(person => ({
                 ...person,
@@ -253,11 +263,10 @@ const AnnualPlanning = () => {
             convertedPlanningData,
             year,
             () => {
-              setBackendErrors(null);
+              setPlanningStatus('valid');
               setIsLoading(false);
             }, (errorPayload) => {
-              const message = errorPayload?.globalError || "Ha ocurrido un error";
-              setBackendErrors(message);
+              setPlanningStatus('invalid');
               setIsLoading(false);
             })
         );
@@ -325,7 +334,7 @@ const AnnualPlanning = () => {
     };
 
     const handleClearPlanning = () => {
-        setBackendErrors(null);
+        
         setPlanningData(emptyPlanning);
         dispatch(actions.clearAnnualPlanning());
     };
@@ -546,8 +555,31 @@ const AnnualPlanning = () => {
                         </button>
                       </div>
                     )}
+
+                    {/* Status Icon */}
+                    {planningStatus && (
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '50%',
+                        background: planningStatus === 'valid' ? '#10b981' : '#ef4444',
+                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                        marginLeft: 'auto'
+                      }}>
+                        <span style={{
+                          color: '#ffffff',
+                          fontSize: '18px',
+                          fontWeight: 'bold'
+                        }}>
+                          {planningStatus === 'valid' ? '✓' : '✗'}
+                        </span>
+                      </div>
+                    )}
+
                     {isLoading && <div className="loader"></div>}
-                    {backendErrors ? <p style={{ color: 'red', textAlign: 'center', marginTop: '30px', marginBottom: '20px' }}>{backendErrors}</p> : null}
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
                         {/* Tabla de asignaciones */}
