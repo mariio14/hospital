@@ -13,8 +13,8 @@ const WeeklyPlanning = () => {
   const weeklyPlanning = useSelector(selectors.getWeeklyPlanning);
   const weeklyPlanningList = useSelector(selectors.getWeeklyPlanningList);
 
-  const [backendErrors, setBackendErrors] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [planningStatus, setPlanningStatus] = useState(null); // 'valid', 'invalid', or null
   const [rightClickData, setRightClickData] = useState(null);
   const prohibitedMenuRef = useRef(null);
   const [editingCell, setEditingCell] = useState({ personName: null, dayIndex: null });
@@ -75,8 +75,14 @@ const WeeklyPlanning = () => {
     if (weeklyPlanningList && weeklyPlanningList.length > 0) {
       setPlanningData(weeklyPlanningList[activePlanningIndex] || emptyPlanning);
     }
-    setBackendErrors(null);
   }, [activePlanningIndex, weeklyPlanningList]);
+
+  // Watch for successful generation
+  useEffect(() => {
+    if (weeklyPlanning && !isLoading) {
+      setIsLoading(false);
+    }
+  }, [weeklyPlanning, isLoading]);
 
   const goToNextPlanning = () => {
     setActivePlanningIndex((prev) =>
@@ -212,9 +218,9 @@ const WeeklyPlanning = () => {
 
 
   useEffect(() => {
-    dispatch(staffActions.getStaff(() =>
-      setBackendErrors("No se ha podido obtener la lista de usuarios")
-    ));
+    dispatch(staffActions.getStaff(() => {
+      // Staff loading error - could show this in UI later if needed
+    }));
   }, []);
 
   useEffect(() => {
@@ -223,14 +229,16 @@ const WeeklyPlanning = () => {
           year,
           weekInMonth + 1,
           {days: days.map(d => d.getDate())},
-          () => setBackendErrors("No se ha podido cargar la planificación guardada.")
+          () => {
+            // Loading error - could show this in UI later if needed
+          }
       ));
     }, [weekInMonth, month, year]);
 
   useEffect(() => {
     setPlanningData(weeklyPlanning || emptyPlanning);
     setIsLoading(false);
-    setBackendErrors(null);
+    
   }, [weeklyPlanning]);
 
   useEffect(() => {
@@ -273,7 +281,7 @@ const WeeklyPlanning = () => {
       updated.weeklyPlanningDtos[targetPersonIndex].assignations[targetMonthIndex] = sourceValue;
 
         setIsLoading(true);
-        setBackendErrors(null);
+        
         const dataToSend = {
           weeklyPlanningDtos: updated.weeklyPlanningDtos.map((p) => {
             const staffMember = staffList.find(staff => staff.name.toLowerCase() === p.name.toLowerCase());
@@ -295,12 +303,11 @@ const WeeklyPlanning = () => {
           actions.checkWeeklyPlanning(
             dataToSend,
             () => {
-              setBackendErrors(null);
+              setPlanningStatus('valid');
               setIsLoading(false);
             },
             (errorPayload) => {
-              const message = errorPayload?.globalError || "Ha ocurrido un error";
-              setBackendErrors(message);
+              setPlanningStatus('invalid');
               setIsLoading(false);
             }
           )
@@ -332,7 +339,7 @@ const WeeklyPlanning = () => {
   };
 
   const handleClearPlanning = () => {
-    setBackendErrors(null);
+    setPlanningStatus(null);
 
     const updatedDtos = emptyPlanning.weeklyPlanningDtos.map((emptyPerson) => {
       const currentPerson = planningData.weeklyPlanningDtos.find(
@@ -374,7 +381,7 @@ const WeeklyPlanning = () => {
 
   const handleGeneratePlanning = () => {
     setIsLoading(true);
-    setBackendErrors(null);
+    setPlanningStatus(null);
     const dataToSend = {
       weeklyPlanningDtos: planningData.weeklyPlanningDtos.map((p) => {
         const staffMember = staffList.find(staff => staff.name.toLowerCase() === p.name.toLowerCase());
@@ -392,14 +399,13 @@ const WeeklyPlanning = () => {
       complete: planningData.complete
     };
     dispatch(actions.getWeeklyPlanning(dataToSend, (errorPayload) => {
-      const message = errorPayload?.globalError || "Ha ocurrido un error";
-      setBackendErrors(message);
+      setPlanningStatus('invalid');
       setIsLoading(false);
     }));
   };
 
   const handleConfirmPlanning = () => {
-      setBackendErrors(null);
+      
       const dataToSend = {
         weeklyPlanningDtos: planningData.weeklyPlanningDtos.map((p) => {
           const staffMember = staffList.find(staff => staff.name.toLowerCase() === p.name.toLowerCase());
@@ -417,8 +423,7 @@ const WeeklyPlanning = () => {
         complete: planningData.complete
       };
       dispatch(actions.saveWeeklyPlanning(dataToSend, (errorPayload) => {
-        const message = errorPayload?.globalError || "Ha ocurrido un error";
-        setBackendErrors(message);
+        // Save error - could show this in UI later if needed
         setIsLoading(false);
       }));
     };
@@ -549,7 +554,7 @@ const WeeklyPlanning = () => {
       };
 
         setIsLoading(true);
-        setBackendErrors(null);
+        
         const dataToSend = {
           weeklyPlanningDtos: updatedData.weeklyPlanningDtos.map((p) => {
             const staffMember = staffList.find(
@@ -571,11 +576,10 @@ const WeeklyPlanning = () => {
         dispatch(
           actions.checkWeeklyPlanning(dataToSend,
           () => {
-            setBackendErrors(null);
+            setPlanningStatus('valid');
             setIsLoading(false);
           }, (errorPayload) => {
-            const message = errorPayload?.globalError || "Ha ocurrido un error";
-            setBackendErrors(message);
+            setPlanningStatus('invalid');
             setIsLoading(false);
           })
         );
@@ -844,6 +848,29 @@ const WeeklyPlanning = () => {
               </div>
             )}
 
+            {/* Status Icon */}
+            {planningStatus && (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                background: planningStatus === 'valid' ? '#10b981' : '#ef4444',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                marginLeft: 'auto'
+              }}>
+                <span style={{
+                  color: '#ffffff',
+                  fontSize: '18px',
+                  fontWeight: 'bold'
+                }}>
+                  {planningStatus === 'valid' ? '✓' : '✗'}
+                </span>
+              </div>
+            )}
+
           </div>
           
           {/* Crear nueva actividad section - moved above table */}
@@ -1093,7 +1120,6 @@ const WeeklyPlanning = () => {
           </div>
           
           {isLoading && <div className="loader"></div>}
-          {backendErrors ? <p style={{ color: 'red', textAlign: 'center', marginTop: '30px', marginBottom: '20px' }}>{backendErrors}</p> : null}
           <div className="overflow-auto">
             <table className="w-full text-sm text-center border">
               <thead>

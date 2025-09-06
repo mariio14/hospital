@@ -22,11 +22,13 @@ cost(semanalP_29, 1).
 % SemanalR_01
 :- day_assign(P,D,T,C,MT,I), vacation(P,D).
 :- day_assign(P,D,T,C,MT,I), day_not_assign(P,D,T).
-:- task_color(qx, C, D, N, I), Cnt = #count { P : day_assign(P,D,qx,C,morning,I) }, Cnt < N.
+:- task_color(qx, C, D, N, I), Cnt = #count { P : day_assign(P,D,qx,C,morning,I), month_assign(P,D,C) }, Cnt < N.
+:- day_assign(P,D,qx,C,morning,_), not month_assign(P,D,C).
 
-% SemanalR_13,
+% SemanalR_13
 :- task_evening_color(qx, C, D, I), day_assign(P,D,qx,C,evening,I), level(P,L), L<2.
-:- task_evening_color(qx, C, D, I), not day_assign(_,D,qx,C,evening,I).
+:- task_evening_color(qx, C, D, I), not day_assign(P,D,qx,C,evening,I): month_assign(P,D,C).
+:- day_assign(P,D,qx,C,evening,_), not month_assign(P,D,C).
 
 % SemanalR_06, SemanalR_07
 :- task(consultation, D), day_assign(P,D,consultation,null,morning,null), level(P,L), L<3.
@@ -63,6 +65,8 @@ cost(semanalP_29, 1).
 :- day_assign(P,D,_,_,evening,_), day_assign_from_month(P,D,i).
 % SemanalR_18
 :- day_assign(P,D,_,_,_,_), prev_day(D,D'), day_assign_guard_from_month(P,D').
+
+:- day_assign(P,D,floor,C,morning,_), not month_assign(P,D,C).
 
 #show day_assign/6.
 #show vacation/2.

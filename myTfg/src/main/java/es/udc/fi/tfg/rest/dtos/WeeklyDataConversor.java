@@ -271,6 +271,10 @@ public class WeeklyDataConversor {
                         }
                         String[] partes = assignation.split("_");
                         String tipo = TASKS.get(partes[0].toUpperCase(Locale.ROOT));
+                        if (tipo == null || tipo.equals("null")) {
+                            i++;
+                            continue;
+                        }
                         String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
                         String identifier = (partes.length > 2 && tipo.equals("qx")) ? ClingoUtils.sanitizeForClingo(partes[2]) : null;
                         if (identifier != null) {
@@ -311,6 +315,10 @@ public class WeeklyDataConversor {
                     if (assignation != null) {
                         String[] partes = assignation.split("_");
                         String tipo = TASKS.get(partes[0].toUpperCase(Locale.ROOT));
+                        if (tipo == null || tipo.equals("null")) {
+                            i++;
+                            continue;
+                        }
                         String color = partes.length > 1 ? COLORS.get(partes[1].toLowerCase(Locale.ROOT)) : null;
                         String identifier = (partes.length > 2 && tipo.equals("qx")) ? ClingoUtils.sanitizeForClingo(partes[2]) : null;
                         if (identifier != null) {
