@@ -43,7 +43,6 @@ const AnnualPlanning = () => {
     // Watch for successful generation
     useEffect(() => {
       if (annualPlanning && !isLoading) {
-        setPlanningStatus('valid');
         setIsLoading(false);
       }
     }, [annualPlanning, isLoading]);

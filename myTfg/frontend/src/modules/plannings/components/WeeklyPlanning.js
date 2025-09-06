@@ -75,13 +75,11 @@ const WeeklyPlanning = () => {
     if (weeklyPlanningList && weeklyPlanningList.length > 0) {
       setPlanningData(weeklyPlanningList[activePlanningIndex] || emptyPlanning);
     }
-    setPlanningStatus(null); // Reset status when changing planning
   }, [activePlanningIndex, weeklyPlanningList]);
 
   // Watch for successful generation
   useEffect(() => {
     if (weeklyPlanning && !isLoading) {
-      setPlanningStatus('valid');
       setIsLoading(false);
     }
   }, [weeklyPlanning, isLoading]);

@@ -345,6 +345,12 @@ public class PlanningServiceImpl implements PlanningService {
 						} else {
 							assignationsMap.put(days.get(i), new ArrayList<>(List.of("v")));
 						}
+					} else if (partes.length == 1 && partes[0].equals("V")) {
+						if (assignationsMap.containsKey(days.get(i))) {
+							assignationsMap.get(days.get(i)).add("v");
+						} else {
+							assignationsMap.put(days.get(i), new ArrayList<>(List.of("v")));
+						}
 					} else if (partes.length == 2) {
 						final String color = COLORS.get(partes[1]);
 						if (assignationsMap.containsKey(days.get(i))) {
