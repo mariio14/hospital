@@ -373,7 +373,7 @@ const WeeklyPlanning = () => {
       head: [["Persona", ...days.map(d => `${d.toLocaleDateString("es-ES", { weekday: "long" })} ${d.getDate()}`)]],
       body: tableData,
       startY: 20,
-      styles: { fontSize: 8, cellPadding: 1 },
+      styles: { fontSize: 10, cellPadding: 1 },
       bodyStyles: { halign: "center" }
     });
     doc.save("planificacion_semanal.pdf");
@@ -623,7 +623,7 @@ const WeeklyPlanning = () => {
               border: '1px solid #e2e8f0',
               flexWrap: 'wrap'
             }}>
-              <label style={{ color: "#374151", fontWeight: "600", fontSize: "14px" }}>Año:</label>
+              <label style={{ color: "#374151", fontWeight: "600", fontSize: "16px" }}>Año:</label>
               <input 
                 type="number" 
                 value={year} 
@@ -644,7 +644,7 @@ const WeeklyPlanning = () => {
                 onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
                 onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
               />
-              <label style={{ color: "#374151", fontWeight: "600", fontSize: "14px" }}>Mes:</label>
+              <label style={{ color: "#374151", fontWeight: "600", fontSize: "16px" }}>Mes:</label>
               <select 
                 value={month} 
                 onChange={(e) => setMonth(Number(e.target.value))} 
@@ -664,7 +664,7 @@ const WeeklyPlanning = () => {
               >
                 {months.map((m, i) => <option key={i} value={i}>{m}</option>)}
               </select>
-              <label style={{ color: "#374151", fontWeight: "600", fontSize: "14px" }}>Semana:</label>
+              <label style={{ color: "#374151", fontWeight: "600", fontSize: "16px" }}>Semana:</label>
               <select 
                 value={weekInMonth} 
                 onChange={(e) => setWeekInMonth(Number(e.target.value))} 
@@ -696,7 +696,7 @@ const WeeklyPlanning = () => {
                     borderRadius: "12px",
                     cursor: "pointer",
                     fontWeight: "600",
-                    fontSize: "14px",
+                    fontSize: "16px",
                     boxShadow: "0 4px 6px -1px rgba(59, 130, 246, 0.3)",
                     transition: "all 0.2s ease",
                     display: "flex",
@@ -724,7 +724,7 @@ const WeeklyPlanning = () => {
                   borderRadius: "12px",
                   cursor: "pointer",
                   fontWeight: "600",
-                  fontSize: "14px",
+                  fontSize: "16px",
                   boxShadow: "0 4px 6px -1px rgba(16, 185, 129, 0.3)",
                   transition: "all 0.2s ease",
                   display: "flex",
@@ -752,7 +752,7 @@ const WeeklyPlanning = () => {
                     borderRadius: "12px",
                     cursor: "pointer",
                     fontWeight: "600",
-                    fontSize: "14px",
+                    fontSize: "16px",
                     boxShadow: "0 4px 6px -1px rgba(239, 68, 68, 0.3)",
                     transition: "all 0.2s ease",
                     display: "flex",
@@ -797,7 +797,7 @@ const WeeklyPlanning = () => {
                   background: "#f3f4f6",
                   padding: "8px 16px",
                   borderRadius: "8px",
-                  fontSize: "14px"
+                  fontSize: "16px"
                 }}>
                   Planning {activePlanningIndex + 1} de {weeklyPlanningList.length}
                 </span>
@@ -829,7 +829,7 @@ const WeeklyPlanning = () => {
                     borderRadius: "10px",
                     cursor: "pointer",
                     fontWeight: "600",
-                    fontSize: "14px",
+                    fontSize: "16px",
                     boxShadow: "0 4px 6px -1px rgba(6, 182, 212, 0.3)",
                     transition: "all 0.2s ease",
                     marginLeft: "12px"
@@ -883,7 +883,7 @@ const WeeklyPlanning = () => {
             background: '#ffffff', 
             boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)'
           }}>
-            <h4 style={{ fontWeight: '700', marginBottom: '16px', color: '#374151', fontSize: '16px' }}>✨ Crear nueva actividad</h4>
+            <h4 style={{ fontWeight: '700', marginBottom: '16px', color: '#374151', fontSize: '18px' }}>✨ Crear nueva actividad</h4>
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '16px' }}>
               {/* Día */}
               <label style={{ fontSize: '14px', fontWeight: '600', color: '#374151', display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -1095,7 +1095,7 @@ const WeeklyPlanning = () => {
                   borderRadius: "10px",
                   cursor: !newActivity.type ? "not-allowed" : "pointer",
                   fontWeight: "600",
-                  fontSize: "14px",
+                  fontSize: "16px",
                   boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                   transition: "all 0.2s ease",
                   opacity: !newActivity.type ? 0.7 : 1
@@ -1211,7 +1211,7 @@ const WeeklyPlanning = () => {
                                   width: "100%",
                                   textAlign: "center",
                                   fontWeight: "bold",
-                                  fontSize: "0.75rem",
+                                  fontSize: "0.875rem",
                                   cursor: "pointer",
                                 }}
                               >
@@ -1280,7 +1280,7 @@ const WeeklyPlanning = () => {
                                   width: "100%",
                                   textAlign: "center",
                                   fontWeight: "bold",
-                                  fontSize: "0.75rem",
+                                  fontSize: "0.875rem",
                                   cursor: "pointer",
                                 }}
                               >
@@ -1326,7 +1326,7 @@ const WeeklyPlanning = () => {
                             style={{
                               backgroundColor: qxColors[act.color] || "#e0e0e0",
                               padding: "4px 6px",
-                              fontSize: "10px",
+                              fontSize: "12px",
                               color: "#000",
                               borderRadius: "4px",
                               fontWeight: "bold",
@@ -1348,7 +1348,7 @@ const WeeklyPlanning = () => {
                                 borderRadius: "50%",
                                 width: "16px",
                                 height: "16px",
-                                fontSize: "10px",
+                                fontSize: "12px",
                                 cursor: "pointer",
                                 lineHeight: "16px",
                                 textAlign: "center",
