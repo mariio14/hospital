@@ -32,6 +32,7 @@ const StaffList = () => {
                 () => setBackendErrors('Ha ocurrido un error al modificar usuarios')
             ));
         };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleNameChange = (userId, newName) => {
@@ -50,6 +51,22 @@ const StaffList = () => {
                     : user
             )
         );
+    };
+
+    const handleRemoveStaff = (userId) => {
+        setUsers(prevUsers =>
+            prevUsers.filter(user => user.id !== userId)
+        );
+    };
+
+    const handleAddStaff = () => {
+        const newId = Date.now(); // Generate unique ID using timestamp
+        const newStaff = {
+            id: newId,
+            name: '',
+            level: 1
+        };
+        setUsers(prevUsers => [...prevUsers, newStaff]);
     };
 
     return (
@@ -104,128 +121,245 @@ const StaffList = () => {
             </div>
 
             {users && users.length > 0 ? (
-                <div 
-                    style={{
-                        maxWidth: '800px',
-                        margin: '0 auto',
-                        background: 'white',
-                        borderRadius: '8px',
-                        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-                        overflow: 'hidden'
-                    }}
-                >
-                    {users.map((user, index) => (
-                        <div 
-                            key={index}
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                padding: '1rem 1.5rem',
-                                borderBottom: index < users.length - 1 ? '1px solid #e5e7eb' : 'none',
-                                gap: '1rem'
-                            }}
-                        >
-                            {/* Name input */}
-                            <div style={{ flex: '1' }}>
-                                <input
-                                    type="text"
-                                    value={user.name}
-                                    onChange={(e) => handleNameChange(user.id, e.target.value)}
-                                    placeholder="Nombre completo"
-                                    style={{
-                                        width: '100%',
-                                        padding: '0.5rem 0.75rem',
-                                        border: '1px solid #d1d5db',
-                                        borderRadius: '6px',
-                                        fontSize: '1rem',
-                                        outline: 'none'
-                                    }}
-                                    onFocus={(e) => {
-                                        e.target.style.borderColor = '#3b82f6';
-                                        e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
-                                    }}
-                                    onBlur={(e) => {
-                                        e.target.style.borderColor = '#d1d5db';
-                                        e.target.style.boxShadow = 'none';
-                                    }}
-                                />
-                            </div>
-                            
-                            {/* Level controls */}
+                <div>
+                    <div 
+                        style={{
+                            maxWidth: '800px',
+                            margin: '0 auto',
+                            background: 'white',
+                            borderRadius: '8px',
+                            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+                            overflow: 'hidden'
+                        }}
+                    >
+                        {users.map((user, index) => (
                             <div 
+                                key={index}
                                 style={{
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: '0.5rem'
+                                    padding: '1rem 1.5rem',
+                                    borderBottom: index < users.length - 1 ? '1px solid #e5e7eb' : 'none',
+                                    gap: '1rem'
                                 }}
                             >
-                                <button
-                                    onClick={() => handleLevelChange(user.id, -1)}
-                                    disabled={user.level === 1}
+                                {/* Name input */}
+                                <div style={{ flex: '1' }}>
+                                    <input
+                                        type="text"
+                                        value={user.name}
+                                        onChange={(e) => handleNameChange(user.id, e.target.value)}
+                                        placeholder="Nombre completo"
+                                        style={{
+                                            width: '100%',
+                                            padding: '0.5rem 0.75rem',
+                                            border: '1px solid #d1d5db',
+                                            borderRadius: '6px',
+                                            fontSize: '1rem',
+                                            outline: 'none'
+                                        }}
+                                        onFocus={(e) => {
+                                            e.target.style.borderColor = '#3b82f6';
+                                            e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+                                        }}
+                                        onBlur={(e) => {
+                                            e.target.style.borderColor = '#d1d5db';
+                                            e.target.style.boxShadow = 'none';
+                                        }}
+                                    />
+                                </div>
+                                
+                                {/* Level controls */}
+                                <div 
                                     style={{
-                                        width: '2rem',
-                                        height: '2rem',
-                                        border: '1px solid #d1d5db',
-                                        borderRadius: '4px',
-                                        background: user.level === 1 ? '#f3f4f6' : 'white',
-                                        cursor: user.level === 1 ? 'not-allowed' : 'pointer',
-                                        fontSize: '1rem',
                                         display: 'flex',
                                         alignItems: 'center',
-                                        justifyContent: 'center'
+                                        gap: '0.5rem'
                                     }}
                                 >
-                                    −
-                                </button>
+                                    <button
+                                        onClick={() => handleLevelChange(user.id, -1)}
+                                        disabled={user.level === 1}
+                                        style={{
+                                            width: '2rem',
+                                            height: '2rem',
+                                            border: '1px solid #d1d5db',
+                                            borderRadius: '4px',
+                                            background: user.level === 1 ? '#f3f4f6' : 'white',
+                                            cursor: user.level === 1 ? 'not-allowed' : 'pointer',
+                                            fontSize: '1rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
+                                        }}
+                                    >
+                                        −
+                                    </button>
+                                    
+                                    <span 
+                                        style={{
+                                            fontSize: '1rem',
+                                            fontWeight: '600',
+                                            minWidth: '2rem',
+                                            textAlign: 'center',
+                                            color: '#374151'
+                                        }}
+                                    >
+                                        {user.level}
+                                    </span>
+                                    
+                                    <button
+                                        onClick={() => handleLevelChange(user.id, 1)}
+                                        disabled={user.level === 5}
+                                        style={{
+                                            width: '2rem',
+                                            height: '2rem',
+                                            border: '1px solid #d1d5db',
+                                            borderRadius: '4px',
+                                            background: user.level === 5 ? '#f3f4f6' : 'white',
+                                            cursor: user.level === 5 ? 'not-allowed' : 'pointer',
+                                            fontSize: '1rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
+                                        }}
+                                    >
+                                        +
+                                    </button>
+                                </div>
                                 
-                                <span 
-                                    style={{
-                                        fontSize: '1rem',
-                                        fontWeight: '600',
-                                        minWidth: '2rem',
-                                        textAlign: 'center',
-                                        color: '#374151'
-                                    }}
-                                >
-                                    {user.level}
-                                </span>
-                                
-                                <button
-                                    onClick={() => handleLevelChange(user.id, 1)}
-                                    disabled={user.level === 5}
-                                    style={{
-                                        width: '2rem',
-                                        height: '2rem',
-                                        border: '1px solid #d1d5db',
-                                        borderRadius: '4px',
-                                        background: user.level === 5 ? '#f3f4f6' : 'white',
-                                        cursor: user.level === 5 ? 'not-allowed' : 'pointer',
-                                        fontSize: '1rem',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center'
-                                    }}
-                                >
-                                    +
-                                </button>
+                                {/* Remove button */}
+                                <div>
+                                    <button
+                                        onClick={() => handleRemoveStaff(user.id)}
+                                        style={{
+                                            width: '2rem',
+                                            height: '2rem',
+                                            border: '1px solid #ef4444',
+                                            borderRadius: '4px',
+                                            background: 'white',
+                                            cursor: 'pointer',
+                                            fontSize: '1rem',
+                                            color: '#ef4444',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            transition: 'all 0.2s ease'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.target.style.background = '#ef4444';
+                                            e.target.style.color = 'white';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.target.style.background = 'white';
+                                            e.target.style.color = '#ef4444';
+                                        }}
+                                    >
+                                        ×
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
+                    
+                    {/* Add new staff button */}
+                    <div 
+                        style={{
+                            maxWidth: '800px',
+                            margin: '1rem auto 0',
+                            textAlign: 'center'
+                        }}
+                    >
+                        <button
+                            onClick={handleAddStaff}
+                            style={{
+                                padding: '0.75rem 1.5rem',
+                                background: 'var(--primary-gradient)',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '8px',
+                                fontSize: '1rem',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '0.5rem',
+                                margin: '0 auto',
+                                transition: 'all 0.2s ease',
+                                boxShadow: '0 2px 8px rgba(59, 130, 246, 0.2)'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.target.style.transform = 'translateY(-1px)';
+                                e.target.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.target.style.transform = 'translateY(0)';
+                                e.target.style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.2)';
+                            }}
+                        >
+                            <span style={{ fontSize: '1.2rem' }}>+</span>
+                            Añadir Residente
+                        </button>
+                    </div>
                 </div>
             ) : (
-                <div 
-                    style={{
-                        textAlign: 'center',
-                        padding: '2rem',
-                        background: 'white',
-                        borderRadius: '8px',
-                        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-                        maxWidth: '800px',
-                        margin: '0 auto',
-                        color: '#6b7280'
-                    }}
-                >
-                    No hay personal disponible
+                <div>
+                    <div 
+                        style={{
+                            textAlign: 'center',
+                            padding: '2rem',
+                            background: 'white',
+                            borderRadius: '8px',
+                            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+                            maxWidth: '800px',
+                            margin: '0 auto',
+                            color: '#6b7280'
+                        }}
+                    >
+                        No hay personal disponible
+                    </div>
+                    
+                    {/* Add new staff button for empty state */}
+                    <div 
+                        style={{
+                            maxWidth: '800px',
+                            margin: '1rem auto 0',
+                            textAlign: 'center'
+                        }}
+                    >
+                        <button
+                            onClick={handleAddStaff}
+                            style={{
+                                padding: '0.75rem 1.5rem',
+                                background: 'var(--primary-gradient)',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '8px',
+                                fontSize: '1rem',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '0.5rem',
+                                margin: '0 auto',
+                                transition: 'all 0.2s ease',
+                                boxShadow: '0 2px 8px rgba(59, 130, 246, 0.2)'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.target.style.transform = 'translateY(-1px)';
+                                e.target.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.target.style.transform = 'translateY(0)';
+                                e.target.style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.2)';
+                            }}
+                        >
+                            <span style={{ fontSize: '1.2rem' }}>+</span>
+                            Añadir Residente
+                        </button>
+                    </div>
                 </div>
             )}
             
