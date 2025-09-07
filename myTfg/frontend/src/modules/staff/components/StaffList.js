@@ -60,7 +60,12 @@ const StaffList = () => {
     };
 
     const handleAddStaff = () => {
-        const newId = Date.now(); // Generate unique ID using timestamp
+        const existingIds = users.map(user => user.id);
+        let newId = 1;
+        while (existingIds.includes(newId)) {
+            newId++;
+        }
+
         const newStaff = {
             id: newId,
             name: '',
