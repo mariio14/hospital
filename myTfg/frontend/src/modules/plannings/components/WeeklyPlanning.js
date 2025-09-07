@@ -1138,7 +1138,15 @@ const WeeklyPlanning = () => {
                   const nameColor = colorPersonMap[person.colors && person.colors[0] ? person.colors[0] : null] || "#fff";
                   return(
                   <tr key={person.name}>
-                    <td className="font-medium" style={{ backgroundColor: nameColor }}>{person.name}</td>
+                    <td className="font-medium" style={{ 
+                      backgroundColor: nameColor, 
+                      width: '120px', 
+                      maxWidth: '120px', 
+                      minWidth: '80px',
+                      whiteSpace: 'nowrap', 
+                      fontSize: '1rem',
+                      padding: '8px 4px'
+                    }}>{person.name}</td>
                     {person.assignations.map((_, idx) => {
                       const morningActivity = person.assignations[idx];
                       const eveningActivity = person.eveningAssignations?.[idx] || null;
@@ -1211,7 +1219,7 @@ const WeeklyPlanning = () => {
                                   width: "100%",
                                   textAlign: "center",
                                   fontWeight: "bold",
-                                  fontSize: "0.875rem",
+                                  fontSize: "1rem",
                                   cursor: "pointer",
                                 }}
                               >
@@ -1280,7 +1288,7 @@ const WeeklyPlanning = () => {
                                   width: "100%",
                                   textAlign: "center",
                                   fontWeight: "bold",
-                                  fontSize: "0.875rem",
+                                  fontSize: "1rem",
                                   cursor: "pointer",
                                 }}
                               >
