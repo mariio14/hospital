@@ -30,6 +30,7 @@ public class MonthlyDataConversor {
 
         boolean vacation = false;
         boolean notValid = false;
+        clingoParams.append(String.format("numResidents(%d). ", monthlyDataDto.getMonthlyPlanningDtos().size()));
         for (MonthlyAssignationsDto monthlyAssignationsDto : monthlyDataDto.getMonthlyPlanningDtos()) {
             String personName = ClingoUtils.sanitizeForClingo(monthlyAssignationsDto.getName());
             clingoParams.append(String.format("person(%s). ", personName));

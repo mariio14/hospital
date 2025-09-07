@@ -101,19 +101,21 @@ day_assign_location(P,D,e) :- day_assign(P,D,e).
 day_assign_location(P,D,i) :- day_assign(P,D,i).
 numLocation_per_person(P,N) :- person(P), N = #count{D : day_assign_location(P,D,_)}.
 
-#minimize { V*(N'/15-N),P :
+#minimize { V*(N'/T-N),P :
     numLocation_per_person(P,N),
     numLocations(N'),
-    N<N'/15,
+    numResidents(T),
+    N<N'/T,
     cost(mensualP_L03,V)
 }.
 
 numComodin_per_person(P,N) :- person(P), N = #count{D : day_assign(P,D,c)}.
 
-#minimize { V*(N'/15-N),P :
+#minimize { V*(N'/T-N),P :
     numComodin_per_person(P,N),
     numDays(N'),
-    N<N'/15,
+    numResidents(T),
+    N<N'/T,
     cost(mensualP_L03,V)
 }.
 
