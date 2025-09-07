@@ -442,10 +442,46 @@ const WeeklyPlanning = () => {
         }
       ];
 
-      return {
+      const updatedData = {
         ...prev,
-        activities: updatedActivities
+        activities: updatedActivities,
       };
+
+      setIsLoading(true);
+      const dataToSend = {
+        weeklyPlanningDtos: updatedData.weeklyPlanningDtos.map((p) => {
+          const staffMember = staffList.find(
+            (staff) => staff.name.toLowerCase() === p.name.toLowerCase()
+          );
+          return {
+            ...p,
+            level: staffMember ? staffMember.level : null,
+            assignations: [...p.assignations],
+            eveningAssignations: [...(p.eveningAssignations || [])],
+          };
+        }),
+        week: weekInMonth + 1,
+        month: months[month],
+        year,
+        days: days.map((d) => d.getDate()),
+        activities: updatedData.activities,
+        complete: true,
+      };
+
+      dispatch(
+        actions.checkWeeklyPlanning(
+          dataToSend,
+          () => {
+            setPlanningStatus("valid");
+            setIsLoading(false);
+          },
+          (errorPayload) => {
+            setPlanningStatus("invalid");
+            setIsLoading(false);
+          }
+        )
+      );
+      return updatedData;
     });
 
     setNewActivity({
@@ -471,16 +507,16 @@ const WeeklyPlanning = () => {
       // Caso especial: PLANTA/QX (FLOOR amarillo)
       if (removedActivity.type === "PLANTA" && removedActivity.color === "amarillo") {
         valuesToRemove.push("PLANTA/QX");
-        // Si hay variantes con identificador, también se añaden
-        planningData.activities[dayIndex]
+        prev.activities[dayIndex]
           .filter(a => a.type === "QX" && a.color === "amarillo")
           .forEach(a => {
             valuesToRemove.push(`PLANTA/QX_${a.identifier || ""}`);
           });
       }
       if (removedActivity.type === "QX" && removedActivity.color === "amarillo") {
-          valuesToRemove.push(removedActivity.identifier ? `PLANTA/QX_${removedActivity.identifier}` : "PLANTA/QX");
-       }
+        valuesToRemove.push(removedActivity.identifier ? `PLANTA/QX_${removedActivity.identifier}` : "PLANTA/QX");
+      }
+
       const generalValue = removedActivity.color
         ? removedActivity.identifier
           ? `${removedActivity.type}_${removedActivity.color}_${removedActivity.identifier}`
@@ -512,11 +548,50 @@ const WeeklyPlanning = () => {
           eveningAssignations: newEveningAssignations
         };
       });
-      return {
+
+      const updatedData = {
         ...prev,
         activities: updatedActivities,
         weeklyPlanningDtos: updatedDtos
       };
+
+      // Iniciar check de planificación
+      setIsLoading(true);
+      const dataToSend = {
+        weeklyPlanningDtos: updatedData.weeklyPlanningDtos.map((p) => {
+          const staffMember = staffList.find(
+            (staff) => staff.name.toLowerCase() === p.name.toLowerCase()
+          );
+          return {
+            ...p,
+            level: staffMember ? staffMember.level : null,
+            assignations: [...p.assignations],
+            eveningAssignations: [...(p.eveningAssignations || [])],
+          };
+        }),
+        week: weekInMonth + 1,
+        month: months[month],
+        year,
+        days: days.map((d) => d.getDate()),
+        activities: updatedData.activities,
+        complete: true,
+      };
+
+      dispatch(
+        actions.checkWeeklyPlanning(
+          dataToSend,
+          () => {
+            setPlanningStatus("valid");
+            setIsLoading(false);
+          },
+          () => {
+            setPlanningStatus("invalid");
+            setIsLoading(false);
+          }
+        )
+      );
+
+      return updatedData;
     });
   };
 
