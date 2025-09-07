@@ -188,7 +188,16 @@ const MonthlyPlanning = () => {
             complete: true
         }
 
-        dispatch(actions.checkMonthlyPlanning(convertedPlanningData,
+        var index = activePlanningIndex;
+        const updatedAnnualPlanningList = [...monthlyPlanningList];
+          if (updatedAnnualPlanningList.length === 0) {
+            updatedAnnualPlanningList.push(convertedPlanningData);
+            index = 0
+          } else {
+            updatedAnnualPlanningList[activePlanningIndex] = convertedPlanningData;
+          }
+
+        dispatch(actions.checkMonthlyPlanning(updatedAnnualPlanningList, index,
             () => {
               setPlanningStatus('valid');
               setIsLoading(false);
@@ -196,7 +205,8 @@ const MonthlyPlanning = () => {
               setPlanningStatus('invalid');
               setIsLoading(false);
             })
-          );
+        );
+
       return updatedData;
     });
   };
@@ -260,7 +270,16 @@ const MonthlyPlanning = () => {
           complete: true
       }
 
-      dispatch(actions.checkMonthlyPlanning(convertedPlanningData,
+      var index = activePlanningIndex;
+      const updatedAnnualPlanningList = [...monthlyPlanningList];
+        if (updatedAnnualPlanningList.length === 0) {
+          updatedAnnualPlanningList.push(convertedPlanningData);
+          index = 0
+        } else {
+          updatedAnnualPlanningList[activePlanningIndex] = convertedPlanningData;
+        }
+
+      dispatch(actions.checkMonthlyPlanning(updatedAnnualPlanningList, index,
           () => {
             setPlanningStatus('valid');
             setIsLoading(false);

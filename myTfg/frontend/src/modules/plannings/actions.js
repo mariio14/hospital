@@ -92,38 +92,86 @@ export const saveYearlyPlanning = (planningData, year, onErrors) => dispatch =>
     () => dispatch(getYearlyConfirmCompleted(planningData)), onErrors);
 
 const getYearlyCheckCompleted = annualPlanning => ({
-    type: actionTypes.YEARLY_CONFIRM_COMPLETED,
+    type: actionTypes.YEARLY_CHECK_COMPLETED,
     annualPlanning
 });
 
-export const checkAnnualPlanning = (planningData, year, onSuccess, onErrors) => dispatch =>
-    backend.planningService.checkAnnualPlanning(planningData, year,
+const getYearlyCheckItemCompleted = annualPlanning => ({
+    type: actionTypes.YEARLY_CHECK_ITEM_COMPLETED,
+    annualPlanning
+});
+
+export const checkAnnualPlanning = (planningList, index, year, onSuccess, onErrors) => dispatch =>
+    backend.planningService.checkAnnualPlanning(planningList, index, year,
     () => {
-        if (onSuccess) onSuccess();
-        dispatch(getYearlyCheckCompleted(planningData))
-    }, onErrors);
+        dispatch(getYearlyCheckItemCompleted(planningList[index]));
+        dispatch(getYearlyCheckCompleted(planningList));
+        setTimeout(() => {
+          if (onSuccess) onSuccess();
+        }, 0);
+    },
+    () => {
+        if (planningList.length > 1) {
+            dispatch(getYearlyCheckCompleted(planningList));
+        }
+        setTimeout(() => {
+          if (onErrors) onErrors();
+        }, 0);
+    });
 
 
 const getMonthlyCheckCompleted = monthlyPlanning => ({
-    type: actionTypes.MONTHLY_CONFIRM_COMPLETED,
+    type: actionTypes.MONTHLY_CHECK_COMPLETED,
     monthlyPlanning
 });
 
-export const checkMonthlyPlanning = (planningData, onSuccess, onErrors) => dispatch =>
-    backend.planningService.checkMonthlyPlanning(planningData,
+const getMonthlyCheckItemCompleted = monthlyPlanning => ({
+    type: actionTypes.MONTHLY_CHECK_ITEM_COMPLETED,
+    monthlyPlanning
+});
+
+export const checkMonthlyPlanning = (planningList, index, onSuccess, onErrors) => dispatch =>
+    backend.planningService.checkMonthlyPlanning(planningList, index,
     () => {
-        if (onSuccess) onSuccess();
-        dispatch(getMonthlyCheckCompleted(planningData))
-    }, onErrors);
+        dispatch(getMonthlyCheckItemCompleted(planningList[index]));
+        dispatch(getMonthlyCheckCompleted(planningList))
+        setTimeout(() => {
+          if (onSuccess) onSuccess();
+        }, 0);
+    },
+    () => {
+        if (planningList.length > 1) {
+            dispatch(getMonthlyCheckCompleted(planningList));
+        }
+        setTimeout(() => {
+          if (onErrors) onErrors();
+        }, 0);
+    });
 
 const getWeeklyCheckCompleted = weeklyPlanning => ({
-    type: actionTypes.WEEKLY_CONFIRM_COMPLETED,
+    type: actionTypes.WEEKLY_CHECK_COMPLETED,
     weeklyPlanning
 });
 
-export const checkWeeklyPlanning = (planningData, onSuccess, onErrors) => dispatch =>
-    backend.planningService.checkWeeklyPlanning(planningData,
+const getWeeklyCheckItemCompleted = weeklyPlanning => ({
+    type: actionTypes.WEEKLY_CHECK_ITEM_COMPLETED,
+    weeklyPlanning
+});
+
+export const checkWeeklyPlanning = (planningList, index, onSuccess, onErrors) => dispatch =>
+    backend.planningService.checkWeeklyPlanning(planningList, index,
     () => {
-        if (onSuccess) onSuccess();
-        dispatch(getWeeklyCheckCompleted(planningData))
-    }, onErrors);
+        dispatch(getWeeklyCheckItemCompleted(planningList[index]));
+        dispatch(getWeeklyCheckCompleted(planningList))
+        setTimeout(() => {
+          if (onSuccess) onSuccess();
+        }, 0);
+    },
+    () => {
+        if (planningList.length > 1) {
+            dispatch(getWeeklyCheckCompleted(planningList));
+        }
+        setTimeout(() => {
+          if (onErrors) onErrors();
+        }, 0);
+    });

@@ -241,22 +241,26 @@ public class PlanningController {
 	}
 
 	@PostMapping("/checkAnnual")
-	public void checkAnnualPlanning(@Validated @RequestBody AnnualDataDto params, @RequestParam int year)
+	public void checkAnnualPlanning(@Validated @RequestBody List<AnnualDataDto> list, @RequestParam int index,
+									@RequestParam int year)
 			throws NoSolutionException, IOException, ClassNotFoundException, PlanningNotGeneratedException {
 		try {
+			AnnualDataDto params = list.get(index);
 			final List<Priority> costs = this.prioritiesService.getPriorities().get("Anual");
 			this.planningService.checkAnnualPlanning(AnnualPlanningDataConversor.toClingoParams(params, costs), year,
 					AnnualPlanningDataConversor.toMap(params));
+			this.planningService.saveYearListInJson(year, list);
 		} catch (final NoSolutionException e) {
-			this.planningService.saveYearInJson(year, params);
+			this.planningService.saveYearListInJson(year, list);
 			throw new NoSolutionException("Cambio no válido");
 		}
 	}
 
 	@PostMapping("/checkMonthly")
-	public void checkMonthlyPlanning(@Validated @RequestBody MonthlyDataDto params)
+	public void checkMonthlyPlanning(@Validated @RequestBody List<MonthlyDataDto> list, @RequestParam int index)
 			throws NoSolutionException, IOException, ClassNotFoundException, PlanningNotGeneratedException {
 		try {
+			MonthlyDataDto params = list.get(index);
 			final List<Priority> costs = this.prioritiesService.getPriorities().get("Mensual");
 
 			final Map<String, Map<Integer, String>> previousMonthPlanning = this.planningService
@@ -265,16 +269,19 @@ public class PlanningController {
 			this.planningService.checkMonthlyPlanning(
 					MonthlyDataConversor.toClingoParams(params, costs, previousMonthPlanning), params.getMonth(),
 					params.getYear(), MonthlyDataConversor.toMap(params));
+			this.planningService.saveMonthListInJson(params.getYear(), params.getMonth(), list);
 		} catch (final NoSolutionException e) {
-			this.planningService.saveMonthInJson(params.getYear(), params.getMonth(), params.getMonthlyPlanningDtos());
+			MonthlyDataDto params = list.get(index);
+			this.planningService.saveMonthListInJson(params.getYear(), params.getMonth(), list);
 			throw new NoSolutionException("Cambio no válido");
 		}
 	}
 
 	@PostMapping("/checkWeekly")
-	public void checkWeeklyPlanning(@Validated @RequestBody WeeklyDataDto params)
+	public void checkWeeklyPlanning(@Validated @RequestBody List<WeeklyDataDto> list, @RequestParam int index)
 			throws IOException, ClassNotFoundException, NoSolutionException, PlanningNotGeneratedException {
 		try {
+			WeeklyDataDto params = list.get(index);
 			final List<Priority> costs = this.prioritiesService.getPriorities().get("Semanal");
 
 			final Map<String, Map<Integer, String>> annualData = this.planningService
@@ -317,8 +324,9 @@ public class PlanningController {
 					params.getYear(), params.getMonth(), params.getWeek(), params.getActivities(),
 					WeeklyDataConversor.toMap(params));
 		} catch (final NoSolutionException e) {
-			this.planningService.saveWeekInJson(params.getYear(), params.getMonth(), params.getWeek(),
-					params.getWeeklyPlanningDtos(), params.getActivities(), params.getDays());
+			WeeklyDataDto params = list.get(index);
+			this.planningService.saveWeekListInJson(params.getYear(), params.getMonth(), params.getWeek(),
+					list, params.getActivities(), params.getDays());
 			throw new NoSolutionException("Cambio no válido");
 		}
 	}

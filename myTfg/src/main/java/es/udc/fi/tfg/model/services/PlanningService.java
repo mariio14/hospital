@@ -26,9 +26,16 @@ public interface PlanningService {
     void saveWeekInJson(int year, String month, String week, List<WeeklyAssignationsDto> planning,
                         List<List<ActivityDto>> activities, List<Integer> days) throws IOException, ClassNotFoundException, PlanningNotGeneratedException;
 
+    void saveWeekListInJson(int year, String month, String week, List<WeeklyDataDto> planning,
+                            List<List<ActivityDto>> activities, List<Integer> days) throws IOException, ClassNotFoundException, PlanningNotGeneratedException;
+
     void saveMonthInJson(int year, String month, List<MonthlyAssignationsDto> planning) throws IOException, ClassNotFoundException, PlanningNotGeneratedException;
 
+    void saveMonthListInJson(int year, String month, List<MonthlyDataDto> planning) throws IOException, ClassNotFoundException, PlanningNotGeneratedException;
+
     void saveYearInJson(int year, AnnualDataDto planning) throws IOException, ClassNotFoundException, PlanningNotGeneratedException;
+
+    void saveYearListInJson(int year, List<AnnualDataDto> plannings) throws IOException, ClassNotFoundException, PlanningNotGeneratedException;
 
     void checkAnnualPlanning(String params, int year, List<Map<String, Map<Integer, String>>> map) throws NoSolutionException;
 

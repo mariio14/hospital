@@ -230,7 +230,6 @@ const WeeklyPlanning = () => {
           weekInMonth + 1,
           {days: days.map(d => d.getDate())},
           () => {
-            // Loading error - could show this in UI later if needed
           }
       ));
     }, [weekInMonth, month, year]);
@@ -299,9 +298,18 @@ const WeeklyPlanning = () => {
           complete: true
         };
 
+        var index = activePlanningIndex;
+        const updatedAnnualPlanningList = [...weeklyPlanningList];
+          if (updatedAnnualPlanningList.length === 0) {
+            updatedAnnualPlanningList.push(dataToSend);
+            index = 0
+          } else {
+            updatedAnnualPlanningList[activePlanningIndex] = dataToSend;
+          }
+
         dispatch(
           actions.checkWeeklyPlanning(
-            dataToSend,
+            updatedAnnualPlanningList, index,
             () => {
               setPlanningStatus('valid');
               setIsLoading(false);
@@ -359,7 +367,14 @@ const WeeklyPlanning = () => {
 
     setPlanningData(updatedData);
 
-    dispatch(actions.getWeeklyClear(updatedData));
+    dispatch(actions.getSavedWeeklyPlanning(
+          getMonthName(month + 1),
+          year,
+          0,
+          {days: days.map(d => d.getDate())},
+          () => {
+          }
+      ));
   };
 
   const exportToPDF = () => {
@@ -468,9 +483,18 @@ const WeeklyPlanning = () => {
         complete: true,
       };
 
+      var index = activePlanningIndex;
+      const updatedAnnualPlanningList = [...weeklyPlanningList];
+        if (updatedAnnualPlanningList.length === 0) {
+          updatedAnnualPlanningList.push(dataToSend);
+          index = 0
+        } else {
+          updatedAnnualPlanningList[activePlanningIndex] = dataToSend;
+        }
+
       dispatch(
         actions.checkWeeklyPlanning(
-          dataToSend,
+          updatedAnnualPlanningList, index,
           () => {
             setPlanningStatus("valid");
             setIsLoading(false);
@@ -577,9 +601,18 @@ const WeeklyPlanning = () => {
         complete: true,
       };
 
+      var index = activePlanningIndex;
+      const updatedAnnualPlanningList = [...weeklyPlanningList];
+        if (updatedAnnualPlanningList.length === 0) {
+          updatedAnnualPlanningList.push(dataToSend);
+          index = 0
+        } else {
+          updatedAnnualPlanningList[activePlanningIndex] = dataToSend;
+        }
+
       dispatch(
         actions.checkWeeklyPlanning(
-          dataToSend,
+          updatedAnnualPlanningList, index,
           () => {
             setPlanningStatus("valid");
             setIsLoading(false);
@@ -648,8 +681,18 @@ const WeeklyPlanning = () => {
           activities: updatedData.activities,
           complete: true,
         };
+
+        var index = activePlanningIndex;
+        const updatedAnnualPlanningList = [...weeklyPlanningList];
+          if (updatedAnnualPlanningList.length === 0) {
+            updatedAnnualPlanningList.push(dataToSend);
+            index = 0
+          } else {
+            updatedAnnualPlanningList[activePlanningIndex] = dataToSend;
+          }
+
         dispatch(
-          actions.checkWeeklyPlanning(dataToSend,
+          actions.checkWeeklyPlanning(updatedAnnualPlanningList, index,
           () => {
             setPlanningStatus('valid');
             setIsLoading(false);
@@ -1281,11 +1324,16 @@ const WeeklyPlanning = () => {
                                     selected = filteredMorning.find(
                                       (a) => a.type === type
                                     );
+                                  }
+                                  else if (type === "PLANTA") {
+                                    const selectedIndex = e.target.selectedIndex - 1;
+                                    selected = filteredMorning[selectedIndex];
                                   } else {
                                     selected = filteredMorning.find((a) => a.type === type);
                                     typeSelected = type;
                                     idSelected = selected?.identifier;
                                   }
+                                  console.log({selectedActivity, type, id, selected, typeSelected, idSelected});
                                   assignCreatedActivity(person.name, idx, "morning", typeSelected, selected?.color, idSelected);
                                 }}
                                 style={{

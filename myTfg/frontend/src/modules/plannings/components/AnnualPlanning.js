@@ -161,9 +161,19 @@ const AnnualPlanning = () => {
             complete: true
           };
 
+        var index = activePlanningIndex;
+          const updatedAnnualPlanningList = [...annualPlanningList];
+          if (updatedAnnualPlanningList.length === 0)    {
+            updatedAnnualPlanningList.push(convertedPlanningData);
+            index = 0;
+          } else {
+            updatedAnnualPlanningList[activePlanningIndex] = convertedPlanningData;
+          }
+
           dispatch(
             actions.checkAnnualPlanning(
-              convertedPlanningData,
+              updatedAnnualPlanningList,
+              activePlanningIndex,
               year,
               () => {
                 setPlanningStatus('valid');
@@ -259,8 +269,18 @@ const AnnualPlanning = () => {
             complete: true
         }
 
+        var index = activePlanningIndex;
+        const updatedAnnualPlanningList = [...annualPlanningList];
+          if (updatedAnnualPlanningList.length === 0) {
+            updatedAnnualPlanningList.push(convertedPlanningData);
+            index = 0
+          } else {
+            updatedAnnualPlanningList[activePlanningIndex] = convertedPlanningData;
+          }
+
         dispatch(actions.checkAnnualPlanning(
-            convertedPlanningData,
+            updatedAnnualPlanningList,
+            index,
             year,
             () => {
               setPlanningStatus('valid');

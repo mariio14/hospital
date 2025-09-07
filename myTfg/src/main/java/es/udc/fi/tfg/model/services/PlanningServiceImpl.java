@@ -411,6 +411,109 @@ public class PlanningServiceImpl implements PlanningService {
 	}
 
 	@Override
+	public void saveWeekListInJson(int year, String month, String week, List<WeeklyDataDto> planning, List<List<ActivityDto>> activities,
+								   List<Integer> days) throws IOException, ClassNotFoundException, PlanningNotGeneratedException {
+		final List<Map<String, Map<Integer, List<String>>>> result = new ArrayList<>();
+		for (WeeklyDataDto weeklyDataDto : planning) {
+			final Map<String, Map<Integer, List<String>>> weekMap = new HashMap<>();
+			for (final WeeklyAssignationsDto weeklyAssignationsDto : weeklyDataDto.getWeeklyPlanningDtos()) {
+				final String name = weeklyAssignationsDto.getName().toLowerCase(Locale.ROOT);
+				final Map<Integer, List<String>> assignationsMap = new HashMap<>();
+				int i = 0;
+				for (final String assignation : weeklyAssignationsDto.getAssignations()) {
+					if (assignation != null) {
+						final String[] partes = assignation.split("_");
+						final String st;
+						if (partes.length == 1 && assignation.startsWith("PLANTA/")) {
+							if (assignationsMap.containsKey(days.get(i))) {
+								assignationsMap.get(days.get(i)).add("morningfloor_yellow");
+								assignationsMap.get(days.get(i)).add("morningqx_yellow");
+							} else {
+								assignationsMap.put(days.get(i),
+										new ArrayList<>(List.of("morningfloor_yellow", "morningqx_yellow")));
+							}
+						} else if (partes.length == 2 && assignation.startsWith("PLANTA/")) {
+							st = partes[1].toLowerCase(Locale.ROOT);
+							if (assignationsMap.containsKey(days.get(i))) {
+								assignationsMap.get(days.get(i)).add("morningfloor_yellow");
+								assignationsMap.get(days.get(i)).add("morningqx_yellow_" + st);
+							} else {
+								assignationsMap.put(days.get(i),
+										new ArrayList<>(List.of("morningfloor_yellow", "morningqx_yellow_" + st)));
+							}
+						} else if (partes.length == 2 && partes[0].equals("V")) {
+							if (assignationsMap.containsKey(days.get(i))) {
+								assignationsMap.get(days.get(i)).add("v");
+							} else {
+								assignationsMap.put(days.get(i), new ArrayList<>(List.of("v")));
+							}
+						} else if (partes.length == 1 && partes[0].equals("V")) {
+							if (assignationsMap.containsKey(days.get(i))) {
+								assignationsMap.get(days.get(i)).add("v");
+							} else {
+								assignationsMap.put(days.get(i), new ArrayList<>(List.of("v")));
+							}
+						} else if (partes.length == 2) {
+							final String color = COLORS.get(partes[1]);
+							if (assignationsMap.containsKey(days.get(i))) {
+								assignationsMap.get(days.get(i))
+										.add("morning" + TASKS.get(partes[0].toUpperCase(Locale.ROOT)) + "_" + color);
+							} else {
+								assignationsMap.put(days.get(i), new ArrayList<>(
+										List.of("morning" + TASKS.get(partes[0].toUpperCase(Locale.ROOT)) + "_" + color)));
+							}
+						} else {
+							final String a = "morning" + TASKS.get(partes[0].toUpperCase(Locale.ROOT)) + "_"
+									+ COLORS.get(partes[1]) + "_" + partes[2].toLowerCase(Locale.ROOT);
+							if (assignationsMap.containsKey(days.get(i))) {
+								assignationsMap.get(days.get(i)).add(a);
+							} else {
+								assignationsMap.put(days.get(i), new ArrayList<>(List.of(a)));
+							}
+						}
+					}
+					i++;
+				}
+				i = 0;
+				for (final String assignation : weeklyAssignationsDto.getEveningAssignations()) {
+					if (assignation != null) {
+						final String[] partes = assignation.split("_");
+						if (partes.length > 1 && partes[0] == null || partes[0].isEmpty() || partes[0].equals("null")) {
+							i++;
+							continue;
+						}
+						if (partes.length == 2) {
+							final String color = COLORS.get(partes[1]);
+							if (assignationsMap.containsKey(days.get(i))) {
+								assignationsMap.get(days.get(i))
+										.add("evening" + TASKS.get(partes[0].toUpperCase(Locale.ROOT)) + "_" + color);
+							} else {
+								assignationsMap.put(days.get(i), new ArrayList<>(
+										List.of("evening" + TASKS.get(partes[0].toUpperCase(Locale.ROOT)) + "_" + color)));
+							}
+						} else if (partes.length == 1) {
+							i++;
+							continue;
+						} else {
+							final String a = "evening" + TASKS.get(partes[0].toUpperCase(Locale.ROOT)) + "_"
+									+ COLORS.get(partes[1]) + "_" + partes[2].toLowerCase(Locale.ROOT);
+							if (assignationsMap.containsKey(days.get(i))) {
+								assignationsMap.get(days.get(i)).add(a);
+							} else {
+								assignationsMap.put(days.get(i), new ArrayList<>(List.of(a)));
+							}
+						}
+					}
+					i++;
+				}
+				weekMap.put(name, assignationsMap);
+			}
+			result.add(weekMap);
+		}
+		this.saveWeekToJsonFile(result, "/solutionWeekly.json", year, month, week, activities);
+	}
+
+	@Override
 	public void saveMonthInJson(int year, String month, List<MonthlyAssignationsDto> planning) {
 		final List<Map<String, Map<Integer, String>>> result = new ArrayList<>();
 		final Map<String, Map<Integer, String>> monthMap = new HashMap<>();
@@ -429,6 +532,30 @@ public class PlanningServiceImpl implements PlanningService {
 		}
 
 		result.add(monthMap);
+		this.saveMonthToJsonFile(result, "/solutionMonthly.json", month, year);
+	}
+
+	@Override
+	public void saveMonthListInJson(int year, String month, List<MonthlyDataDto> planning) throws IOException, ClassNotFoundException, PlanningNotGeneratedException {
+		final List<Map<String, Map<Integer, String>>> result = new ArrayList<>();
+		for (MonthlyDataDto monthlyDataDto : planning) {
+			final Map<String, Map<Integer, String>> monthMap = new HashMap<>();
+
+			for (final MonthlyAssignationsDto monthlyAssignationsDto : monthlyDataDto.getMonthlyPlanningDtos()) {
+				final String name = monthlyAssignationsDto.getName().toLowerCase(Locale.ROOT);
+				final Map<Integer, String> assignationsMap = new HashMap<>();
+				int i = 1;
+				for (final String assignation : monthlyAssignationsDto.getAssignations()) {
+					if (assignation != null) {
+						assignationsMap.put(i, assignation);
+					}
+					i++;
+				}
+				monthMap.put(name, assignationsMap);
+			}
+
+			result.add(monthMap);
+		}
 		this.saveMonthToJsonFile(result, "/solutionMonthly.json", month, year);
 	}
 
@@ -453,6 +580,31 @@ public class PlanningServiceImpl implements PlanningService {
 		}
 
 		result.add(yearMap);
+		this.saveYearJsonFile(result, "/solution_yearly.json", year);
+	}
+
+	@Override
+	public void saveYearListInJson(int year, List<AnnualDataDto> plannings) throws IOException, ClassNotFoundException, PlanningNotGeneratedException {
+		final List<Map<String, Map<Integer, String>>> result = new ArrayList<>();
+		for (AnnualDataDto planning : plannings) {
+			final Map<String, Map<Integer, String>> yearMap = new HashMap<>();
+			for (final AnnualPlanningDataDto annualPlanningDataDto : planning.getAssignations()) {
+				final String name = annualPlanningDataDto.getName().toLowerCase(Locale.ROOT);
+				final Map<Integer, String> assignationsMap = new HashMap<>();
+				int i = 1;
+				for (final String assignation : annualPlanningDataDto.getAssignations()) {
+					if (assignation != null) {
+						final String key = CONSTANTS_MAP.entrySet().stream()
+								.filter(entry -> entry.getValue().equals(assignation)).map(Map.Entry::getKey).findFirst()
+								.orElse("unknown");
+						assignationsMap.put(i, key);
+					}
+					i++;
+				}
+				yearMap.put(name, assignationsMap);
+			}
+			result.add(yearMap);
+		}
 		this.saveYearJsonFile(result, "/solution_yearly.json", year);
 	}
 

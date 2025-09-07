@@ -198,7 +198,7 @@ public class WeeklyPlanningConversor {
 			index++;
 		}
 		if (empty) {
-			insertVacations(list, monthData, days);
+			insertVacations(list, eveningList, monthData, days);
 		}
 		return new WeeklyPlanningDto(name, colors, list, eveningList);
 	}
@@ -258,7 +258,7 @@ public class WeeklyPlanningConversor {
 		return true;
 	}
 
-	private static void insertVacations(List<String> list, Map<Integer, String> monthData, List<Integer> days) {
+	private static void insertVacations(List<String> list, List<String> eveningList, Map<Integer, String> monthData, List<Integer> days) {
 		if (monthData == null || monthData.isEmpty()) {
 			return;
 		}
@@ -267,6 +267,7 @@ public class WeeklyPlanningConversor {
 			final String assignation = monthData.get(day);
 			if (assignation != null && assignation.equalsIgnoreCase("v")) {
 				list.set(i, "V");
+				eveningList.set(i, "V");
 			}
 		}
 	}

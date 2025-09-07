@@ -17,7 +17,7 @@ const annualPlanning = (state = initialState.annualPlanning, action) => {
             return action.annualPlanning[0];
         case actionTypes.ANNUAL_PLANNING_CLEAR:
             return null;
-        case actionTypes.YEARLY_CHECK_COMPLETED:
+        case actionTypes.YEARLY_CHECK_ITEM_COMPLETED:
             return action.annualPlanning;
         default:
             return state;
@@ -31,7 +31,7 @@ const annualPlanningList = (state = initialState.annualPlanningList, action) => 
         case actionTypes.YEARLY_CONFIRM_COMPLETED:
             return [];
         case actionTypes.YEARLY_CHECK_COMPLETED:
-            return [action.annualPlanning];
+            return action.annualPlanning;
         case actionTypes.ANNUAL_PLANNING_CLEAR:
             return [];
         default:
@@ -47,7 +47,7 @@ const monthlyPlanning = (state = initialState.monthlyPlanning, action) => {
             return action.monthlyPlanning;
         case actionTypes.CLEAR_MONTHLY_LIST:
             return action.monthlyPlanning;
-        case actionTypes.MONTHLY_CHECK_COMPLETED:
+        case actionTypes.MONTHLY_CHECK_ITEM_COMPLETED:
             return action.monthlyPlanning;
         default:
             return state;
@@ -61,7 +61,7 @@ const monthlyPlanningList = (state = initialState.monthlyPlanningList, action) =
         case actionTypes.MONTHLY_CONFIRM_COMPLETED:
             return [];
         case actionTypes.MONTHLY_CHECK_COMPLETED:
-            return [action.monthlyPlanning];
+            return action.monthlyPlanning;
         case actionTypes.CLEAR_MONTHLY_LIST:
             return [];
         default:
@@ -77,7 +77,7 @@ const weeklyPlanning = (state = initialState.weeklyPlanning, action) => {
             return action.weeklyPlanning;
         case actionTypes.CLEAR_WEEKLY_LIST:
             return action.weeklyPlanning;
-        case actionTypes.WEEKLY_CHECK_COMPLETED:
+        case actionTypes.WEEKLY_CHECK_ITEM_COMPLETED:
             return action.weeklyPlanning;
         default:
             return state;
@@ -93,7 +93,7 @@ const weeklyPlanningList = (state = initialState.weeklyPlanningList, action) => 
         case actionTypes.CLEAR_WEEKLY_LIST:
             return [];
         case actionTypes.WEEKLY_CHECK_COMPLETED:
-            return [action.weeklyPlanning];
+            return action.weeklyPlanning;
         default:
             return state;
     }

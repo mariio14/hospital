@@ -30,12 +30,12 @@ export const saveMonthlyPlanning = (planningData, onSuccess, onErrors) =>
 export const saveYearlyPlanning = (planningData, year, onSuccess, onErrors) =>
   appFetch(`/plannings/saveYearly?year=${year}`, fetchConfig("POST", planningData), onSuccess, onErrors);
 
-export const checkAnnualPlanning = (planningData, year, onSuccess, onErrors) =>
-  appFetch(`/plannings/checkAnnual?year=${year}`, fetchConfig("POST", planningData), onSuccess, onErrors);
+export const checkAnnualPlanning = (planningData, index, year, onSuccess, onErrors) =>
+  appFetch(`/plannings/checkAnnual?year=${year}&index=${index}`, fetchConfig("POST", planningData), onSuccess, onErrors);
 
-export const checkMonthlyPlanning = (planningData, onSuccess, onErrors) =>
-  appFetch(`/plannings/checkMonthly`, fetchConfig("POST", planningData), onSuccess, onErrors);
+export const checkMonthlyPlanning = (planningData, index, onSuccess, onErrors) =>
+  appFetch(`/plannings/checkMonthly?index=${index}`, fetchConfig("POST", planningData), onSuccess, onErrors);
 
 
-export const checkWeeklyPlanning = (planningData, onSuccess, onErrors) =>
-  appFetch(`/plannings/checkWeekly`, fetchConfig("POST", planningData), onSuccess, onErrors);
+export const checkWeeklyPlanning = (planningData, index, onSuccess, onErrors) =>
+  appFetch(`/plannings/checkWeekly?index=${index}`, fetchConfig("POST", planningData), onSuccess, onErrors);
