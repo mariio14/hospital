@@ -377,20 +377,104 @@ const WeeklyPlanning = () => {
       ));
   };
 
+  // Function to clean task names by removing color information
+  const cleanTaskName = (taskName) => {
+    if (!taskName || taskName === "-") return taskName;
+    
+    const parts = taskName.split("_");
+    
+    if (parts.length === 1) {
+      // 1 part (TASK) → keep as TASK
+      return parts[0];
+    } else if (parts.length === 2) {
+      // 2 parts (TASK_COLOR) → keep as TASK
+      return parts[0];
+    } else if (parts.length === 3) {
+      // 3 parts (TASK_COLOR_ID) → keep as TASK_ID
+      return `${parts[0]}_${parts[2]}`;
+    } else {
+      // More than 3 parts, keep first and last
+      return `${parts[0]}_${parts[parts.length - 1]}`;
+    }
+  };
+
+  // Function to convert rgba color to hex for PDF
+  const rgbaToHex = (rgba) => {
+    if (!rgba || rgba === "#fff") return [255, 255, 255];
+    
+    // Extract RGB values from rgba string
+    const rgbaMatch = rgba.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*[\d.]+)?\)/);
+    if (rgbaMatch) {
+      return [parseInt(rgbaMatch[1]), parseInt(rgbaMatch[2]), parseInt(rgbaMatch[3])];
+    }
+    
+    // Fallback to white if color parsing fails
+    return [255, 255, 255];
+  };
+
   const exportToPDF = () => {
     const doc = new jsPDF({ orientation: "landscape" });
     doc.text("Planificación Semanal", 10, 10);
+    
+    // Prepare table data with cleaned task names
     const tableData = planningData.weeklyPlanningDtos.map((p) => [
       p.name,
-      ...p.assignations.map((a) => a || "-")
+      ...p.assignations.map((a) => cleanTaskName(a) || "-")
     ]);
+
+    // Prepare body styles with colors for each cell
+    const bodyStyles = [];
+    
+    planningData.weeklyPlanningDtos.forEach((person, rowIndex) => {
+      // Name cell styling
+      const nameColor = colorPersonMap[person.colors && person.colors[0] ? person.colors[0] : null] || "#fff";
+      bodyStyles.push({
+        0: { fillColor: rgbaToHex(nameColor) }
+      });
+
+      // Day cells styling
+      const rowStyles = {};
+      person.assignations.forEach((_, dayIndex) => {
+        const dayColor = colorPersonMap[person.colors && person.colors[dayIndex] ? person.colors[dayIndex] : null] || "#fff";
+        rowStyles[dayIndex + 1] = { fillColor: rgbaToHex(dayColor) };
+      });
+      
+      // Merge name cell style with day cells styles
+      bodyStyles[rowIndex] = { ...bodyStyles[rowIndex], ...rowStyles };
+    });
+
     doc.autoTable({
       head: [["Persona", ...days.map(d => `${d.toLocaleDateString("es-ES", { weekday: "long" })} ${d.getDate()}`)]],
       body: tableData,
       startY: 20,
-      styles: { fontSize: 10, cellPadding: 1 },
-      bodyStyles: { halign: "center" }
+      styles: { 
+        fontSize: 10, 
+        cellPadding: 3,
+        lineColor: [0, 0, 0],
+        lineWidth: 0.1
+      },
+      headStyles: {
+        fillColor: [200, 200, 200],
+        textColor: [0, 0, 0],
+        fontStyle: 'bold'
+      },
+      bodyStyles: { 
+        halign: "center",
+        textColor: [0, 0, 0]
+      },
+      didParseCell: function(data) {
+        // Apply row-specific colors
+        if (data.section === 'body') {
+          const rowIndex = data.row.index;
+          const colIndex = data.column.index;
+          
+          if (bodyStyles[rowIndex] && bodyStyles[rowIndex][colIndex]) {
+            data.cell.styles.fillColor = bodyStyles[rowIndex][colIndex].fillColor;
+          }
+        }
+      }
     });
+    
     doc.save("planificacion_semanal.pdf");
   };
 
