@@ -32,7 +32,7 @@ public class WeeklyPlanningConversor {
 			Map.entry("nutrition", "NUTRI"));
 
 	private static final Map<String, String> TASKS = Map.ofEntries(Map.entry("floor", "PLANTA"), Map.entry("qx", "QX"),
-			Map.entry("consultation", "CONSULTA"), Map.entry("carca", "CARCA"), Map.entry("cerdo", "CERDO"),
+			Map.entry("consultation", "CONSULTA"), Map.entry("carca", "CARCA"), Map.entry("cerdo", "EXPE"),
 			Map.entry("qxrobot", "QXROBOT"), Map.entry("v", "V"));
 
 	public static List<WeeklyResultDto> toWeeklyPlanningDtos(ActivityAndPlanning planningMap, int year, String month,

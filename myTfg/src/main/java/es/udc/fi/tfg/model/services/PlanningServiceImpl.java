@@ -35,7 +35,7 @@ public class PlanningServiceImpl implements PlanningService {
 			Map.entry("nutrition", "NUTRI"));
 
 	private static final Map<String, String> TASKS = Map.ofEntries(Map.entry("PLANTA", "floor"), Map.entry("QX", "qx"),
-			Map.entry("CONSULTA", "consultation"), Map.entry("CARCA", "carca"), Map.entry("CERDO", "cerdo"),
+			Map.entry("CONSULTA", "consultation"), Map.entry("CARCA", "carca"), Map.entry("EXPE", "cerdo"),
 			Map.entry("QXROBOT", "qxrobot"));
 
 	@Override
