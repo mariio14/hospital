@@ -1386,7 +1386,9 @@ const WeeklyPlanning = () => {
                                           const parts = (morningActivity || "").split("_");
                                           return parts.length === 3 ? `${parts[0]}_${parts[2]}` : parts[0];
                                         })()
-                                      : (morningActivity || "").split("_")[0]
+                                      : (morningActivity || "").startsWith("PLANTA_")
+                                        ? morningActivity || ""
+                                        : (morningActivity || "").split("_")[0]
                                 }
                                 onChange={(e) => {
                                   const selectedActivity = e.target.value;
@@ -1410,8 +1412,16 @@ const WeeklyPlanning = () => {
                                     );
                                   }
                                   else if (type === "PLANTA") {
-                                    const selectedIndex = e.target.selectedIndex - 1;
-                                    selected = filteredMorning[selectedIndex];
+                                    if (id) {
+                                      // PLANTA with color (e.g., "PLANTA_azul")
+                                      selected = filteredMorning.find(
+                                        (a) => a.type === "PLANTA" && a.color === id
+                                      );
+                                    } else {
+                                      // PLANTA without color - find based on selectedIndex
+                                      const selectedIndex = e.target.selectedIndex - 1;
+                                      selected = filteredMorning[selectedIndex];
+                                    }
                                   } else {
                                     selected = filteredMorning.find((a) => a.type === type);
                                     typeSelected = type;
@@ -1454,13 +1464,25 @@ const WeeklyPlanning = () => {
                                   {filteredMorning.map((act, i) => (
                                     <option
                                       key={i}
-                                      value={act.identifier ? `${act.type}_${act.identifier}` : act.type}
+                                      value={
+                                        act.identifier 
+                                          ? `${act.type}_${act.identifier}` 
+                                          : act.type === "PLANTA" && act.color
+                                            ? `${act.type}_${act.color}`
+                                            : act.type
+                                      }
                                       style={{
                                         backgroundColor: qxColors[act.color] || "#e0e0e0",
                                         color: "#000",
                                       }}
                                     >
-                                      {act.identifier ? `${act.type}_${act.identifier}` : act.type}
+                                      {
+                                        act.identifier 
+                                          ? `${act.type}_${act.identifier}` 
+                                          : act.type === "PLANTA" && act.color
+                                            ? act.type
+                                            : act.type
+                                      }
                                     </option>
                                   ))}
                                 </>
@@ -1470,7 +1492,11 @@ const WeeklyPlanning = () => {
                             {/* Tarde */}
                             <div style={{ flex: 1, padding: "2px" }}>
                               <select
-                                value={(eveningActivity || "").split("_")[0]}
+                                value={
+                                  (eveningActivity || "").startsWith("PLANTA_")
+                                    ? eveningActivity || ""
+                                    : (eveningActivity || "").split("_")[0]
+                                }
                                 onChange={(e) => {
                                   const selectedActivity = e.target.value;
                                     const [type, id] = selectedActivity.split("_");
@@ -1479,11 +1505,16 @@ const WeeklyPlanning = () => {
                                     let idSelected = id;
 
                                     if (type === "QX" && id) {
-                                      selected = filteredMorning.find(
+                                      selected = filteredEvening.find(
                                         (a) => a.type === "QX" && a.identifier === id
                                       );
+                                    } else if (type === "PLANTA" && id) {
+                                      // PLANTA with color (e.g., "PLANTA_azul")
+                                      selected = filteredEvening.find(
+                                        (a) => a.type === "PLANTA" && a.color === id
+                                      );
                                     } else {
-                                      selected = filteredMorning.find((a) => a.type === type);
+                                      selected = filteredEvening.find((a) => a.type === type);
                                       typeSelected = type;
                                       idSelected = selected?.identifier
                                     }
@@ -1505,13 +1536,25 @@ const WeeklyPlanning = () => {
                                   {filteredEvening.map((act, i) => (
                                     <option
                                       key={i}
-                                      value={act.identifier ? `${act.type}_${act.identifier}` : act.type}
+                                      value={
+                                        act.identifier 
+                                          ? `${act.type}_${act.identifier}` 
+                                          : act.type === "PLANTA" && act.color
+                                            ? `${act.type}_${act.color}`
+                                            : act.type
+                                      }
                                       style={{
                                         backgroundColor: qxColors[act.color] || "#e0e0e0",
                                         color: "#000",
                                       }}
                                     >
-                                      {act.identifier ? `${act.type}_${act.identifier}` : act.type}
+                                      {
+                                        act.identifier 
+                                          ? `${act.type}_${act.identifier}` 
+                                          : act.type === "PLANTA" && act.color
+                                            ? act.type
+                                            : act.type
+                                      }
                                     </option>
                                   ))}
                                 </>
@@ -1550,7 +1593,13 @@ const WeeklyPlanning = () => {
                               position: "relative",
                             }}
                           >
-                            {act.identifier ? `${act.type}_${act.identifier}` : act.type}
+                            {
+                              act.identifier 
+                                ? `${act.type}_${act.identifier}` 
+                                : act.type === "PLANTA" && act.color
+                                  ? act.type
+                                  : act.type
+                            }
                             <button
                               onClick={() => handleRemoveActivity(idx, i)}
                               style={{
