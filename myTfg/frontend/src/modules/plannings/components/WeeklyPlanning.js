@@ -1480,7 +1480,7 @@ const WeeklyPlanning = () => {
                                         act.identifier 
                                           ? `${act.type}_${act.identifier}` 
                                           : act.type === "PLANTA" && act.color
-                                            ? `${act.type}_${act.color}`
+                                            ? act.type
                                             : act.type
                                       }
                                     </option>
@@ -1552,7 +1552,7 @@ const WeeklyPlanning = () => {
                                         act.identifier 
                                           ? `${act.type}_${act.identifier}` 
                                           : act.type === "PLANTA" && act.color
-                                            ? `${act.type}_${act.color}`
+                                            ? act.type
                                             : act.type
                                       }
                                     </option>
@@ -1597,7 +1597,7 @@ const WeeklyPlanning = () => {
                               act.identifier 
                                 ? `${act.type}_${act.identifier}` 
                                 : act.type === "PLANTA" && act.color
-                                  ? `${act.type}_${act.color}`
+                                  ? act.type
                                   : act.type
                             }
                             <button
