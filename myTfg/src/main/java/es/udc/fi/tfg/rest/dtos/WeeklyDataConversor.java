@@ -109,6 +109,7 @@ public class WeeklyDataConversor {
               String identifier = (parts.length > 1 && parts[1] != null) ? ClingoUtils.sanitizeForClingo(parts[1]) : null;
               clingoParams.append(String.format("day_assign(%s,%d,qx,yellow,morning,%s). ", personName, weeklyDataDto.getDays().get(i), identifier));
               clingoParams.append(String.format("day_assign(%s,%d,floor,yellow,morning,null). ", personName, weeklyDataDto.getDays().get(i)));
+              i++;
               continue;
             }
             String[] partes = assignation.split("_");
